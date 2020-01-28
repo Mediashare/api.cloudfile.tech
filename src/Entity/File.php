@@ -25,6 +25,11 @@ class File
      */
     private $path;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $size;
+
     public function __construct() {
         $this->setId(\uniqid());
     }
@@ -61,6 +66,18 @@ class File
     public function setPath(string $path): self
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(?int $size): self
+    {
+        $this->size = $size;
 
         return $this;
     }
