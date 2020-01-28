@@ -22,6 +22,7 @@ class UploadController extends AbstractController
             $size = 0;
             foreach ($files as $index => $file) {
                 $file = $fileSystem->upload($file, $stockage);
+                $file->setMetadata($_REQUEST);
                 $em->persist($file);
                 $em->flush();
                 

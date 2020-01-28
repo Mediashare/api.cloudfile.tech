@@ -8,7 +8,7 @@ curl_setopt(
     CURLOPT_POSTFIELDS,
     [
         'file' => curl_file_create(realpath('README.md')),
-        'file2' => curl_file_create(realpath('composer.json'))
+        'file2' => curl_file_create(realpath('composer.json')),
     ]
 );
 

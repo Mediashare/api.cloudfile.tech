@@ -46,3 +46,11 @@ echo curl_exec($request);
 // close the session
 curl_close($request);
 ```
+##### Add metadata to file(s)
+You can add metadata to file(s) with GET & POST methods.
+```bash
+curl \
+  -F "file=@/home/user1/Desktop/image1.jpg" \
+  -F "category=image" \
+  localhost:8000/upload?foo=bar
+```

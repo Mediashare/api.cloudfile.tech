@@ -24,7 +24,8 @@ class FileController extends AbstractController
                 'name' => $file->getName(),
                 'path' => $file->getPath(),
                 'mimeType' => $file->getMimeType(),
-                'size' => $fileSystem->getSizeReadable($file->getSize())
+                'size' => $fileSystem->getSizeReadable($file->getSize()),
+                'metadata' => $file->getMetadata(),
             ];
         endif;
         return $this->json([

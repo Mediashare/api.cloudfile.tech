@@ -35,6 +35,11 @@ class File
      */
     private $mimeType;
 
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $metadata = [];
+
     public function __construct() {
         $this->setId(\uniqid());
     }
@@ -95,6 +100,18 @@ class File
     public function setMimeType(?string $mimeType): self
     {
         $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function getMetadata(): ?array
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(array $metadata): self
+    {
+        $this->metadata = $metadata;
 
         return $this;
     }
