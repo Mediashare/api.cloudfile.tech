@@ -42,6 +42,21 @@ class AppController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $file = $em->getRepository(File::class)->find($id);
         if ($file):
+            return new BinaryFileResponse($file->getPath());
+        endif;
+        return $this->json([
+            'status' => 'error',
+            'message' => 'File not found.',
+        ]);
+    }
+
+    /**
+     * @Route("/download/{id}", name="download")
+     */
+    public function download(string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $file = $em->getRepository(File::class)->find($id);
+        if ($file):
             $response = new BinaryFileResponse($file->getPath());
             $response->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
