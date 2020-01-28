@@ -26,13 +26,7 @@ class UploadController extends AbstractController
                 $em->persist($file);
                 $em->flush();
                 
-                $results[] = [
-                    'id' => $file->getId(),
-                    'name' => $file->getName(),
-                    'path' => $file->getPath(),
-                    'mimeType' => $file->getMimeType(),
-                    'size' => $fileSystem->getSizeReadable($file->getSize())
-                ];
+                $results[] = $file->getInfo();
                 $size += $file->getSize();
             }
             // Response

@@ -19,14 +19,7 @@ class FileController extends AbstractController
         $file = $em->getRepository(File::class)->find($id);
         if ($file):
             $fileSystem = new FileSystemApi();
-            return [
-                'id' => $file->getId(),
-                'name' => $file->getName(),
-                'path' => $file->getPath(),
-                'mimeType' => $file->getMimeType(),
-                'size' => $fileSystem->getSizeReadable($file->getSize()),
-                'metadata' => $file->getMetadata(),
-            ];
+            return $file->getInfo();
         endif;
         return $this->json([
             'status' => 'error',

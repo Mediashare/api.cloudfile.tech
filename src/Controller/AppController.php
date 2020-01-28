@@ -19,14 +19,7 @@ class AppController extends AbstractController
         $results = [];
         $size = 0;
         foreach ($files as $file) {
-            $results[] = [
-                'id' => $file->getId(),
-                'name' => $file->getName(),
-                'path' => $file->getPath(),
-                'mimeType' => $file->getMimeType(),
-                'size' => $fileSystem->getSizeReadable($file->getSize()),
-                'metadata' => $file->getMetadata(),
-            ];
+            $results[] = $file->getInfo();;
             $size += $file->getSize();
         }
         return $this->json([

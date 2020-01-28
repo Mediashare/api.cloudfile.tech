@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Service\FileSystemApi;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -114,5 +115,22 @@ class File
         $this->metadata = $metadata;
 
         return $this;
+    }
+
+    public function getInfo(): array {
+        $fileSystem = new FileSystemApi();
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'mimeType' => $this->getMimeType(),
+            'size' => $fileSystem->getSizeReadable($this->getSize()),
+            'metadata' => $this->getMetadata(),
+            'urls' => [
+                'info' => '/info/'.$this->getId(),
+                'show' => '/show/'.$this->getId(),
+                'download' => '/download/'.$this->getId(),
+                'remove' => '/remove/'.$this->getId(),
+            ],
+        ];
     }
 }
