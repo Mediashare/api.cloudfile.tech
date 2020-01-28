@@ -1,14 +1,20 @@
 <?php
-if (function_exists('curl_file_create')) { // php 5.5+
-    $file = curl_file_create(realpath('README.md'));
-} else { // 
-    $file = '@' . realpath('README.md');
-}
+// send a file
+$request = curl_init();
+curl_setopt($request, CURLOPT_URL,"http://localhost:8000/upload");
+curl_setopt($request, CURLOPT_POST, true);
+curl_setopt(
+    $request,
+    CURLOPT_POSTFIELDS,
+    [
+        'file' => curl_file_create(realpath('README.md')),
+        'file2' => curl_file_create(realpath('composer.json'))
+    ]
+);
 
-$post = ['file' => $file];
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL,"http://localhost:8000/upload");
-curl_setopt($ch, CURLOPT_POST,1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-$result = curl_exec($ch);
-curl_close($ch);
+// output the response
+curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+echo curl_exec($request);
+
+// close the session
+curl_close($request);

@@ -16,6 +16,27 @@ curl \
   -F "file2=@/home/user1/Desktop/image2.jpg" \
   localhost:8000/upload
 ```
+```php
+// send a file
+$request = curl_init();
+curl_setopt($request, CURLOPT_URL,"http://localhost:8000/upload");
+curl_setopt($request, CURLOPT_POST, true);
+curl_setopt(
+    $request,
+    CURLOPT_POSTFIELDS,
+    [
+        'file' => curl_file_create(realpath('image1.jpg')),
+        'file2' => curl_file_create(realpath('image1.jpg'))
+    ]
+);
+
+// output the response
+curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+echo curl_exec($request);
+
+// close the session
+curl_close($request);
+```
 #### Api endpoint
 * ``/`` List file(s)
 * ``/upload`` Upload file
