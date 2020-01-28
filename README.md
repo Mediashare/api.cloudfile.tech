@@ -9,10 +9,11 @@ composer install
 php -S localhost:8000 -t public/
 ```
 ### Usages
-#### Upload file
+#### Upload file(s)
 ```bash
 curl \
-  -F "file=@/home/user1/Desktop/test.jpg" \
+  -F "file=@/home/user1/Desktop/image1.jpg" \
+  -F "file2=@/home/user1/Desktop/image2.jpg" \
   localhost:8000/upload
 ```
 #### Api endpoint
