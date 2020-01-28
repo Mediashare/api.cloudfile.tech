@@ -9,6 +9,12 @@ composer install
 php -S localhost:8000 -t public/
 ```
 ### Usages
+#### Api endpoint
+* ``/`` List file(s)
+* ``/upload`` Upload file
+* ``/show/{id}`` Show file
+* ``/download/{id}`` Download file
+* ``/remove/{id}`` Remove file
 #### Upload file(s)
 ##### Use curl command line tool
 ```bash
@@ -39,9 +45,3 @@ echo curl_exec($request);
 // close the session
 curl_close($request);
 ```
-#### Api endpoint
-* ``/`` List file(s)
-* ``/upload`` Upload file
-* ``/show/{id}`` Show file
-* ``/download/{id}`` Download file
-* ``/remove/{id}`` Remove file
