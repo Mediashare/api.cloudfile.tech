@@ -23,7 +23,7 @@ Class FileSystem
 
         $file->move(
             $destination, 
-            $name = \uniqid() .'.'. $file->guessExtension()
+            $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)
         );
         
         $FileEntity = new FileEntity();

@@ -10,6 +10,6 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL,"http://localhost:8000/upload");
 curl_setopt($ch, CURLOPT_POST,1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-$result=curl_exec($ch);
+$result = curl_exec($ch);
 curl_close($ch);
-echo $result;
+// echo $result;
