@@ -24,12 +24,12 @@ Class FileSystemApi {
             $destination, 
             $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)
         );
-        
         $FileEntity = new FileEntity();
         $FileEntity->setName($file->getClientOriginalName());
         $FileEntity->setPath($destination . '/' . $name);
         $FileEntity->setSize(\filesize($FileEntity->getPath()));
-
+        $FileEntity->setMimeType(mime_content_type($FileEntity->getPath()));
+        
         return $FileEntity;
     }
     public function move(string $path, string $destination) {

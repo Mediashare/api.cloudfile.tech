@@ -23,6 +23,7 @@ class AppController extends AbstractController
                 'id' => $file->getId(),
                 'name' => $file->getName(),
                 'path' => $file->getPath(),
+                'mimeType' => $file->getMimeType(),
                 'size' => $fileSystem->getSizeReadable($file->getSize())
             ];
             $size += $file->getSize();

@@ -30,6 +30,11 @@ class File
      */
     private $size;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $mimeType;
+
     public function __construct() {
         $this->setId(\uniqid());
     }
@@ -78,6 +83,18 @@ class File
     public function setSize(?int $size): self
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(?string $mimeType): self
+    {
+        $this->mimeType = $mimeType;
 
         return $this;
     }
