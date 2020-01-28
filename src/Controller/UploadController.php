@@ -18,6 +18,7 @@ class UploadController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $stockage = $this->getParameter('kernel.project_dir').$this->getParameter('stockage');
             $fileSystem = new FileSystemApi();
+            $results = [];
             $size = 0;
             foreach ($files as $index => $file) {
                 $file = $fileSystem->upload($file, $stockage);

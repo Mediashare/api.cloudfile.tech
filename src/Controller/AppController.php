@@ -15,11 +15,11 @@ class AppController extends AbstractController
     public function index() {
         $em = $this->getDoctrine()->getManager();
         $fileSystem = new FileSystemApi();
-        $fileRepo = $em->getRepository(File::class)->findAll();
-        $files = [];
+        $files = $em->getRepository(File::class)->findAll();
+        $results = [];
         $size = 0;
-        foreach ($fileRepo as $file) {
-            $files[] = [
+        foreach ($files as $file) {
+            $results[] = [
                 'id' => $file->getId(),
                 'name' => $file->getName(),
                 'path' => $file->getPath(),
@@ -31,9 +31,9 @@ class AppController extends AbstractController
         return $this->json([
             'status' => 'success',
             'files' => [
-                'counter' => count($files),
+                'counter' => count($results),
                 'size' => $fileSystem->getSizeReadable($size),
-                'results' => $files
+                'results' => $results
             ],
         ]);
     }
