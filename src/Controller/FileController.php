@@ -12,6 +12,28 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class FileController extends AbstractController
 {
     /**
+     * @Route("/info/{id}", name="info")
+     */
+    public function info(string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $file = $em->getRepository(File::class)->find($id);
+        if ($file):
+            $fileSystem = new FileSystemApi();
+            return [
+                'id' => $file->getId(),
+                'name' => $file->getName(),
+                'path' => $file->getPath(),
+                'mimeType' => $file->getMimeType(),
+                'size' => $fileSystem->getSizeReadable($file->getSize())
+            ];
+        endif;
+        return $this->json([
+            'status' => 'error',
+            'message' => 'File not found.',
+        ]);
+    }
+
+    /**
      * @Route("/show/{id}", name="show")
      */
     public function show(string $id) {

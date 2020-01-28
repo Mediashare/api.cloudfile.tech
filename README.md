@@ -11,7 +11,8 @@ php -S localhost:8000 -t public/
 ### Usages
 #### Api endpoint
 * ``/`` List file(s)
-* ``/upload`` Upload file
+* ``/upload`` Upload file(s)
+* ``/info/{id}`` File informations
 * ``/show/{id}`` Show file
 * ``/download/{id}`` Download file
 * ``/remove/{id}`` Remove file
