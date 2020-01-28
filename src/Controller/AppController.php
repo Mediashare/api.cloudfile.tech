@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\File;
-use Mediashare\Service\FileSystem;
+use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AppController extends AbstractController
@@ -26,7 +28,30 @@ class AppController extends AbstractController
         }
         return $this->json([
             'status' => 'success',
-            'files' => $files,
+            'files' => [
+                'counter' => count($files),
+                'results' => $files
+            ],
+        ]);
+    }
+
+    /**
+     * @Route("/show/{id}", name="show")
+     */
+    public function show(string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $file = $em->getRepository(File::class)->find($id);
+        if ($file):
+            $response = new BinaryFileResponse($file->getPath());
+            $response->setContentDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $file->getName()
+            );
+            return $response;
+        endif;
+        return $this->json([
+            'status' => 'error',
+            'message' => 'File not found.',
         ]);
     }
 
@@ -39,7 +64,7 @@ class AppController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $stockage = $this->getParameter('kernel.project_dir').$this->getParameter('stockage');
             foreach ($files as $file) {
-                $fileSystem = new FileSystem();
+                $fileSystem = new FileSystemApi();
                 $file = $fileSystem->upload($file, $stockage);
                 $em->persist($file);
                 $em->flush();
@@ -47,6 +72,31 @@ class AppController extends AbstractController
             return $this->json([
                 'status' => 'success',
                 'message' => 'Your file(s) was uploaded.',
+            ]);
+        endif;
+        return $this->json([
+            'status' => 'error',
+            'message' => 'File not found.',
+        ]);
+    }
+
+    /**
+     * @Route("/remove/{id}", name="remove")
+     */
+    public function remove(string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $file = $em->getRepository(File::class)->find($id);
+        if ($file):
+            $fileSystem = new FileSystemApi();
+            // Remove to database
+            $em->remove($file);
+            $em->flush();
+            // Remove file
+            $fileSystem->remove($file->getPath());
+            // Response
+            return $this->json([
+                'status' => 'success',
+                'message' => '['.$id.'] File was removed.',
             ]);
         endif;
         return $this->json([

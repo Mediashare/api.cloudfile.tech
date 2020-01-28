@@ -1,5 +1,5 @@
 <?php
-namespace Mediashare\Service;
+namespace App\Service;
 
 use App\Entity\File as FileEntity;
 use Mediashare\Kernel\Kernel;
@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Filesystem\Filesystem as Fs;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
-Class FileSystem {
+Class FileSystemApi {
     public function __construct() {
         $kernel = new Kernel();
         $kernel->run();
@@ -37,5 +37,8 @@ Class FileSystem {
         $this->mkdir->run();
         // Move
         $this->filesystem->rename($path, $destination);
+    }
+    public function remove(string $path) {
+        $this->filesystem->remove($path);
     }
 }
