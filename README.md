@@ -6,6 +6,7 @@ Server file system with simple API.
 git clone https://github.com/Mediashare/CloudFile
 cd CloudFile
 composer install
+bin/console doctrine:schema:update --force
 php -S localhost:8000 -t public/
 ```
 ### Usages
