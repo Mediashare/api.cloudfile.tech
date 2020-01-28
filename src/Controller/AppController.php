@@ -13,8 +13,7 @@ class AppController extends AbstractController
     /**
      * @Route("/", name="index")
      */
-    public function index()
-    {
+    public function index() {
         $em = $this->getDoctrine()->getManager();
         $fileRepo = $em->getRepository(File::class)->findAll();
         $files = [];
@@ -34,8 +33,7 @@ class AppController extends AbstractController
     /**
      * @Route("/upload", name="upload")
      */
-    public function upload(Request $request)
-    {
+    public function upload(Request $request) {
         $files = $request->files;
         if (count($files) > 0):
             $em = $this->getDoctrine()->getManager();
@@ -56,6 +54,4 @@ class AppController extends AbstractController
             'message' => 'File not found.',
         ]);
     }
-
-    
 }

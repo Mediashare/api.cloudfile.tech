@@ -7,8 +7,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Filesystem\Filesystem as Fs;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
-Class FileSystem
-{
+Class FileSystem {
     public function __construct() {
         $kernel = new Kernel();
         $kernel->run();
