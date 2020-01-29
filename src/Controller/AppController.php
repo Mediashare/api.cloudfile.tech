@@ -15,7 +15,7 @@ class AppController extends AbstractController
     public function index() {
         $em = $this->getDoctrine()->getManager();
         $fileSystem = new FileSystemApi();
-        $files = $em->getRepository(File::class)->findAll();
+        $files = $em->getRepository(File::class)->findBy([], ['createDate' => 'DESC']);
         $results = [];
         $size = 0;
         foreach ($files as $file) {

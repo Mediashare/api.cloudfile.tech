@@ -41,8 +41,14 @@ class File
      */
     private $metadata = [];
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createDate;
+
     public function __construct() {
         $this->setId(\uniqid());
+        $this->setCreateDate(new \DateTime());
     }
 
     public function getId(): ?string
@@ -117,6 +123,18 @@ class File
         return $this;
     }
 
+    public function getCreateDate(): ?\DateTime
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate(\DateTime $createDate): self
+    {
+        $this->createDate = $createDate;
+
+        return $this;
+    }
+
     public function getInfo(): array {
         $fileSystem = new FileSystemApi();
         return [
@@ -125,6 +143,7 @@ class File
             'mimeType' => $this->getMimeType(),
             'size' => $fileSystem->getSizeReadable($this->getSize()),
             'metadata' => $this->getMetadata(),
+            'createDate' => $this->getCreateDate(),
             'urls' => [
                 'info' => '/info/'.$this->getId(),
                 'show' => '/show/'.$this->getId(),
