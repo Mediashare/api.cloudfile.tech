@@ -1,9 +1,9 @@
-# CloudFile
+# CloudFile-API
 Server file system with simple API.
 ## Getting Start
 ### Installation
 ```bash
-git clone https://github.com/Mediashare/CloudFile
+git clone https://github.com/Mediashare/CloudFile-API
 cd CloudFile
 composer install
 bin/console doctrine:schema:update --force
