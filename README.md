@@ -1,6 +1,6 @@
 # CloudFile-API
 Server file system with simple API.
-[Documentation](https://github.com/Mediashare/CloudFile-API.wiki.git)
+[Documentation](https://github.com/Mediashare/CloudFile-API/wiki)
 ## Getting Start
 ### Installation
 ```bash
