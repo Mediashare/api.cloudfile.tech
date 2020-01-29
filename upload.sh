@@ -1,14 +1,13 @@
 #!/bin/sh
-# Upload file(s) to CloudFile server with fzf & fd command line tools.
+# Upload file(s) to CloudFile server with fzf command line tools.
 help() {
    echo ""
    echo "Usage: $0"
    echo "\t-H Host CloudFile server"
    echo "\t-h Helper"
    echo ""
-   echo "Description: Upload file(s) to CloudFile server with fzf & fd command line tools."
+   echo "Description: Upload file(s) to CloudFile server with fzf command line tools."
    echo "Requierements:"
-   echo "\t- fd (https://github.com/sharkdp/fd#installation)"
    echo "\t- fzf (https://github.com/junegunn/fzf#installation)"
    exit 1 # Exit script after printing help
 }
@@ -28,7 +27,7 @@ then
 fi
 
 # Run
-fd --hidden | fzf -m | xargs -I {} curl \
+fzf -m | xargs -I {} curl \
     -F "file=@{}" \
     $host/upload
 exit 1
