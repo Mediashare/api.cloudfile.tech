@@ -1,5 +1,5 @@
 # CloudFile-API
-Server file system with simple API.
+CloudFile is a simple file storage solution that can be consumed via an API. Useful for all your projects, CloudFile allows the storage of files (images, videos, texts, applications...) in a public or private cloud. 
 [Documentation](https://github.com/Mediashare/CloudFile-API/wiki)
 ## Getting Start
 ### Installation
