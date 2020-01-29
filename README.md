@@ -47,6 +47,13 @@ echo curl_exec($request);
 // close the session
 curl_close($request);
 ```
+##### Use ApiKey for private cloud
+```bash
+curl \
+  -F "file=@/home/user1/Desktop/image1.jpg" \
+  -H "ApiKey: xxxxxxx" \
+  localhost:8000/upload
+```
 ##### Add metadata to file(s)
 You can add metadata to file(s) with GET & POST methods.
 ```bash

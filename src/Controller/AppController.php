@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\File;
 use App\Service\FileSystemApi;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -12,10 +13,17 @@ class AppController extends AbstractController
     /**
      * @Route("/", name="index")
      */
-    public function index() {
+    public function index(Request $request) {
         $fileSystem = new FileSystemApi();
         $em = $this->getDoctrine()->getManager();
-        $files = $em->getRepository(File::class)->findBy([], ['createDate' => 'DESC']);
+        
+        $apiKey = $request->headers->get('apikey');
+        if ($apiKey):
+            $files = $em->getRepository(File::class)->findBy(['apiKey' => $apiKey], ['createDate' => 'DESC']);
+        else:
+            $files = $em->getRepository(File::class)->findBy(['private' => false], ['createDate' => 'DESC']);
+        endif;
+
         $results = [];
         $size = 0;
         foreach ($files as $file) {

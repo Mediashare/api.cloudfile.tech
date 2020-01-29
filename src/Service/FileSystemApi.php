@@ -27,6 +27,7 @@ Class FileSystemApi {
         $FileEntity = new FileEntity();
         $FileEntity->setId($id);
         $FileEntity->setName($file->getClientOriginalName());
+        $FileEntity->setStockage($destination);
         $FileEntity->setPath($destination . '/' . $name);
         $FileEntity->setSize(\filesize($FileEntity->getPath()));
         $FileEntity->setMimeType(mime_content_type($FileEntity->getPath()));

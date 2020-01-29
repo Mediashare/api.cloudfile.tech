@@ -30,7 +30,9 @@ class UploadController extends AbstractController
                 // Upload file
                 $file = $fileSystem->upload($id, $file, $stockage);
                 // Set metadata
-                $file->setMetadata($_REQUEST);                
+                $file->setMetadata($_REQUEST);
+                // ApiKey
+                $file->setApiKey($request->headers->get('apikey'));
                 // Record
                 $em->persist($file);
                 $em->flush();

@@ -24,6 +24,11 @@ class File
     /**
      * @ORM\Column(type="string")
      */
+    private $stockage;
+
+    /**
+     * @ORM\Column(type="string")
+     */
     private $path;
 
     /**
@@ -52,12 +57,13 @@ class File
     private $apiKey;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=false)
      */
     private $private;
 
     public function __construct() {
         $this->setId(\uniqid());
+        $this->setPrivate(false);
         $this->setCreateDate(new \DateTime());
     }
 
@@ -81,6 +87,18 @@ class File
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getStockage(): ?string
+    {
+        return $this->stockage;
+    }
+
+    public function setStockage(string $stockage): self
+    {
+        $this->stockage = $stockage;
 
         return $this;
     }
@@ -153,6 +171,22 @@ class File
     public function setApiKey(?string $apiKey): self
     {
         $this->apiKey = $apiKey;
+        if ($this->apiKey):$this->setPrivate(true);endif;
+        return $this;
+    }
+
+    public function getPrivate(): ?bool
+    {
+        if ($this->private):
+            return true;
+        else:
+            return false;
+        endif;
+    }
+
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
 
         return $this;
     }
@@ -165,6 +199,7 @@ class File
             'mimeType' => $this->getMimeType(),
             'size' => $fileSystem->getSizeReadable($this->getSize()),
             'metadata' => $this->getMetadata(),
+            'private' => $this->getPrivate(),
             'createDate' => $this->getCreateDate(),
             'urls' => [
                 'info' => '/info/'.$this->getId(),
@@ -173,17 +208,5 @@ class File
                 'remove' => '/remove/'.$this->getId(),
             ],
         ];
-    }
-
-    public function getPrivate(): ?bool
-    {
-        return $this->private;
-    }
-
-    public function setPrivate(?bool $private): self
-    {
-        $this->private = $private;
-
-        return $this;
     }
 }
