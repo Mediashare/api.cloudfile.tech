@@ -16,7 +16,7 @@ class UploadController extends AbstractController
         $files = $request->files;
         if (count($files) > 0):
             $em = $this->getDoctrine()->getManager();
-            $stockage = $this->getParameter('kernel.project_dir').$this->getParameter('stockage');
+            $stockage = $this->getParameter('stockage');
             $fileSystem = new FileSystemApi();
             $results = [];
             $size = 0;
