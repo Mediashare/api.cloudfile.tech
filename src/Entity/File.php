@@ -46,6 +46,16 @@ class File
      */
     private $createDate;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $apiKey;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $private;
+
     public function __construct() {
         $this->setId(\uniqid());
         $this->setCreateDate(new \DateTime());
@@ -134,6 +144,18 @@ class File
 
         return $this;
     }
+    
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
+    }
+
+    public function setApiKey(?string $apiKey): self
+    {
+        $this->apiKey = $apiKey;
+
+        return $this;
+    }
 
     public function getInfo(): array {
         $fileSystem = new FileSystemApi();
@@ -151,5 +173,17 @@ class File
                 'remove' => '/remove/'.$this->getId(),
             ],
         ];
+    }
+
+    public function getPrivate(): ?bool
+    {
+        return $this->private;
+    }
+
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
+
+        return $this;
     }
 }

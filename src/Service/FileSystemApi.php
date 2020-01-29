@@ -14,9 +14,9 @@ Class FileSystemApi {
         $this->mkdir = $kernel->get('Mkdir');
         $this->filesystem = new Fs();
     }
-    public function upload(File $file, string $stockage): FileEntity {
+    public function upload(string $id, File $file, string $stockage): FileEntity {
         // Create destination if not exist
-        $destination = \rtrim($stockage, '/');
+        $destination = \rtrim($stockage, '/') . '/' . $id;
         $this->mkdir->setPath($destination);
         $this->mkdir->run();
 
@@ -25,6 +25,7 @@ Class FileSystemApi {
             $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)
         );
         $FileEntity = new FileEntity();
+        $FileEntity->setId($id);
         $FileEntity->setName($file->getClientOriginalName());
         $FileEntity->setPath($destination . '/' . $name);
         $FileEntity->setSize(\filesize($FileEntity->getPath()));

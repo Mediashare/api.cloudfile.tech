@@ -13,8 +13,8 @@ class AppController extends AbstractController
      * @Route("/", name="index")
      */
     public function index() {
-        $em = $this->getDoctrine()->getManager();
         $fileSystem = new FileSystemApi();
+        $em = $this->getDoctrine()->getManager();
         $files = $em->getRepository(File::class)->findBy([], ['createDate' => 'DESC']);
         $results = [];
         $size = 0;

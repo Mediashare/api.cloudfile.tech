@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\File;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,8 +22,16 @@ class UploadController extends AbstractController
             $results = [];
             $size = 0;
             foreach ($files as $index => $file) {
-                $file = $fileSystem->upload($file, $stockage);
-                $file->setMetadata($_REQUEST);
+                // Generate ID
+                $id = \uniqid(); // Generate uniqid()
+                while ($em->getRepository(File::class)->find($id)) { // Check $id if already used
+                    $id = \uniqid();
+                }
+                // Upload file
+                $file = $fileSystem->upload($id, $file, $stockage);
+                // Set metadata
+                $file->setMetadata($_REQUEST);                
+                // Record
                 $em->persist($file);
                 $em->flush();
                 

@@ -18,7 +18,6 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $file = $em->getRepository(File::class)->find($id);
         if ($file):
-            $fileSystem = new FileSystemApi();
             return $file->getInfo();
         endif;
         return $this->json([
