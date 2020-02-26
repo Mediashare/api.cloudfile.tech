@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Public Cloud{% endblock %}
+
+{% block content %}
+<section id="data-list-view" class="data-list-view-header">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="table-responsive">
+                <table class="table data-list-view text-right">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Nom du fichier</th>
+                            <th>Auteur</th>
+                            <th>Taille</th>
+                            <th>Date de création</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in files %}
+                            <tr>
+                                <td class="product-name text-left">
+                                    <a href="{{ path('file_show', {'id': file.id}) }}" title="{{ file.name }}">{{ file.name }}</a>
+                                </td>
+                                <td class="product-category">
+                                    <div class="chip chip-primary">
+                                        <div class="chip-body">
+                                            {% if file.user %}
+                                                <div class="chip-text">{{ file.user.username }}</div>
+                                            {% else %}
+                                                <div class="chip-text">Anonymous</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {{ file.info.size }}
+                                </td>
+                                <td>
+                                    {{ file.createDate|date('d/m/Y H:i:s')}}
+                                </td>
+                                <td class="product-action">
+                                    <a href="{{ path('api_download', {'id': file.id}) }}" title="{{ file.name }}"><i class="feather icon-download"></i></a>
+                                    <a href="{{ path('file_show', {'id': file.id}) }}"><i class="feather icon-eye"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            {{ render(controller('App\\Controller\\PublicCloudController::form')) }}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{# Sweet Alert #}
+<script src="{{ asset('app-assets/vendors/js/extensions/sweetalert2.all.min.js') }}"></script>
+<script src="{{ asset('app-assets/vendors/js/extensions/polyfill.min.js') }}"></script>
+
+{% for message in app.session.flashbag.get('error') %}
+<script>
+    Swal.fire({
+        position: 'bottom-end',
+        type: 'error',
+        title: '{{ message }}',
+        showConfirmButton: false,
+        timer: 3000,
+        confirmButtonClass: 'btn btn-primary',
+        buttonsStyling: false,
+    })
+</script>
+{% endfor %}
+{% for message in app.session.flashbag.get('success') %}
+<script>
+    Swal.fire({
+        position: 'bottom-end',
+        type: 'success',
+        title: '{{ message }}',
+        showConfirmButton: false,
+        timer: 3000,
+        confirmButtonClass: 'btn btn-primary',
+        buttonsStyling: false,
+    })
+</script>
+{% endfor %}

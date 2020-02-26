@@ -61,6 +61,11 @@ class File
      */
     private $private;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="files")
+     */
+    private $user;
+
     public function __construct() {
         $this->setId(\uniqid());
         $this->setPrivate(false);
@@ -202,11 +207,23 @@ class File
             'private' => $this->getPrivate(),
             'createDate' => $this->getCreateDate(),
             'urls' => [
-                'info' => '/info/'.$this->getId(),
-                'show' => '/show/'.$this->getId(),
-                'download' => '/download/'.$this->getId(),
-                'remove' => '/remove/'.$this->getId(),
+                'info' => '/api/info/'.$this->getId(),
+                'show' => '/api/show/'.$this->getId(),
+                'download' => '/api/download/'.$this->getId(),
+                'remove' => '/api/remove/'.$this->getId(),
             ],
         ];
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }
