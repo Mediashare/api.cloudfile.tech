@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     stockage: '%env(resolve:stockage)%'
+    avatar_directory: '%kernel.project_dir%/public/images/avatar'
 services:
     # default configuration for services in *this* file
     _defaults:

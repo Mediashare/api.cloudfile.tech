@@ -3,4 +3,73 @@
 {% block title %}Private Cloud{% endblock %}
 
 {% block content %}
+<section id="data-list-view" class="data-list-view-header">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="table-responsive">
+                <table class="table data-list-view">
+                    <thead>
+                        <tr>
+                            <th class="">ID</th>
+                            <th>Nom</th>
+                            <th>Date de mise à jour</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for container in containers %}
+                            <tr>
+                                <td class="">
+                                    <a href="{{ path('private_cloud_show', {'id': container.id}) }}" title="{{ container.name }}">{{ container.id }}</a>
+                                </td>
+                                <td>
+                                    <a href="{{ path('private_cloud_show', {'id': container.id}) }}" title="{{ container.name }}">{{ container.name }}</a>
+                                </td>
+                                <td>
+                                    {{ container.updateDate|date('d/m/Y H:i:s')}}
+                                </td>
+                                <td class="product-action">
+                                    <a href="{{ path('api_download', {'id': container.id}) }}" title="{{ container.name }}"><i class="feather icon-edit"></i></a>
+                                    <a href="{{ path('private_cloud_show', {'id': container.id}) }}"><i class="feather icon-eye"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Créer un nouveau container</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <form action="{{ path('private_cloud_new') }}" method="POST" class="form">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-label-group">
+                                            <input type="text" id="name-floating" class="form-control" maxlength="255" placeholder="Nom" name="name" required="true">
+                                            <label for="name-floating">Nom</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-label-group">
+                                            <input type="text" id="description-floating" class="form-control" maxlength="255" placeholder="Description" name="description">
+                                            <label for="description-floating">Description</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light">Enregistré</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

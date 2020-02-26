@@ -16,7 +16,7 @@ class User implements UserInterface
 {
     /**
      * @ORM\Id()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $id;
 
@@ -51,11 +51,22 @@ class User implements UserInterface
      */
     private $createDate;
 
+    /**
+     * @ORM\Column(type="string", length=10000, nullable=true)
+     */
+    private $avatar;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Container", mappedBy="user", orphanRemoval=true)
+     */
+    private $containers;
+
     public function __construct()
     {
         $this->setId(\uniqid());
         $this->setCreateDate(new \DateTime());
         $this->files = new ArrayCollection();
+        $this->containers = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -187,6 +198,49 @@ class User implements UserInterface
     public function setCreateDate(\DateTime $createDate): self
     {
         $this->createDate = $createDate;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Container[]
+     */
+    public function getContainers(): Collection
+    {
+        return $this->containers;
+    }
+
+    public function addContainer(Container $container): self
+    {
+        if (!$this->containers->contains($container)) {
+            $this->containers[] = $container;
+            $container->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContainer(Container $container): self
+    {
+        if ($this->containers->contains($container)) {
+            $this->containers->removeElement($container);
+            // set the owning side to null (unless already changed)
+            if ($container->getUser() === $this) {
+                $container->setUser(null);
+            }
+        }
 
         return $this;
     }

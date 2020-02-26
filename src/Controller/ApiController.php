@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Entity\Container;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
 {
@@ -135,8 +136,24 @@ class ApiController extends AbstractController
                 $file = $fileSystem->upload($id, $file, $stockage);
                 // Set metadata
                 $file->setMetadata($_REQUEST);
-                // ApiKey
-                $file->setApiKey($request->headers->get('apikey'));
+                // Container ApiKey
+                $apiKey = null;
+                if ($request->headers->get('apikey')):
+                    $apiKey = $request->headers->get('apikey');
+                elseif ($request->get('apikey')):
+                    $apiKey = $request->get('apikey');
+                endif;
+                if ($apiKey):
+                    $container = $em->getRepository(Container::class)->findOneBy(['apiKey' => $apiKey], ['updateDate' => 'desc']);
+                    if ($container):
+                        $file->setContainer($container);
+                    else:
+                        return $this->json([
+                            'status' => 'error',
+                            'message' => 'Your ApiKey is not valid.'
+                        ]);
+                    endif;
+                endif;
                 // User
                 if ($this->getUser()):
                     $file->setUser($this->getUser());

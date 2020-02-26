@@ -21,12 +21,20 @@ class PublicCloudController extends AbstractController
     }
 
     /**
-     * Upload form
-     *
-     * @return render
+     * @Route("/public/{id}", name="public_cloud_file_show")
      */
-    public function form()
+    public function show(string $id)
     {
-        return $this->render('public_cloud/_form.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $file = $em->getRepository(File::class)->findOneBy([
+            'id' => $id,
+            'private' => false
+        ], ['createDate' => 'DESC']);
+        if (!$file):
+            return $this->redirect('public_cloud');
+        endif;
+        return $this->render('file/show.html.twig', [
+            'file' => $file,
+        ]);
     }
 }

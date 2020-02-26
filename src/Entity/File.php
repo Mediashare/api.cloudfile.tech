@@ -52,11 +52,6 @@ class File
     private $createDate;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $apiKey;
-
-    /**
      * @ORM\Column(type="boolean", nullable=false)
      */
     private $private;
@@ -65,6 +60,11 @@ class File
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="files")
      */
     private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Container", inversedBy="files")
+     */
+    private $container;
 
     public function __construct() {
         $this->setId(\uniqid());
@@ -223,6 +223,18 @@ class File
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getContainer(): ?Container
+    {
+        return $this->container;
+    }
+
+    public function setContainer(?Container $container): self
+    {
+        $this->container = $container;
 
         return $this;
     }

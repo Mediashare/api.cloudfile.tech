@@ -35,14 +35,18 @@
                                     <span class="user-status">42 Karma</span>
                                 </div>
                                 <span>
-                                    <img class="round" src="{{ asset('app-assets/images/portrait/small/avatar-s-11.png') }}" alt="avatar" height="40" width="40">
+                                    {% if app.user.avatar %}
+                                        <img class="round" src="/{{ app.user.avatar }}" alt="{{ app.user.username }}" height="40" width="40">
+                                    {% else %}
+                                        <img class="round" src="{{ asset('app-assets/images/portrait/small/avatar-s-11.png') }}" alt="{{ app.user.username }}" height="40" width="40">
+                                    {% endif %}
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ path('profile') }}">
                                     <i class="feather icon-settings"></i> Profile
                                 </a>
-                                <div class="dropdown-divider"></div><a class="dropdown-item" href="{{ path('app_logout') }}"><i class="feather icon-power"></i> Logout</a>
+                                <div class="dropdown-divider"></div><a class="dropdown-item" href="{{ path('app_logout') }}"><i class="feather icon-power"></i> Déconnexion</a>
                             </div>
                         </li>
                     {% else %}

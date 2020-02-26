@@ -1,3 +1,6 @@
 <form action="{{ path('api_upload') }}" method="POST" enctype="multipart/form-data" class="dropzone dropzone-area" id="dpz-multiple-files">
+    {% if container is defined and container != null %}
+        <input type="hidden" name="apikey" value="{{ container.apiKey }}">
+    {% endif %}
     <div class="dz-message">Drop Files Here To Upload</div>
 </form>

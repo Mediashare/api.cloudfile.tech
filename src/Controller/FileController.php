@@ -2,27 +2,25 @@
 
 namespace App\Controller;
 
-use App\Entity\File;
+use App\Entity\Container;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FileController extends AbstractController
 {
     /**
-     * @Route("/file/{id}", name="file_show")
+     * Upload form
+     *
+     * @return render
      */
-    public function show(string $id)
+    public function upload(?string $container = null)
     {
-        $em = $this->getDoctrine()->getManager();
-        $file = $em->getRepository(File::class)->findOneBy([
-            'id' => $id,
-            'private' => false
-        ], ['createDate' => 'DESC']);
-        if (!$file):
-            return $this->redirect('public_cloud');
+        if ($container):
+            $em = $this->getDoctrine()->getManager();
+            $container = $em->getRepository(Container::class)->find($container);
+        else:
+            $container = null;
         endif;
-        return $this->render('file/show.html.twig', [
-            'file' => $file,
-        ]);
+        return $this->render('file/_upload.html.twig', ['container' => $container]);
     }
 }
