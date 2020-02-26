@@ -5,7 +5,7 @@ CloudFile is a simple file storage solution that can be consumed via an API. Use
 ### Installation
 ```bash
 git clone https://github.com/Mediashare/CloudFile-API
-cd CloudFile
+cd CloudFile-API
 composer install
 bin/console doctrine:schema:update --force
 php -S localhost:8000 -t public/
