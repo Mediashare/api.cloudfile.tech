@@ -1,5 +1,0 @@
-easy_admin:
-   entities:
-      - App\Entity\File
-      - App\Entity\Container
-      - App\Entity\User

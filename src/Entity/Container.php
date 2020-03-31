@@ -38,12 +38,6 @@ class Container
     private $updateDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="containers")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\File", mappedBy="container")
      */
     private $files;
@@ -116,18 +110,6 @@ class Container
     public function setUpdateDate(\DateTime $updateDate): self
     {
         $this->updateDate = $updateDate;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
 
         return $this;
     }

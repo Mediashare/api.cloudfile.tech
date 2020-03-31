@@ -57,11 +57,6 @@ class File
     private $private;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="files")
-     */
-    private $user;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Container", inversedBy="files")
      */
     private $container;
@@ -213,18 +208,6 @@ class File
                 'remove' => '/api/remove/'.$this->getId(),
             ],
         ];
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     public function getContainer(): ?Container

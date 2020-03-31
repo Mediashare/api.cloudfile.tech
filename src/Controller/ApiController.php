@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ApiController extends AbstractController
 {
     /**
-     * @Route("/api", name="api")
+     * @Route("/", name="api")
      */
     public function index(Request $request) {
         $fileSystem = new FileSystemApi();
@@ -44,7 +44,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/info/{id}", name="api_info")
+     * @Route("/info/{id}", name="api_info")
      */
     public function info(Request $request, string $id) {
         $file = $this->getFile($request, $id);
@@ -58,7 +58,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/show/{id}", name="api_show")
+     * @Route("/show/{id}", name="api_show")
      */
     public function show(Request $request, string $id) {
         $file = $this->getFile($request, $id);
@@ -72,7 +72,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/download/{id}", name="api_download")
+     * @Route("/download/{id}", name="api_download")
      */
     public function download(Request $request, string $id) {
         $file = $this->getFile($request, $id);
@@ -91,7 +91,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/remove/{id}", name="api_remove")
+     * @Route("/remove/{id}", name="api_remove")
      */
     public function remove(Request $request, string $id) {
         $file = $this->getFile($request, $id);
@@ -116,7 +116,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/upload", name="api_upload")
+     * @Route("/upload", name="api_upload")
      */
     public function upload(Request $request) {
         $files = $request->files;

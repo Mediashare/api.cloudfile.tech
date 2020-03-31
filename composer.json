@@ -6,7 +6,6 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/annotations": "^1.8",
-        "easycorp/easyadmin-bundle": "^2.3",
         "mediashare/kernel": "^0.2.2",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "5.0.*",
