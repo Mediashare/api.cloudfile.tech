@@ -6,6 +6,7 @@ use App\Entity\File;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,9 +19,9 @@ class FileController extends AbstractController
     public function info(Request $request, string $id) {
         $file = $this->getFile($request, $id);
         if ($file):
-            return $file->getInfo();
+            return new JsonResponse($file->getInfo());
         endif;
-        return $this->json([
+        return new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
@@ -34,7 +35,7 @@ class FileController extends AbstractController
         if ($file):
             return new BinaryFileResponse($file->getPath());
         endif;
-        return $this->json([
+        return new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
@@ -53,7 +54,7 @@ class FileController extends AbstractController
             );
             return $response;
         endif;
-        return $this->json([
+        return new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
@@ -73,12 +74,12 @@ class FileController extends AbstractController
             // Remove file stockage
             $fileSystem->remove($file->getStockage());
             // Response
-            return $this->json([
+            return new JsonResponse([
                 'status' => 'success',
                 'message' => '['.$id.'] File was removed.',
             ]);
         endif;
-        return $this->json([
+        return new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);

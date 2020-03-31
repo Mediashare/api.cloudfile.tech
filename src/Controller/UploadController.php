@@ -6,6 +6,7 @@ use App\Entity\File;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UploadController extends AbstractController
@@ -41,7 +42,7 @@ class UploadController extends AbstractController
                 $size += $file->getSize();
             }
             // Response
-            return $this->json([
+            return new JsonResponse([
                 'status' => 'success',
                 'message' => 'Your file(s) was uploaded.',
                 'files' => [
@@ -51,7 +52,7 @@ class UploadController extends AbstractController
                 ]
             ]);
         endif;
-        return $this->json([
+        return new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);

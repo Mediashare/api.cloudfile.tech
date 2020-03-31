@@ -6,6 +6,7 @@ use App\Entity\File;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AppController extends AbstractController
@@ -30,7 +31,7 @@ class AppController extends AbstractController
             $results[] = $file->getInfo();;
             $size += $file->getSize();
         }
-        return $this->json([
+        return new JsonResponse([
             'status' => 'success',
             'files' => [
                 'counter' => count($results),
