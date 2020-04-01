@@ -40,4 +40,26 @@ class AppController extends AbstractController
             ],
         ]);
     }
+
+    /**
+     * @Route("/stats", name="stats")
+     */
+    public function stats() {
+        $fileSystem = new FileSystemApi();
+        $em = $this->getDoctrine()->getManager();
+        $files = $em->getRepository(File::class)->findAll();
+        
+        $results = [];
+        $size = 0;
+        foreach ($files as $file) {
+            $size += $file->getSize();
+        }
+        return new JsonResponse([
+            'status' => 'success',
+            'stats' => [
+                'counter' => count($files),
+                'size' => $fileSystem->getSizeReadable($size),
+            ],
+        ]);
+    }
 }

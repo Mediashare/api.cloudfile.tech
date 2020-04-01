@@ -12,6 +12,7 @@ php -S localhost:8000 -t public/
 ```
 ### Api endpoint
 * ``/`` List file(s)
+* ``/stats`` Cloud storage statistiques
 * ``/upload`` Upload file(s)
 * ``/info/{id}`` File informations
 * ``/show/{id}`` Show file
