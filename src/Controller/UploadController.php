@@ -22,7 +22,7 @@ class UploadController extends AbstractController
             $fileSystem = new FileSystemApi();
             $results = [];
             $size = 0;
-            foreach ($files as $index => $file) {
+            foreach ($files as $file) {
                 // Generate ID
                 $id = \uniqid(); // Generate uniqid()
                 while ($em->getRepository(File::class)->find($id)) { // Check $id if already used
