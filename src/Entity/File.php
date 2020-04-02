@@ -202,10 +202,10 @@ class File
             'private' => $this->getPrivate(),
             'createDate' => $this->getCreateDate(),
             'urls' => [
-                'info' => '/info/'.$this->getId(),
-                'show' => '/show/'.$this->getId(),
-                'download' => '/download/'.$this->getId(),
-                'remove' => '/remove/'.$this->getId(),
+                'info' => $_ENV['host'].'/info/'.$this->getId(),
+                'show' => $_ENV['host'].'/show/'.$this->getId(),
+                'download' => $_ENV['host'].'/download/'.$this->getId(),
+                'remove' => $_ENV['host'].'/remove/'.$this->getId(),
             ],
         ];
     }
