@@ -31,14 +31,16 @@ class AppController extends AbstractController
             $results[] = $file->getInfo();;
             $size += $file->getSize();
         }
-        return new JsonResponse([
+        $response = new JsonResponse([
             'status' => 'success',
             'files' => [
                 'counter' => count($results),
                 'size' => $fileSystem->getSizeReadable($size),
                 'results' => $results
             ],
-        ]);
+        ], 200);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 
     /**
