@@ -193,6 +193,7 @@ class File
 
     public function getInfo(): array {
         $fileSystem = new FileSystemApi();
+        $host = $_SERVER['SYMFONY_DEFAULT_ROUTE_URL'];
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
@@ -202,10 +203,10 @@ class File
             'private' => $this->getPrivate(),
             'createDate' => $this->getCreateDate(),
             'urls' => [
-                'info' => $_ENV['host'].'/info/'.$this->getId(),
-                'show' => $_ENV['host'].'/show/'.$this->getId(),
-                'download' => $_ENV['host'].'/download/'.$this->getId(),
-                'remove' => $_ENV['host'].'/remove/'.$this->getId(),
+                'info' => $host.'info/'.$this->getId(),
+                'show' => $host.'show/'.$this->getId(),
+                'download' => $host.'download/'.$this->getId(),
+                'remove' => $host.'remove/'.$this->getId(),
             ],
         ];
     }
