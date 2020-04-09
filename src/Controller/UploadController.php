@@ -42,7 +42,7 @@ class UploadController extends AbstractController
                 $size += $file->getSize();
             }
             // Response
-            return new JsonResponse([
+            $response = new JsonResponse([
                 'status' => 'success',
                 'message' => 'Your file(s) was uploaded.',
                 'files' => [
@@ -51,10 +51,16 @@ class UploadController extends AbstractController
                     'results' => $results
                 ]
             ]);
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
+            return $response;
         endif;
-        return new JsonResponse([
+        $response =  new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 }
