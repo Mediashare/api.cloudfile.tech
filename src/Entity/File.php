@@ -168,20 +168,16 @@ class File
         return $this->apiKey;
     }
 
-    public function setApiKey(?string $apiKey): self
+    public function setApiKey(?string $apiKey = null): self
     {
         $this->apiKey = $apiKey;
-        if ($this->apiKey):$this->setPrivate(true);endif;
+        if ($apiKey):$this->setPrivate(true);endif;
         return $this;
     }
 
     public function getPrivate(): ?bool
     {
-        if ($this->private):
-            return true;
-        else:
-            return false;
-        endif;
+        return $this->private;
     }
 
     public function setPrivate(?bool $private): self
