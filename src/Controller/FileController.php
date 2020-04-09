@@ -19,12 +19,18 @@ class FileController extends AbstractController
     public function info(Request $request, string $id) {
         $file = $this->getFile($request, $id);
         if ($file):
-            return new JsonResponse($file->getInfo());
+            $response = new JsonResponse($file->getInfo());
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
+            return $response;
         endif;
-        return new JsonResponse([
+        $response = new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 
     /**
@@ -33,12 +39,18 @@ class FileController extends AbstractController
     public function show(Request $request, string $id) {
         $file = $this->getFile($request, $id);
         if ($file):
-            return new BinaryFileResponse($file->getPath());
+            $response = new BinaryFileResponse($file->getPath());
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
+            return $response;
         endif;
-        return new JsonResponse([
+        $response = new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 
     /**
@@ -52,12 +64,17 @@ class FileController extends AbstractController
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
                 $file->getName()
             );
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
             return $response;
         endif;
-        return new JsonResponse([
+        $response = new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 
     /**
@@ -74,15 +91,21 @@ class FileController extends AbstractController
             // Remove file stockage
             $fileSystem->remove($file->getStockage());
             // Response
-            return new JsonResponse([
+            $response = new JsonResponse([
                 'status' => 'success',
                 'message' => '['.$id.'] File was removed.',
             ]);
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
+            return $response;
         endif;
-        return new JsonResponse([
+        $response = new JsonResponse([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 
     /**

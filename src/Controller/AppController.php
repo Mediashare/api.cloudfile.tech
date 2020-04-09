@@ -40,6 +40,7 @@ class AppController extends AbstractController
             ],
         ], 200);
         $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
     }
 
@@ -56,12 +57,16 @@ class AppController extends AbstractController
         foreach ($files as $file) {
             $size += $file->getSize();
         }
-        return new JsonResponse([
+
+        $response = new JsonResponse([
             'status' => 'success',
             'stats' => [
                 'counter' => count($files),
                 'size' => $fileSystem->getSizeReadable($size),
             ],
         ]);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 }
