@@ -31,6 +31,7 @@ class SearchController extends AbstractController
         $response = new Response();
         return $response->send([
             'status' => 'success',
+            'queries' => $queries,
             'files' => [
                 'counter' => count($results),
                 'size' => $fileSystem->getSizeReadable($size),

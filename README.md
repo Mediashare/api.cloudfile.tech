@@ -14,6 +14,7 @@ php -S localhost:8000 -t public/
 * ``/`` List file(s)
 * ``/stats`` Cloud storage statistiques
 * ``/upload`` Upload file(s)
+* ``/search`` Search file(s)
 * ``/info/{id}`` File informations
 * ``/show/{id}`` Show file
 * ``/download/{id}`` Download file
@@ -40,4 +41,8 @@ curl \
   -F "file=@/home/user1/Desktop/image1.jpg" \
   -F "category=image" \
   localhost:8000/upload?foo=bar
+```
+#### Search file(s)
+```bash
+curl localhost:8000/search?query=filename.txt
 ```
