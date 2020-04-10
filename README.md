@@ -42,7 +42,11 @@ curl \
   -F "category=image" \
   localhost:8000/upload?foo=bar
 ```
-#### Search file(s)
+#### Search file(s) by name
 ```bash
-curl localhost:8000/search?query=filename.txt
+curl localhost:8000/search?query=image1.jpg
+```
+#### Search file(s) by field value
+```bash
+curl localhost:8000/search/field?category=image
 ```
