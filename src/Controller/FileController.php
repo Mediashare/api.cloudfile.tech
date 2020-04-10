@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,47 +17,43 @@ class FileController extends AbstractController
      * @Route("/info/{id}", name="info")
      */
     public function info(Request $request, string $id) {
-        $file = $this->getFile($request, $id);
+        $fileSystem = new FileSystemApi();
+        $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
+        $response = new Response();
         if ($file):
-            $response = new JsonResponse($file->getInfo());
-            $response->headers->set('Access-Control-Allow-Origin', '*');
-            $response->headers->set('Access-Control-Allow-Headers', '*');
-            return $response;
+            return $response->send($file->getInfo());
         endif;
-        $response = new JsonResponse([
+        return $response->send([
             'status' => 'error',
             'message' => 'File not found.',
-        ]);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-        return $response;
+        ], 404);
     }
 
     /**
      * @Route("/show/{id}", name="show")
      */
     public function show(Request $request, string $id) {
-        $file = $this->getFile($request, $id);
+        $fileSystem = new FileSystemApi();
+        $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
+        $response = new Response();
         if ($file):
             $response = new BinaryFileResponse($file->getPath());
             $response->headers->set('Access-Control-Allow-Origin', '*');
             $response->headers->set('Access-Control-Allow-Headers', '*');
             return $response;
         endif;
-        $response = new JsonResponse([
+        return $response->send([
             'status' => 'error',
             'message' => 'File not found.',
-        ]);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-        return $response;
+        ], 404);
     }
 
     /**
      * @Route("/download/{id}", name="download")
      */
     public function download(Request $request, string $id) {
-        $file = $this->getFile($request, $id);
+        $fileSystem = new FileSystemApi();
+        $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
         if ($file):
             $response = new BinaryFileResponse($file->getPath());
             $response->setContentDisposition(
@@ -68,22 +64,21 @@ class FileController extends AbstractController
             $response->headers->set('Access-Control-Allow-Headers', '*');
             return $response;
         endif;
-        $response = new JsonResponse([
+        $response = new Response();
+        return $response->send([
             'status' => 'error',
             'message' => 'File not found.',
-        ]);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-        return $response;
+        ], 404);
     }
 
     /**
      * @Route("/remove/{id}", name="remove")
      */
     public function remove(Request $request, string $id) {
-        $file = $this->getFile($request, $id);
+        $fileSystem = new FileSystemApi();
+        $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
+        $response = new Response();
         if ($file):
-            $fileSystem = new FileSystemApi();
             // Remove to database
             $em = $this->getDoctrine()->getManager();
             $em->remove($file);
@@ -91,44 +86,14 @@ class FileController extends AbstractController
             // Remove file stockage
             $fileSystem->remove($file->getStockage());
             // Response
-            $response = new JsonResponse([
+            return $response->send([
                 'status' => 'success',
                 'message' => '['.$id.'] File was removed.',
             ]);
-            $response->headers->set('Access-Control-Allow-Origin', '*');
-            $response->headers->set('Access-Control-Allow-Headers', '*');
-            return $response;
         endif;
-        $response = new JsonResponse([
+        return $response->send([
             'status' => 'error',
             'message' => 'File not found.',
-        ]);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-        return $response;
-    }
-
-    /**
-     * Get file from public or private cloud.
-     *
-     * @param Request $request
-     * @param string $id
-     * @return File|null
-     */
-    private function getFile(Request $request, string $id): ?File {
-        $em = $this->getDoctrine()->getManager();
-        $apiKey = $request->headers->get('apikey');
-        if ($apiKey):
-            return $em->getRepository(File::class)->findOneBy(
-                ['apiKey' => $apiKey, 'id' => $id], 
-                ['createDate' => 'DESC']
-            );
-        else:
-            return $em->getRepository(File::class)->findOneBy(
-                ['private' => false, 'id' => $id], 
-                ['createDate' => 'DESC']
-            );
-        endif;
-        return null;
+        ], 404);
     }
 }

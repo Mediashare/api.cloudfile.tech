@@ -1,8 +1,10 @@
 <?php
 namespace App\Service;
 
-use App\Entity\File as FileEntity;
 use Mediashare\Kernel\Kernel;
+use Doctrine\ORM\EntityManager;
+use App\Entity\File as FileEntity;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Filesystem\Filesystem as Fs;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
@@ -48,5 +50,48 @@ Class FileSystemApi {
         $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
         $factor = floor((strlen($bytes) - 1) / 3);
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+    }
+    
+    /**
+     * Get files from public or private cloud.
+     * @param Request $request
+     * @return array|null
+     */
+    public function getFiles(Request $request, EntityManager $em): ?array {
+        $apiKey = $request->headers->get('apikey');
+        if ($apiKey):
+            return $em->getRepository(FileEntity::class)->findBy(
+                ['apiKey' => $apiKey], 
+                ['createDate' => 'DESC']
+            );
+        else:
+            return $em->getRepository(FileEntity::class)->findBy(
+                ['private' => false], 
+                ['createDate' => 'DESC']
+            );
+        endif;
+        return null;
+    }
+
+    /**
+     * Get file from public or private cloud.
+     * @param Request $request
+     * @param string $id
+     * @return File|null
+     */
+    public function getFile(Request $request, string $id, EntityManager $em): ?FileEntity {
+        $apiKey = $request->headers->get('apikey');
+        if ($apiKey):
+            return $em->getRepository(FileEntity::class)->findOneBy(
+                ['apiKey' => $apiKey, 'id' => $id], 
+                ['createDate' => 'DESC']
+            );
+        else:
+            return $em->getRepository(FileEntity::class)->findOneBy(
+                ['private' => false, 'id' => $id], 
+                ['createDate' => 'DESC']
+            );
+        endif;
+        return null;
     }
 }

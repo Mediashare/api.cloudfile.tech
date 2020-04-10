@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UploadController extends AbstractController
@@ -42,7 +42,8 @@ class UploadController extends AbstractController
                 $size += $file->getSize();
             }
             // Response
-            $response = new JsonResponse([
+            $response = new Response();
+            return $response->send([
                 'status' => 'success',
                 'message' => 'Your file(s) was uploaded.',
                 'files' => [
@@ -51,16 +52,11 @@ class UploadController extends AbstractController
                     'results' => $results
                 ]
             ]);
-            $response->headers->set('Access-Control-Allow-Origin', '*');
-            $response->headers->set('Access-Control-Allow-Headers', '*');
-            return $response;
         endif;
-        $response =  new JsonResponse([
+        $response =  new Response();
+        return $response->send([
             'status' => 'error',
             'message' => 'File not found.',
-        ]);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-        return $response;
+        ], 404);
     }
 }
