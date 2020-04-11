@@ -189,7 +189,11 @@ class File
 
     public function getInfo(): array {
         $fileSystem = new FileSystemApi();
-        $host = $_SERVER['SYMFONY_DEFAULT_ROUTE_URL'];
+        if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
+            $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
+        else:
+            $host = trim($_SERVER['HTTP_HOST'], '/');
+        endif;
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
@@ -199,10 +203,10 @@ class File
             'private' => $this->getPrivate(),
             'createDate' => $this->getCreateDate(),
             'urls' => [
-                'info' => $host.'info/'.$this->getId(),
-                'show' => $host.'show/'.$this->getId(),
-                'download' => $host.'download/'.$this->getId(),
-                'remove' => $host.'remove/'.$this->getId(),
+                'info' => $host.'/info/'.$this->getId(),
+                'show' => $host.'/show/'.$this->getId(),
+                'download' => $host.'/download/'.$this->getId(),
+                'remove' => $host.'/remove/'.$this->getId(),
             ],
         ];
     }

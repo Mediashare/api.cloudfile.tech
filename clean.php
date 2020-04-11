@@ -10,7 +10,7 @@ foreach ($files as $file) {
 }
 function getFiles(): array {
     $request = curl_init();
-    curl_setopt($request, CURLOPT_URL,"https://127.0.0.1:8001/");
+    curl_setopt($request, CURLOPT_URL,"http://127.0.0.1:8001/");
     // output the response
     curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($request);
@@ -22,7 +22,7 @@ function getFiles(): array {
 }
 function remove_file(string $id) {
     $request = curl_init();
-    curl_setopt($request, CURLOPT_URL,"https://127.0.0.1:8001/remove/".$id);
+    curl_setopt($request, CURLOPT_URL,"http://127.0.0.1:8001/remove/".$id);
     // output the response
     curl_setopt($request, CURLOPT_RETURNTRANSFER, false);
     $response = curl_exec($request);
