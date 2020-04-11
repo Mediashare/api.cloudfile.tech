@@ -35,13 +35,13 @@ class FileController extends AbstractController
     public function show(Request $request, string $id) {
         $fileSystem = new FileSystemApi();
         $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
-        $response = new Response();
         if ($file):
-            $response = new BinaryFileResponse($file->getPath());
+            $response = new BinaryFileResponse($file->getPath(), 200);
             $response->headers->set('Access-Control-Allow-Origin', '*');
             $response->headers->set('Access-Control-Allow-Headers', '*');
             return $response;
         endif;
+        $response = new Response();
         return $response->send([
             'status' => 'error',
             'message' => 'File not found.',
