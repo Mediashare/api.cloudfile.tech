@@ -57,6 +57,6 @@ class UploadController extends AbstractController
         return $response->send([
             'status' => 'error',
             'message' => 'File not found.',
-        ], 404);
+        ]);
     }
 }
