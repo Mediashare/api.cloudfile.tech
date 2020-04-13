@@ -201,7 +201,7 @@ class File
             'size' => $fileSystem->getSizeReadable($this->getSize()),
             'metadata' => $this->getMetadata(),
             'private' => $this->getPrivate(),
-            'createDate' => $this->getCreateDate(),
+            'createDate' => (array) $this->getCreateDate(),
             'urls' => [
                 'info' => $host.'/info/'.$this->getId(),
                 'show' => $host.'/show/'.$this->getId(),
