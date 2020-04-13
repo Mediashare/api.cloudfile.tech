@@ -19,26 +19,31 @@ class SearchController extends AbstractController
         $fileSystem = new FileSystemApi();
         $files = $fileSystem->getFiles($request, $this->getDoctrine()->getManager());
         $queries = $request->query->all();
+        if (!$queries && $request->getContent()):
+            $queries = \json_decode($request->getContent(), true);
+        endif;
         $size = 0;
         $results = [];
-        foreach ($files as $index => $file):
-            foreach ($queries as $query => $value):
-                if ($score = $this->searchInArray($file->getInfo(), $query, $value)):
-                    if (isset($results[$file->getId()])):
-                        $score += $results[$file->getId()]['score'];
-                    else:
-                        $size += $file->getSize();
+        if ($queries):
+            foreach ($files as $index => $file):
+                foreach ($queries as $query => $value):
+                    if ($score = $this->searchInArray($file->getInfo(), $query, $value)):
+                        if (isset($results[$file->getId()])):
+                            $score += $results[$file->getId()]['score'];
+                        else:
+                            $size += $file->getSize();
+                        endif;
+                        $results[$file->getId()] = [
+                            'score' => $score,
+                            'file' => $file->getInfo()
+                        ];
+                    else: // Remove if score = 0
+                        unset($results[$file->getId()]);
+                        break;
                     endif;
-                    $results[$file->getId()] = [
-                        'score' => $score,
-                        'file' => $file->getInfo()
-                    ];
-                else: // Remove if score = 0
-                    unset($results[$file->getId()]);
-                    break;
-                endif;
+                endforeach;
             endforeach;
-        endforeach;
+        endif;
         $response = new Response();
         return $response->send([
             'status' => 'success',
