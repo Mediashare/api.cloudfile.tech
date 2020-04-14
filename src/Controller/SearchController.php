@@ -18,7 +18,7 @@ class SearchController extends AbstractController
     public function search(Request $request) {
         $fileSystem = new FileSystemApi();
         $files = $fileSystem->getFiles($request, $this->getDoctrine()->getManager());
-        $queries = $request->query->all();
+        $queries = $this->getRealInput('GET');
         if (!$queries && $request->getContent()):
             $queries = \json_decode($request->getContent(), true);
         endif;
@@ -44,6 +44,12 @@ class SearchController extends AbstractController
                 endforeach;
             endforeach;
         endif;
+        // Order
+        usort($results, function($a, $b) {
+            return $a['score'] <=> $b['score'];
+        });
+        $results = array_reverse($results, false);
+        // Response
         $response = new Response();
         return $response->send([
             'status' => 'success',
@@ -92,5 +98,19 @@ class SearchController extends AbstractController
         else:
             return false;
         endif;
+    }
+
+    private function getRealInput($source) {
+        $pairs = explode("&", $source == 'POST' ? file_get_contents("php://input") : $_SERVER['QUERY_STRING']);
+        $vars = array();
+        foreach ($pairs as $pair) {
+            $nv = explode("=", $pair);
+            $name = trim(urldecode($nv[0]));
+            if (isset($nv[1])):
+                $value = trim(urldecode($nv[1]));
+            endif;
+            $vars[$name] = $value ?? null;
+        }
+        return $vars;
     }
 }
