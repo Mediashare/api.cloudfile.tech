@@ -62,33 +62,30 @@ class SearchController extends AbstractController
         ]);
     }
 
-    private function searchInArray(array $array, string $key, ?string $query = null) {
-        $results = 0;
+    private function searchInArray(array $array, string $key, ?string $query = null, ?float $score = 0) {
         foreach ($array as $index => $value):
             if ($this->compare($index, $key)): // index === $key
                 \similar_text($index, $key, $percent_index_key);
                 if ($query && is_string($value) && $this->compare($value, $query)): // index === $key && value === $query
                     \similar_text($value, $query, $percent_value_query);
-                    $results += $percent_value_query + $percent_index_key;
+                    $score += $percent_value_query + $percent_index_key;
                 elseif (!$query): // index === $key && !$query
-                    $results += $percent_index_key;
-                else: // index === $key && value !== $query
-                    $results = 0;
+                    $score += $percent_index_key;
                 endif;
-            elseif (is_string($value) && $this->compare($value, $key)): // index !== key && value === $key
+            elseif (!$query && is_string($value) && $this->compare($value, $key)): // index !== $key && !$query && value === $key
                 \similar_text($value, $key, $percent_value_key); 
-                $results += $percent_value_key * 1.5;
+                $score += $percent_value_key * 1.5;
             endif;
 
             // Array recursive
             if (is_array($value)):
-                $result = $this->searchInArray($value, $key, $query);
+                $result = $this->searchInArray((array) $value, $key, $query, $score);
                 if (!empty($result)):
-                    $results += $result;
+                    $score += $result;
                 endif;
             endif;
         endforeach;
-        return $results;
+        return $score;
     }
 
     // levenshtein || similar_text

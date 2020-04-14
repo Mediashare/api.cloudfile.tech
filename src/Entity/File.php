@@ -192,7 +192,7 @@ class File
         if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
             $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
         else:
-            $host = trim($_SERVER['HTTP_HOST'], '/');
+            $host = 'http://'.trim($_SERVER['HTTP_HOST'], '/');
         endif;
         return [
             'id' => $this->getId(),
