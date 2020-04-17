@@ -101,6 +101,7 @@ class SearchController extends AbstractController
         $pairs = explode("&", $source == 'POST' ? file_get_contents("php://input") : $_SERVER['QUERY_STRING']);
         $vars = array();
         foreach ($pairs as $pair) {
+            $nv = null;
             $nv = explode("=", $pair);
             $name = trim(urldecode($nv[0]));
             if (isset($nv[1])):
