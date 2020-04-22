@@ -12,7 +12,7 @@ Class Indexer {
         $kernel->run();
         $this->mkdir = $kernel->get('Mkdir');
         $this->filesystem = new Filesystem();
-        $this->index_dir = __DIR__.'../../../var/index/';
+        $this->index_dir = __DIR__.'../../../var/index';
     }
     
     public function addFile(File $file) {
@@ -35,8 +35,8 @@ Class Indexer {
     private function getPath(File $file): string {
         $this->mkdir->setPath($this->index_dir);
         $this->mkdir->run();
-        if ($file->getPrivate()): $index = $this->$index_dir.$file->getApiKey().'.json';
-        else: $index = $this->index_dir.'public.json'; endif;
+        if ($file->getPrivate()): $index = $this->$index_dir.'/'.$file->getApiKey().'.json';
+        else: $index = $this->index_dir.'/public.json'; endif;
         
         // Generate if not exist
         if (!file_exists($index)): 
