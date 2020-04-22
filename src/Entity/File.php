@@ -42,6 +42,11 @@ class File
     private $mimeType;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $checksum;
+
+    /**
      * @ORM\Column(type="array")
      */
     private $metadata = [];
@@ -139,6 +144,23 @@ class File
         return $this;
     }
 
+    public function getChecksum(): ?string {
+        if (!$this->checksum):
+            $this->setChecksum();
+        endif;
+        return $this->checksum;
+    }
+
+    public function setChecksum(?string $checksum = null): self {
+        if ($checksum):
+            $this->checksum = $checksum;
+        else:
+            $this->checksum = md5_file($this->getPath());
+        endif;
+
+        return $this;
+    }
+
     public function getMetadata(): ?array
     {
         return $this->metadata;
@@ -199,7 +221,7 @@ class File
             'name' => $this->getName(),
             'mimeType' => $this->getMimeType(),
             'size' => $fileSystem->getSizeReadable($this->getSize()),
-            'checksum' => md5_file($this->getPath()),
+            'checksum' => $this->getChecksum(),
             'metadata' => $this->getMetadata(),
             'private' => $this->getPrivate(),
             'createDate' => (array) $this->getCreateDate(),

@@ -33,7 +33,8 @@ Class FileSystemApi {
         $FileEntity->setPath($destination . '/' . $name);
         $FileEntity->setSize(\filesize($FileEntity->getPath()));
         $FileEntity->setMimeType(mime_content_type($FileEntity->getPath()));
-        
+        $FileEntity->setChecksum();
+
         return $FileEntity;
     }
     public function move(string $path, string $destination) {
