@@ -18,8 +18,11 @@ class FileController extends AbstractController
      */
     public function list(Request $request, ?int $page = 1) {
         $fileSystem = new FileSystemApi();
-        $files = $fileSystem->getFiles($request, $this->getDoctrine()->getManager(), $page);
-        
+        $files = $fileSystem->getFiles($request, $em = $this->getDoctrine()->getManager(), $page);
+        $counter = $em->getRepository(File::class)->createQueryBuilder('f')->select('count(f.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
         $results = [];
         $size = 0;
         foreach ($files as $file) {
@@ -32,7 +35,7 @@ class FileController extends AbstractController
             'status' => 'success',
             'files' => [
                 'page' => $page,
-                'counter' => count($results),
+                'counter' => $counter,
                 'size' => $fileSystem->getSizeReadable($size),
                 'results' => $results
             ],
