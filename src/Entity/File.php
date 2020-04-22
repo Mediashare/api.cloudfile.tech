@@ -199,6 +199,7 @@ class File
             'name' => $this->getName(),
             'mimeType' => $this->getMimeType(),
             'size' => $fileSystem->getSizeReadable($this->getSize()),
+            'checksum' => md5_file($this->getPath()),
             'metadata' => $this->getMetadata(),
             'private' => $this->getPrivate(),
             'createDate' => (array) $this->getCreateDate(),
