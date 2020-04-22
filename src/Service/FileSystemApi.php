@@ -1,13 +1,13 @@
 <?php
 namespace App\Service;
 
+use App\Service\Indexer;
 use Mediashare\Kernel\Kernel;
 use Doctrine\ORM\EntityManager;
 use App\Entity\File as FileEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Filesystem\Filesystem as Fs;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 Class FileSystemApi {
     public function __construct() {
@@ -52,26 +52,31 @@ Class FileSystemApi {
         $factor = floor((strlen($bytes) - 1) / 3);
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
     }
-    
+
     /**
      * Get files from public or private cloud.
+     *
      * @param Request $request
+     * @param EntityManager $em
      * @return array|null
      */
     public function getFiles(Request $request, EntityManager $em): ?array {
         $apiKey = $request->headers->get('apikey');
         if ($apiKey):
-            return $em->getRepository(FileEntity::class)->findBy(
-                ['apiKey' => $apiKey], 
-                ['createDate' => 'DESC']
-            );
+            $file = $em->getRepository(FileEntity::class)->findOneBy(['apiKey' => $apiKey], ['createDate' => 'DESC']);
         else:
-            return $em->getRepository(FileEntity::class)->findBy(
-                ['private' => false], 
-                ['createDate' => 'DESC']
-            );
+            $file = $em->getRepository(FileEntity::class)->findOneBy(['private' => false], ['createDate' => 'DESC']);
         endif;
-        return null;
+        
+        if ($file):
+            $indexer = new Indexer();
+            $files = \json_decode($indexer->getIndex($file), true);
+            $files = array_reverse($files);
+        else:
+            $files = [];
+        endif;
+
+        return $files;
     }
 
     /**

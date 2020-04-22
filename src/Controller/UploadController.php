@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Service\Indexer;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,6 +42,11 @@ class UploadController extends AbstractController
                 $results[] = $file->getInfo();
                 $size += $file->getSize();
             }
+            
+            // Re-generate index files
+            $indexer = new Indexer();
+            $indexer->addFile($file);
+            
             // Response
             $response = new Response();
             return $response->send([

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Service\Indexer;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,38 +17,38 @@ class SearchController extends AbstractController
      * @Route("/search", name="search")
      */
     public function search(Request $request) {
-        $fileSystem = new FileSystemApi();
-        $files = $fileSystem->getFiles($request, $this->getDoctrine()->getManager());
+        $filesystem = new FileSystemApi();
+        $files = $filesystem->getFiles($request, $this->getDoctrine()->getManager());
+
         $queries = $this->getRealInput('GET');
         if (!$queries && $request->getContent()):
             $queries = \json_decode($request->getContent(), true);
         endif;
-        $size = 0;
         $results = [];
-        if ($queries):
+        if (!empty($queries)):
             foreach ($files as $index => $file):
                 foreach ($queries as $query => $value):
-                    if ($score = $this->searchInArray($file->getInfo(), $query, $value)):
-                        if (isset($results[$file->getId()])):
-                            $score += $results[$file->getId()]['score'];
-                        else:
-                            $size += $file->getSize();
+                    if ($score = $this->searchInArray($file, $query, $value)):
+                        if (isset($results[$file['id']])):
+                            $score += $results[$file['id']]['score'];
                         endif;
-                        $results[$file->getId()] = [
+                        $results[$file['id']] = [
                             'score' => $score,
-                            'file' => $file->getInfo()
+                            'file' => $file
                         ];
                     else: // Remove if score = 0
-                        unset($results[$file->getId()]);
+                        unset($results[$file['id']]);
                         break;
                     endif;
                 endforeach;
             endforeach;
+            // Order
+            usort($results, function($a, $b) {
+                return $a['score'] <=> $b['score'];
+            });
+        else:
+            $results = $files;
         endif;
-        // Order
-        usort($results, function($a, $b) {
-            return $a['score'] <=> $b['score'];
-        });
         $results = array_reverse($results, false);
         // Response
         $response = new Response();
@@ -56,7 +57,6 @@ class SearchController extends AbstractController
             'queries' => $queries,
             'files' => [
                 'counter' => count($results),
-                'size' => $fileSystem->getSizeReadable($size),
                 'results' => $results
             ],
         ]);
@@ -98,7 +98,9 @@ class SearchController extends AbstractController
     }
 
     private function getRealInput($source) {
-        $pairs = explode("&", $source == 'POST' ? file_get_contents("php://input") : $_SERVER['QUERY_STRING']);
+        $source =  $source == 'POST' ? file_get_contents("php://input") : $_SERVER['QUERY_STRING'] ?? null;
+        if (!$source):return null;endif;
+        $pairs = explode("&", $source);
         $vars = array();
         foreach ($pairs as $pair) {
             $value = null;

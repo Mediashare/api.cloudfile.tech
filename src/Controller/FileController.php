@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Service\Indexer;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
@@ -85,6 +86,9 @@ class FileController extends AbstractController
             $em->flush();
             // Remove file stockage
             $fileSystem->remove($file->getStockage());
+            // Remove file from index
+            $indexer = new Indexer();
+            $indexer->removeFile($file);
             // Response
             return $response->send([
                 'status' => 'success',

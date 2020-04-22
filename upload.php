@@ -1,7 +1,7 @@
 <?php
 // send a file
 $request = curl_init();
-curl_setopt($request, CURLOPT_URL,"https://127.0.0.1:8001");
+curl_setopt($request, CURLOPT_URL,"http://127.0.0.1:8001/upload");
 curl_setopt($request, CURLOPT_POST, true);
 curl_setopt(
     $request,
