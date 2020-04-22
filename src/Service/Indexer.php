@@ -33,7 +33,6 @@ Class Indexer {
     }
 
     private function getPath(File $file): string {
-        dd($this->index_dir);
         $this->mkdir->setPath($this->index_dir);
         $this->mkdir->run();
         if ($file->getPrivate()): $index = $this->$index_dir.'/'.$file->getApiKey().'.json';
