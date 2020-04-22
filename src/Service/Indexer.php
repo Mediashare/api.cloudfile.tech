@@ -12,7 +12,7 @@ Class Indexer {
         $kernel->run();
         $this->mkdir = $kernel->get('Mkdir');
         $this->filesystem = new Filesystem();
-        $this->index_dir = rtrim(__DIR__, '/').'/../../../var/index';
+        $this->index_dir = rtrim(__DIR__, '/').'/../../var/index';
     }
     
     public function addFile(File $file) {
