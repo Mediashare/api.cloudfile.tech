@@ -12,7 +12,7 @@ Class Indexer {
         $kernel->run();
         $this->mkdir = $kernel->get('Mkdir');
         $this->filesystem = new Filesystem();
-        $this->index_dir = __DIR__.'../../../var/index';
+        $this->index_dir = rtrim(__DIR__, '/').'/../../../var/index';
     }
     
     public function addFile(File $file) {
@@ -33,11 +33,8 @@ Class Indexer {
     }
 
     private function getPath(File $file): string {
-        dd($this->index_dir);
-        if (!file_exists($this->index_dir)):
-            $this->mkdir->setPath($this->index_dir);
-            $this->mkdir->run();
-        endif;
+        $this->mkdir->setPath($this->index_dir);
+        $this->mkdir->run();
         if ($file->getPrivate()): $index = $this->$index_dir.'/'.$file->getApiKey().'.json';
         else: $index = $this->index_dir.'/public.json'; endif;
         
