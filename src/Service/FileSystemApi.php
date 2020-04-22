@@ -58,18 +58,26 @@ Class FileSystemApi {
      * @param Request $request
      * @return array|null
      */
-    public function getFiles(Request $request, EntityManager $em): ?array {
+    public function getFiles(Request $request, EntityManager $em, ?int $page = null): ?array {
         $apiKey = $request->headers->get('apikey');
         if ($apiKey):
-            return $em->getRepository(FileEntity::class)->findBy(
-                ['apiKey' => $apiKey], 
-                ['createDate' => 'DESC']
-            );
+            if ($page):
+                return $em->getRepository(FileEntity::class)->getPrivate($page);
+            else:
+                return $em->getRepository(FileEntity::class)->findBy(
+                    ['apiKey' => $apiKey], 
+                    ['createDate' => 'DESC']
+                );
+            endif;
         else:
-            return $em->getRepository(FileEntity::class)->findBy(
-                ['private' => false], 
-                ['createDate' => 'DESC']
-            );
+            if ($page):
+                return $em->getRepository(FileEntity::class)->getPublic($page);
+            else:
+                return $em->getRepository(FileEntity::class)->findBy(
+                    ['private' => false], 
+                    ['createDate' => 'DESC']
+                );
+            endif;
         endif;
         return null;
     }

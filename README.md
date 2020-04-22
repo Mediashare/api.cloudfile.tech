@@ -11,7 +11,8 @@ bin/console doctrine:schema:update --force
 php -S localhost:8000 -t public/
 ```
 ### Api endpoint
-* ``/`` List file(s)
+* ``/`` All files
+* ``/list/{page}`` List files by page
 * ``/stats`` Cloud storage statistiques
 * ``/upload`` Upload file(s)
 * ``/search`` Search file(s)

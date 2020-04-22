@@ -19,22 +19,33 @@ class FileRepository extends ServiceEntityRepository
         parent::__construct($registry, File::class);
     }
 
-    // /**
-    //  * @return File[] Returns an array of File objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
+    public function getPublic(int $page) {
+        $max_result = 100;
+        $first_result = $max_result * ($page - 1);
+
         return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('f.private = :private')
+            ->setParameter('private', false)
+            ->orderBy('f.createDate', 'DESC')
+            ->setFirstResult($first_result)
+            ->setMaxResults($max_result)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
+
+    public function getPrivate(int $page, string $apikey) {
+        $max_result = 100;
+        $first_result = $max_result * ($page - 1);
+
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.apikey = :apikey')
+            ->setParameter('apikey', $apikey)
+            ->orderBy('f.createDate', 'DESC')
+            ->setFirstResult($first_result)
+            ->setMaxResults($max_result)
+            ->getQuery()
+            ->getResult();
+    }
 
     /*
     public function findOneBySomeField($value): ?File

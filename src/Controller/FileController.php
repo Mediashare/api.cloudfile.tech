@@ -14,6 +14,32 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class FileController extends AbstractController
 {
     /**
+     * @Route("/list/{page}", name="list")
+     */
+    public function list(Request $request, ?int $page = 1) {
+        $fileSystem = new FileSystemApi();
+        $files = $fileSystem->getFiles($request, $this->getDoctrine()->getManager(), $page);
+        
+        $results = [];
+        $size = 0;
+        foreach ($files as $file) {
+            $results[] = $file->getInfo();;
+            $size += $file->getSize();
+        }
+        
+        $response = new Response();
+        return $response->send([
+            'status' => 'success',
+            'files' => [
+                'page' => $page,
+                'counter' => count($results),
+                'size' => $fileSystem->getSizeReadable($size),
+                'results' => $results
+            ],
+        ]);
+    }
+
+    /**
      * @Route("/info/{id}", name="info")
      */
     public function info(Request $request, string $id) {
