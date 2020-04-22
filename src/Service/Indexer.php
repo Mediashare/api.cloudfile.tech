@@ -33,6 +33,7 @@ Class Indexer {
     }
 
     private function getPath(File $file): string {
+        dd($this->index_dir);
         if (!file_exists($this->index_dir)):
             $this->mkdir->setPath($this->index_dir);
             $this->mkdir->run();
