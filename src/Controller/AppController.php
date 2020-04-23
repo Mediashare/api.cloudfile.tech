@@ -56,10 +56,10 @@ class AppController extends AbstractController
                     'counter' => count($files),
                 ],
                 'stockage' => [
-                    'used' => $fileSystem->getSizeReadable((int) $size),
+                    'used' => $fileSystem->getSizeReadable($size),
                     'used_pct' => number_format($size * 100 / $free_space),
-                    'free' => $fileSystem->getSizeReadable((int) $free_space),
-                    'total' => $fileSystem->getSizeReadable((int) $total_space)
+                    'free' => $fileSystem->getSizeReadable($free_space),
+                    'total' => $fileSystem->getSizeReadable($total_space)
                 ]
             ],
         ]);
