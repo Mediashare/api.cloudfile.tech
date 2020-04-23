@@ -45,6 +45,9 @@ class AppController extends AbstractController
         foreach ($files as $file) {
             $size += $file->getSize();
         }
+        $stockage = $this->getParameter('kernel_dir').$this->getParameter('stockage');
+        $free_space = disk_free_space($stockage);
+        $total_space = disk_total_space($stockage);
         $response = new Response();
         return $response->send([
             'status' => 'success',
@@ -54,10 +57,9 @@ class AppController extends AbstractController
                 ],
                 'stockage' => [
                     'used' => $fileSystem->getSizeReadable($size),
-                    'free' => $fileSystem->getSizeReadable(
-                        disk_free_space($this->getParameter('kernel_dir').$this->getParameter('stockage'))),
-                    'total' => $fileSystem->getSizeReadable(
-                        disk_total_space($this->getParameter('kernel_dir').$this->getParameter('stockage')))
+                    'used_pct' => number_format($size * 100 / $free_space),
+                    'free' => $fileSystem->getSizeReadable($free_space),
+                    'total' => $fileSystem->getSizeReadable($total_space)
                 ]
             ],
         ]);
