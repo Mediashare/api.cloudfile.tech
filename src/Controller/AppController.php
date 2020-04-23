@@ -49,8 +49,16 @@ class AppController extends AbstractController
         return $response->send([
             'status' => 'success',
             'stats' => [
-                'counter' => count($files),
-                'size' => $fileSystem->getSizeReadable($size),
+                'files' => [
+                    'counter' => count($files),
+                ],
+                'stockage' => [
+                    'used' => $fileSystem->getSizeReadable($size),
+                    'free' => $fileSystem->getSizeReadable(
+                        disk_free_space($this->getParameter('kernel_dir').$this->getParameter('stockage'))),
+                    'total' => $fileSystem->getSizeReadable(
+                        disk_total_space($this->getParameter('kernel_dir').$this->getParameter('stockage')))
+                ]
             ],
         ]);
     }
