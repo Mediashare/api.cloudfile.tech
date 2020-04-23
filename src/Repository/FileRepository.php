@@ -23,7 +23,7 @@ class FileRepository extends ServiceEntityRepository
         $max_result = 100;
         $first_result = $max_result * ($page - 1);
 
-        return $this->createQueryBuilder('f')
+        $files = $this->createQueryBuilder('f')
             ->andWhere('f.private = :private')
             ->setParameter('private', false)
             ->orderBy('f.createDate', 'DESC')
@@ -31,20 +31,43 @@ class FileRepository extends ServiceEntityRepository
             ->setMaxResults($max_result)
             ->getQuery()
             ->getResult();
+        $counter = $this->createQueryBuilder('f')
+            ->select('count(f.id)')
+            ->andWhere('f.private = :private')
+            ->setParameter('private', false)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return [
+            'files' => $files,
+            'counter' => $counter
+        ];
     }
 
-    public function getPrivate(int $page, string $apikey) {
+    public function getPrivate(int $page, string $apiKey) {
         $max_result = 100;
         $first_result = $max_result * ($page - 1);
 
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.apikey = :apikey')
-            ->setParameter('apikey', $apikey)
+        $files = $this->createQueryBuilder('f')
+            ->andWhere('f.apiKey = :apiKey')
+            ->setParameter('apiKey', $apiKey)
             ->orderBy('f.createDate', 'DESC')
             ->setFirstResult($first_result)
             ->setMaxResults($max_result)
             ->getQuery()
             ->getResult();
+        
+        $counter = $this->createQueryBuilder('f')
+            ->select('count(f.id)')
+            ->andWhere('f.apiKey = :apiKey')
+            ->setParameter('apiKey', $apiKey)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return [
+            'files' => $files,
+            'counter' => $counter
+        ];
     }
 
     /*

@@ -62,7 +62,7 @@ Class FileSystemApi {
         $apiKey = $request->headers->get('apikey');
         if ($apiKey):
             if ($page):
-                return $em->getRepository(FileEntity::class)->getPrivate($page);
+                return $em->getRepository(FileEntity::class)->getPrivate($page, $apiKey);
             else:
                 return $em->getRepository(FileEntity::class)->findBy(
                     ['apiKey' => $apiKey], 
