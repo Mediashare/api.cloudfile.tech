@@ -16,6 +16,13 @@ class SearchController extends AbstractController
      * @Route("/search", name="search")
      */
     public function search(Request $request) {
+        $response = new Response();
+        // Check Authority
+        $authority = $response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        if ($authority):
+            return $authority;
+        endif;
+
         $fileSystem = new FileSystemApi();
         $files = $fileSystem->getFiles($request, $this->getDoctrine()->getManager());
         $queries = $this->getRealInput('GET');
@@ -50,7 +57,6 @@ class SearchController extends AbstractController
         });
         $results = array_reverse($results, false);
         // Response
-        $response = new Response();
         return $response->send([
             'status' => 'success',
             'queries' => $queries,

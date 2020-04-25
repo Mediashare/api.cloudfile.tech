@@ -66,6 +66,11 @@ class File
      */
     private $private;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Volume", inversedBy="files")
+     */
+    private $volume;
+
     public function __construct() {
         $this->setId(\uniqid());
         $this->setPrivate(false);
@@ -232,5 +237,17 @@ class File
                 'remove' => $host.'/remove/'.$this->getId(),
             ],
         ];
+    }
+
+    public function getVolume(): ?Volume
+    {
+        return $this->volume;
+    }
+
+    public function setVolume(?Volume $volume): self
+    {
+        $this->volume = $volume;
+
+        return $this;
     }
 }

@@ -70,14 +70,7 @@ Class FileSystemApi {
                 );
             endif;
         else:
-            if ($page):
-                return $em->getRepository(FileEntity::class)->getPublic($page);
-            else:
-                return $em->getRepository(FileEntity::class)->findBy(
-                    ['private' => false], 
-                    ['createDate' => 'DESC']
-                );
-            endif;
+            return $em->getRepository(FileEntity::class)->findAll();
         endif;
         return null;
     }

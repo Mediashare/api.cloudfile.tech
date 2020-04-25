@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Entity\Volume;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,12 +14,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FileController extends AbstractController
 {
+    public function __construct() {
+        $this->response = new Response();
+    }
+
     /**
      * @Route("/list/{page}", name="list")
      */
     public function list(Request $request, ?int $page = 1) {
+        // Check Authority
+        $authority = $this->response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        if ($authority):
+            return $authority;
+        endif;
+           
+        // Get Files
         $fileSystem = new FileSystemApi();
-        $result = $fileSystem->getFiles($request, $em = $this->getDoctrine()->getManager(), $page);
+        $result = $fileSystem->getFiles($request, $em, $page);
 
         $files = $result['files'];
         $results = [];
@@ -27,8 +39,8 @@ class FileController extends AbstractController
             $results[] = $file->getInfo();;
             $size += $file->getSize();
         }
-        $response = new Response();
-        return $response->send([
+
+        return $this->response->send([
             'status' => 'success',
             'files' => [
                 'page' => $page,
@@ -43,13 +55,18 @@ class FileController extends AbstractController
      * @Route("/info/{id}", name="info")
      */
     public function info(Request $request, string $id) {
-        $fileSystem = new FileSystemApi();
-        $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
-        $response = new Response();
-        if ($file):
-            return $response->send($file->getInfo());
+        // Check Authority
+        $authority = $this->response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        if ($authority):
+            return $authority;
         endif;
-        return $response->send([
+
+        $fileSystem = new FileSystemApi();
+        $file = $fileSystem->getFile($request, $id, $em);
+        if ($file):
+            return $this->response->send($file->getInfo());
+        endif;
+        return $this->response->send([
             'status' => 'error',
             'message' => 'File not found.',
         ], 404);
@@ -59,6 +76,12 @@ class FileController extends AbstractController
      * @Route("/show/{id}", name="show")
      */
     public function show(Request $request, string $id) {
+        // Check Authority
+        $authority = $this->response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        if ($authority):
+            return $authority;
+        endif;
+        
         $fileSystem = new FileSystemApi();
         $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
         if ($file):
@@ -67,8 +90,7 @@ class FileController extends AbstractController
             $response->headers->set('Access-Control-Allow-Headers', '*');
             return $response;
         endif;
-        $response = new Response();
-        return $response->send([
+        return $this->response->send([
             'status' => 'error',
             'message' => 'File not found.',
         ], 404);
@@ -90,8 +112,7 @@ class FileController extends AbstractController
             $response->headers->set('Access-Control-Allow-Headers', '*');
             return $response;
         endif;
-        $response = new Response();
-        return $response->send([
+        return $this->response->send([
             'status' => 'error',
             'message' => 'File not found.',
         ], 404);
@@ -103,7 +124,6 @@ class FileController extends AbstractController
     public function remove(Request $request, string $id) {
         $fileSystem = new FileSystemApi();
         $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
-        $response = new Response();
         if ($file):
             // Remove to database
             $em = $this->getDoctrine()->getManager();
@@ -112,12 +132,12 @@ class FileController extends AbstractController
             // Remove file stockage
             $fileSystem->remove($file->getStockage());
             // Response
-            return $response->send([
+            return $this->response->send([
                 'status' => 'success',
                 'message' => '['.$id.'] File was removed.',
             ]);
         endif;
-        return $response->send([
+        return $this->response->send([
             'status' => 'error',
             'message' => 'File not found.',
         ], 404);

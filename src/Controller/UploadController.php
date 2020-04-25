@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Entity\Volume;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,13 +12,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UploadController extends AbstractController
 {
+    public function __construct() {
+        $this->response = new Response();
+    }
+
     /**
      * @Route("/upload", name="upload")
      */
     public function upload(Request $request) {
+        // Check ApiKey
+        $authority = $this->response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        if ($authority):
+            return $authority;
+        endif;
+        
+        $apikey = $request->headers->get('apikey');
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        
+        // Upload file(s)
         $files = $request->files;
         if (count($files) > 0):
-            $em = $this->getDoctrine()->getManager();
             $stockage = $this->getParameter('kernel.project_dir').$this->getParameter('stockage');
             $fileSystem = new FileSystemApi();
             $results = [];
@@ -32,8 +46,9 @@ class UploadController extends AbstractController
                 $file = $fileSystem->upload($id, $file, $stockage);
                 // Set metadata
                 $file->setMetadata($_REQUEST);
-                // ApiKey
-                $file->setApiKey($request->headers->get('apikey'));
+                // ApiKey & Volume
+                $file->setApiKey($apikey);
+                $file->setVolume($volume);
                 // Record
                 $em->persist($file);
                 $em->flush();
@@ -42,8 +57,7 @@ class UploadController extends AbstractController
                 $size += $file->getSize();
             }
             // Response
-            $response = new Response();
-            return $response->send([
+            return $this->response->send([
                 'status' => 'success',
                 'message' => 'Your file(s) was uploaded.',
                 'files' => [
@@ -53,8 +67,7 @@ class UploadController extends AbstractController
                 ]
             ]);
         endif;
-        $response =  new Response();
-        return $response->send([
+        return $this->response->send([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
