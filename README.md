@@ -8,6 +8,11 @@ cd CloudFile-API
 composer install
 bin/console doctrine:schema:update --force
 ```
+You can edit files stockage directory in .env file
+
+```
+stockage=/var/stockage
+```
 ### Api endpoint
 * ``/`` All files
 * ``/list/{page}`` List files by page
