@@ -6,6 +6,7 @@
 parameters:
     stockage: '%env(resolve:stockage)%'
     kernel_dir: '%kernel.project_dir%'
+    volume_password: '%env(volume_password)%'
 services:
     # default configuration for services in *this* file
     _defaults:

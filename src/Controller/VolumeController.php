@@ -19,6 +19,13 @@ class VolumeController extends AbstractController
      * @Route("/volume/new", name="volume_new")
      */
     public function new(Request $request) {
+        if ($this->getParameter('volume_password') 
+            && $request->get('volume_password') !== $this->getParameter('volume_password')):
+                return $this->response->send([
+                    'status' => 'error',
+                    'message' => 'Authority not valid for volume creation.'
+                ]);
+        endif;
         $volume = new Volume();
         $volume->setEmail($request->get('email')); // Email association
         $volume->setSize($request->get('size')); // Gb
