@@ -3,12 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\Volume;
+use App\Service\Response;
+use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class VolumeController extends AbstractController
 {
+    public function __construct() {
+        $this->response = new Response();
+    }
+
     /**
      * @Route("/volume/new", name="volume_new")
      */
@@ -21,7 +27,7 @@ class VolumeController extends AbstractController
         $em->persist($volume);
         $em->flush();
 
-        return $this->json([
+        return $this->response->send([
             'status' => 'success',
             'volume' => [
                 'id' => $volume->getId(),
@@ -39,6 +45,41 @@ class VolumeController extends AbstractController
         return $this->json([
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/VolumeController.php',
+        ]);
+    }
+
+    /**
+     * @Route("/volume/clean/{id}", name="volume_clean")
+     */
+    public function clean(Request $request, string $id) {
+        $apiKey = $request->headers->get('apikey');
+        if (!$apiKey):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'ApiKey not found in Header.'
+            ]);
+        endif;
+        $em = $this->getDoctrine()->getManager();
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apiKey, 'online' => true]);
+        if (!$volume):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'Volume not found with your ApiKey.'
+            ]);
+        endif;
+
+        // Remove file(s)
+        $fileSystem = new FileSystemApi();
+        foreach ($volume->getFiles() as $file) {    
+            // Remove to database
+            $em->remove($file);
+            $em->flush();
+            // Remove file stockage
+            $fileSystem->remove($file->getStockage());
+        }
+        return $this->response->send([
+            'status' => 'error',
+            'message' => 'All files from volume ['.$volume->getId().'] was deleted.'
         ]);
     }
 
