@@ -16,31 +16,9 @@ class AppController extends AbstractController
      * @Route("/", name="index")
      */
     public function index(Request $request) {
-        $fileSystem = new FileSystemApi();
-        $files = $fileSystem->getFiles($request, $this->getDoctrine()->getManager());
-        $results = [];
-        $size = 0;
-        foreach ($files as $file) {
-            $size += $file->getSize();
-        }
-        
         $response = new Response();
-        $stockage = $this->getParameter('kernel_dir').$this->getParameter('stockage');
-        $free_space = disk_free_space($stockage);
-        $total_space = disk_total_space($stockage);
         return $response->send([
-            'status' => 'success',
-            'stats' => [
-                'files' => [
-                    'counter' => count($files),
-                ],
-                'stockage' => [
-                    'used' => $fileSystem->getSizeReadable($size),
-                    'used_pct' => number_format($size * 100 / $free_space, 1),
-                    'free' => $fileSystem->getSizeReadable($free_space),
-                    'total' => $fileSystem->getSizeReadable($total_space)
-                ]
-            ],
+            'status' => 'success'
         ]);
     }
 
