@@ -1,6 +1,5 @@
 # CloudFile-API
-CloudFile is a simple file storage solution that can be consumed via an API. Useful for all your projects, CloudFile allows the storage of files (images, videos, texts, applications...) in a public or private cloud. 
-[Documentation](https://github.com/Mediashare/CloudFile-API/wiki)
+CloudFile is a simple file storage solution that can be consumed via an API. Useful for all your projects, CloudFile allows the storage of files (images, videos, texts, applications...) with an public or private access.
 ## Getting Start
 ### Installation
 ```bash
@@ -8,7 +7,6 @@ git clone https://github.com/Mediashare/CloudFile-API
 cd CloudFile-API
 composer install
 bin/console doctrine:schema:update --force
-php -S localhost:8000 -t public/
 ```
 ### Api endpoint
 * ``/`` All files
@@ -20,6 +18,7 @@ php -S localhost:8000 -t public/
 * ``/show/{id}`` Show file
 * ``/download/{id}`` Download file
 * ``/remove/{id}`` Remove file
+
 ### Usages
 #### Use curl command line tool
 ```bash
@@ -46,6 +45,6 @@ curl \
 #### Search file(s)
 ```bash
 curl localhost:8000/search?image1.jpg
-curl localhost:8000/search?name=image1.jpg
 curl localhost:8000/search?category=image
+curl localhost:8000/search?category=image&name=image1.jpg
 ```
