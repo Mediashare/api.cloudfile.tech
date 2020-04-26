@@ -47,10 +47,23 @@ Class FileSystemApi {
     public function remove(string $path) {
         $this->filesystem->remove($path);
     }
+    // Bytes => Mb | Bytes => Gb ...
     public function getSizeReadable($bytes, int $decimals = 2){
         $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
         $factor = floor((strlen($bytes) - 1) / 3);
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+    }
+    // Mb => bytes | Gb => bytes ...
+    public function human2byte($value) {
+        return preg_replace_callback('/^\s*(\d+)\s*(?:([kmgt]?)b?)?\s*$/i', function ($m) {
+        switch (strtolower($m[2])) {
+            case 't': $m[1] *= 1024;
+            case 'g': $m[1] *= 1024;
+            case 'm': $m[1] *= 1024;
+            case 'k': $m[1] *= 1024;
+        }
+        return $m[1];
+        }, $value);
     }
     
     /**

@@ -29,9 +29,17 @@ class UploadController extends AbstractController
         $apikey = $request->headers->get('apikey');
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         
-        // Upload file(s)
         $files = $request->files;
         if (count($files) > 0):
+            // Check Espace Disk
+            $free_disk = $this->checkDisk($volume, $files); 
+            if (!$free_disk):
+                return $this->response->send([
+                    'status' => 'error',
+                    'message' => 'There is a missing of space on your volume disk.'
+                ]);
+            endif;
+            // Upload file(s)
             $stockage = $this->getParameter('kernel.project_dir').$this->getParameter('stockage');
             $fileSystem = new FileSystemApi();
             $results = [];
@@ -71,5 +79,29 @@ class UploadController extends AbstractController
             'status' => 'error',
             'message' => 'File not found.',
         ]);
+    }
+
+    /**
+     * If freespace return true, else false.
+     *
+     * @param Volume $volume
+     * @param array $files
+     * @return bool
+     */
+    private function checkDisk(Volume $volume, $files): bool {
+        $fileSystem = new FileSystemApi();
+        $volume_size = $fileSystem->human2byte($volume->getSize().'Gb');
+        $files_size = 0;
+        foreach ($volume->getFiles() as $file) {
+            $files_size += $file->getSize();
+        }
+        foreach ($files as $file) {
+            $files_size += $file->getSize();
+        }
+        if ($files_size > $volume_size):
+            return false;
+        else:
+            return true;
+        endif;
     }
 }
