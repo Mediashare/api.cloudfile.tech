@@ -26,6 +26,7 @@ class VolumeController extends AbstractController
                     'message' => 'Authority not valid for volume creation.'
                 ]);
         endif;
+        
         $volume = new Volume();
         $volume->setEmail($request->get('email')); // Email association
         $volume->setSize($request->get('size')); // Gb

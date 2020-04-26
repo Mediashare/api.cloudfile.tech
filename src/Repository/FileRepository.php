@@ -19,31 +19,6 @@ class FileRepository extends ServiceEntityRepository
         parent::__construct($registry, File::class);
     }
 
-    public function getPublic(int $page) {
-        $max_result = 100;
-        $first_result = $max_result * ($page - 1);
-
-        $files = $this->createQueryBuilder('f')
-            ->andWhere('f.private = :private')
-            ->setParameter('private', false)
-            ->orderBy('f.createDate', 'DESC')
-            ->setFirstResult($first_result)
-            ->setMaxResults($max_result)
-            ->getQuery()
-            ->getResult();
-        $counter = $this->createQueryBuilder('f')
-            ->select('count(f.id)')
-            ->andWhere('f.private = :private')
-            ->setParameter('private', false)
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        return [
-            'files' => $files,
-            'counter' => $counter
-        ];
-    }
-
     public function getPrivate(int $page, string $apiKey) {
         $max_result = 100;
         $first_result = $max_result * ($page - 1);

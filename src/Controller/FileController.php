@@ -23,14 +23,16 @@ class FileController extends AbstractController
      */
     public function list(Request $request, ?int $page = 1) {
         // Check Authority
-        $authority = $this->response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
         if ($authority):
             return $authority;
         endif;
            
         // Get Files
         $fileSystem = new FileSystemApi();
-        $result = $fileSystem->getFiles($request, $em, $page);
+        $result = $fileSystem->getFiles($em, $apikey, $page);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
 
         $files = $result['files'];
         $results = [];
@@ -42,6 +44,7 @@ class FileController extends AbstractController
 
         return $this->response->send([
             'status' => 'success',
+            'volume' => $volume->getInfo(),
             'files' => [
                 'page' => $page,
                 'counter' => $result['counter'],
@@ -56,7 +59,8 @@ class FileController extends AbstractController
      */
     public function info(Request $request, string $id) {
         // Check Authority
-        $authority = $this->response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
         if ($authority):
             return $authority;
         endif;
@@ -78,7 +82,8 @@ class FileController extends AbstractController
      */
     public function show(Request $request, string $id) {
         // Check Authority
-        $authority = $this->response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
         if ($authority):
             return $authority;
         endif;

@@ -179,5 +179,16 @@ class Volume
     private function rngString($length = 32) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
+
+    public function getInfo(): array {
+        return [
+            'id' => $this->getId(),
+            'email' => $this->getEmail(),
+            'size' => $this->getSize(),
+            'online' => $this->getOnline(),
+            'updateDate' => $this->getUpdateDate(),
+            'createDate' => $this->getCreateDate(),
+        ];
+    }
     
 }

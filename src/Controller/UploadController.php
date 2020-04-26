@@ -57,8 +57,9 @@ class UploadController extends AbstractController
                 // ApiKey & Volume
                 $file->setApiKey($apikey);
                 $file->setVolume($volume);
+                $volume->setUpdateDate(new \DateTime());
                 // Record
-                $em->persist($file);
+                $em->persist($file, $volume);
                 $em->flush();
                 
                 $results[] = $file->getInfo();

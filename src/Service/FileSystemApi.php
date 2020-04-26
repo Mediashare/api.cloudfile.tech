@@ -71,14 +71,13 @@ Class FileSystemApi {
      * @param Request $request
      * @return array|null
      */
-    public function getFiles(Request $request, EntityManager $em, ?int $page = null): ?array {
-        $apiKey = $request->headers->get('apikey');
-        if ($apiKey):
+    public function getFiles(EntityManager $em, string $apikey, ?int $page = null): ?array {
+        if ($apikey):
             if ($page):
-                return $em->getRepository(FileEntity::class)->getPrivate($page, $apiKey);
+                return $em->getRepository(FileEntity::class)->getPrivate($page, $apikey);
             else:
                 return $em->getRepository(FileEntity::class)->findBy(
-                    ['apiKey' => $apiKey], 
+                    ['apiKey' => $apikey], 
                     ['createDate' => 'DESC']
                 );
             endif;

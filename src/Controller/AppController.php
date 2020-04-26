@@ -28,14 +28,15 @@ class AppController extends AbstractController
     public function stats(Request $request) {
         $response = new Response();
         // Check Authority
-        $authority = $response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        $apikey = $request->headers->get('apikey');
+        $authority = $response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
         if ($authority):
             return $authority;
         endif;
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $request->headers->get('apikey'), 'online' => true]);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
 
         $fileSystem = new FileSystemApi();
-        $files = $fileSystem->getFiles($request, $em);
+        $files = $fileSystem->getFiles($em, $apikey);
         $size = 0;
         foreach ($files as $file) {
             $size += $file->getSize();

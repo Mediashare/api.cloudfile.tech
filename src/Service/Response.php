@@ -21,8 +21,7 @@ Class Response {
      * @param Request $request
      * @return Response|null
      */
-    public function checkAuthority(Request $request, EntityManager $em) {
-        $apikey = $request->headers->get('apikey');
+    public function checkAuthority(EntityManager $em, $apikey) {
         if (!$apikey):
             return $this->send([
                 'status' => 'error',
