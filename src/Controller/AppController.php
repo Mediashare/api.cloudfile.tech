@@ -35,9 +35,8 @@ class AppController extends AbstractController
         endif;
 
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
-        $files = $em->getRepository(File::class)->findBy(['apiKey' => $apikey], ['createDate' => 'DESC']);
         $size = 0;
-        foreach ($files as $file) {
+        foreach ($volume->getFiles() as $file) {
             $size += $file->getSize();
         }
         
@@ -49,7 +48,7 @@ class AppController extends AbstractController
             'volume' => $volume->getInfo(),
             'stats' => [
                 'files' => [
-                    'counter' => count($files),
+                    'counter' => count($volume->getFiles()),
                 ],
                 'stockage' => [
                     'used' => $fileSystem->getSizeReadable($size),
