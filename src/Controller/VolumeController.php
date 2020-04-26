@@ -82,7 +82,10 @@ class VolumeController extends AbstractController
             $results[] = $volume->getInfo();
         }
 
-        return $this->response->send($results);
+        return $this->response->send([
+            'status' => 'success',
+            'results' => $results
+        ]);
     }
 
     /**
