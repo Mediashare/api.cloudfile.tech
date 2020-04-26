@@ -76,12 +76,6 @@ class VolumeController extends AbstractController
         $email = $request->get('email');
         $em = $this->getDoctrine()->getManager();
         $volumes = $em->getRepository(Volume::class)->findBy(['email' => $email]);
-        if (!$volumes):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'Not volume(s) associated with this email.'
-            ]);
-        endif;
 
         $results = [];
         foreach ($volumes as $volume) {
