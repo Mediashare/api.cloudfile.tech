@@ -40,7 +40,7 @@ class UploadController extends AbstractController
                 ]);
             endif;
             // Upload file(s)
-            $stockage = $this->getParameter('kernel.project_dir').$this->getParameter('stockage');
+            $stockage = $this->getParameter('stockage');
             $fileSystem = new FileSystemApi();
             $results = [];
             $size = 0;

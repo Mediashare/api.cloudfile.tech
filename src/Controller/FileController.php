@@ -63,13 +63,14 @@ class FileController extends AbstractController
 
         $fileSystem = new FileSystemApi();
         $file = $fileSystem->getFile($request, $id, $em);
-        if ($file):
-            return $this->response->send($file->getInfo());
+        if (!$file):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'File not found.',
+            ], 404);
         endif;
-        return $this->response->send([
-            'status' => 'error',
-            'message' => 'File not found.',
-        ], 404);
+        
+        return $this->response->send($file->getInfo());
     }
 
     /**
@@ -84,16 +85,17 @@ class FileController extends AbstractController
         
         $fileSystem = new FileSystemApi();
         $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
-        if ($file):
-            $response = new BinaryFileResponse($file->getPath(), 200);
-            $response->headers->set('Access-Control-Allow-Origin', '*');
-            $response->headers->set('Access-Control-Allow-Headers', '*');
-            return $response;
+        if (!$file):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'File not found.',
+            ], 404);
         endif;
-        return $this->response->send([
-            'status' => 'error',
-            'message' => 'File not found.',
-        ], 404);
+
+        $response = new BinaryFileResponse($file->getPath(), 200);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 
     /**
@@ -102,20 +104,21 @@ class FileController extends AbstractController
     public function download(Request $request, string $id) {
         $fileSystem = new FileSystemApi();
         $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
-        if ($file):
-            $response = new BinaryFileResponse($file->getPath());
-            $response->setContentDisposition(
-                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $file->getName()
-            );
-            $response->headers->set('Access-Control-Allow-Origin', '*');
-            $response->headers->set('Access-Control-Allow-Headers', '*');
-            return $response;
+        if (!$file):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'File not found.',
+            ], 404);
         endif;
-        return $this->response->send([
-            'status' => 'error',
-            'message' => 'File not found.',
-        ], 404);
+
+        $response = new BinaryFileResponse($file->getPath());
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $file->getName()
+        );
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 
     /**
@@ -124,22 +127,23 @@ class FileController extends AbstractController
     public function remove(Request $request, string $id) {
         $fileSystem = new FileSystemApi();
         $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
-        if ($file):
-            // Remove to database
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($file);
-            $em->flush();
-            // Remove file stockage
-            $fileSystem->remove($file->getStockage());
-            // Response
+        if (!$file):
             return $this->response->send([
-                'status' => 'success',
-                'message' => '['.$id.'] File was removed.',
-            ]);
+                'status' => 'error',
+                'message' => 'File not found.',
+            ], 404);
         endif;
+        
+        // Remove to database
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($file);
+        $em->flush();
+        // Remove file stockage
+        $fileSystem->remove($file->getStockage());
+        // Response
         return $this->response->send([
-            'status' => 'error',
-            'message' => 'File not found.',
-        ], 404);
+            'status' => 'success',
+            'message' => '['.$id.'] File was removed.',
+        ]);
     }
 }

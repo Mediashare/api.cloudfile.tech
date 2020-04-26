@@ -24,7 +24,7 @@ class SearchController extends AbstractController
         endif;
 
         $fileSystem = new FileSystemApi();
-        $files = $fileSystem->getFiles($request, $this->getDoctrine()->getManager());
+        $files = $fileSystem->getFiles($request, $em);
         $queries = $this->getRealInput('GET');
         if (!$queries && $request->getContent()):
             $queries = \json_decode($request->getContent(), true);
