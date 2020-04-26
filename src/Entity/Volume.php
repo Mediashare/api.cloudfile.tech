@@ -55,7 +55,7 @@ class Volume
     public function __construct() {
         $this->files = new ArrayCollection();
         $this->setId(\uniqid());
-        $this->setApikey($this->rngString(32));
+        $this->generateApiKey();
         $this->setOnline(true);
         $this->setCreateDate(new \DateTime());
         $this->setUpdateDate(new \DateTime());
@@ -82,6 +82,11 @@ class Volume
     {
         $this->email = $email;
 
+        return $this;
+    }
+
+    public function generateApiKey(): self {
+        $this->setApikey($this->rngString(32));
         return $this;
     }
 
