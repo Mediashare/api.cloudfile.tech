@@ -46,6 +46,7 @@ class AppController extends AbstractController
         $free_space = $total_space - $size;
         return $response->send([
             'status' => 'success',
+            'volume' => $volume->getInfo(),
             'stats' => [
                 'files' => [
                     'counter' => count($files),
