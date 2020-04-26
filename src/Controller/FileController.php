@@ -150,6 +150,8 @@ class FileController extends AbstractController
         
         // Remove to database
         $em = $this->getDoctrine()->getManager();
+        $volume = $file->getVolume()->setUpdateDate(new \DateTime());
+        $em->persist($volume);
         $em->remove($file);
         $em->flush();
         // Remove file stockage
