@@ -21,7 +21,8 @@ class UploadController extends AbstractController
      */
     public function upload(Request $request) {
         // Check ApiKey
-        $authority = $this->response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
         if ($authority):
             return $authority;
         endif;

@@ -19,7 +19,7 @@ class FileRepository extends ServiceEntityRepository
         parent::__construct($registry, File::class);
     }
 
-    public function getPrivate(int $page, string $apiKey) {
+    public function getPrivate(string $apiKey, int $page) {
         $max_result = 100;
         $first_result = $max_result * ($page - 1);
 

@@ -16,15 +16,15 @@ class SearchController extends AbstractController
      * @Route("/search", name="search")
      */
     public function search(Request $request) {
-        $response = new Response();
         // Check Authority
-        $authority = $response->checkAuthority($request, $em = $this->getDoctrine()->getManager());
+        $response = new Response();
+        $apikey = $request->headers->get('apikey');
+        $authority = $response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
         if ($authority):
             return $authority;
         endif;
 
-        $fileSystem = new FileSystemApi();
-        $files = $fileSystem->getFiles($request, $em);
+        $files = $em->getRepository(File::class)->findBy(['apiKey' => $apikey], ['createDate' => 'DESC']);
         $queries = $this->getRealInput('GET');
         if (!$queries && $request->getContent()):
             $queries = \json_decode($request->getContent(), true);
@@ -57,6 +57,7 @@ class SearchController extends AbstractController
         });
         $results = array_reverse($results, false);
         // Response
+        $fileSystem = new FileSystemApi();
         return $response->send([
             'status' => 'success',
             'queries' => $queries,

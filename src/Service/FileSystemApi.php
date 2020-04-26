@@ -65,47 +65,4 @@ Class FileSystemApi {
         return $m[1];
         }, $value);
     }
-    
-    /**
-     * Get files from public or private cloud.
-     * @param Request $request
-     * @return array|null
-     */
-    public function getFiles(EntityManager $em, string $apikey, ?int $page = null): ?array {
-        if ($apikey):
-            if ($page):
-                return $em->getRepository(FileEntity::class)->getPrivate($page, $apikey);
-            else:
-                return $em->getRepository(FileEntity::class)->findBy(
-                    ['apiKey' => $apikey], 
-                    ['createDate' => 'DESC']
-                );
-            endif;
-        else:
-            return $em->getRepository(FileEntity::class)->findAll();
-        endif;
-        return null;
-    }
-
-    /**
-     * Get file from public or private cloud.
-     * @param Request $request
-     * @param string $id
-     * @return File|null
-     */
-    public function getFile(Request $request, string $id, EntityManager $em): ?FileEntity {
-        $apiKey = $request->headers->get('apikey');
-        if ($apiKey):
-            return $em->getRepository(FileEntity::class)->findOneBy(
-                ['apiKey' => $apiKey, 'id' => $id], 
-                ['createDate' => 'DESC']
-            );
-        else:
-            return $em->getRepository(FileEntity::class)->findOneBy(
-                ['private' => false, 'id' => $id], 
-                ['createDate' => 'DESC']
-            );
-        endif;
-        return null;
-    }
 }

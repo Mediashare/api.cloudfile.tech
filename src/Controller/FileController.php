@@ -28,12 +28,10 @@ class FileController extends AbstractController
         if ($authority):
             return $authority;
         endif;
-           
-        // Get Files
-        $fileSystem = new FileSystemApi();
-        $result = $fileSystem->getFiles($em, $apikey, $page);
+        
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
-
+        $result = $em->getRepository(File::class)->getPrivate($apikey, $page);
+        
         $files = $result['files'];
         $results = [];
         $size = 0;
@@ -41,7 +39,8 @@ class FileController extends AbstractController
             $results[] = $file->getInfo();;
             $size += $file->getSize();
         }
-
+        
+        $fileSystem = new FileSystemApi();
         return $this->response->send([
             'status' => 'success',
             'volume' => $volume->getInfo(),
@@ -65,8 +64,7 @@ class FileController extends AbstractController
             return $authority;
         endif;
 
-        $fileSystem = new FileSystemApi();
-        $file = $fileSystem->getFile($request, $id, $em);
+        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
@@ -88,8 +86,7 @@ class FileController extends AbstractController
             return $authority;
         endif;
         
-        $fileSystem = new FileSystemApi();
-        $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
+        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
@@ -107,8 +104,14 @@ class FileController extends AbstractController
      * @Route("/download/{id}", name="download")
      */
     public function download(Request $request, string $id) {
-        $fileSystem = new FileSystemApi();
-        $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
+        endif;
+
+        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
@@ -130,8 +133,14 @@ class FileController extends AbstractController
      * @Route("/remove/{id}", name="remove")
      */
     public function remove(Request $request, string $id) {
-        $fileSystem = new FileSystemApi();
-        $file = $fileSystem->getFile($request, $id, $this->getDoctrine()->getManager());
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
+        endif;
+
+        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
@@ -144,6 +153,7 @@ class FileController extends AbstractController
         $em->remove($file);
         $em->flush();
         // Remove file stockage
+        $fileSystem = new FileSystemApi();
         $fileSystem->remove($file->getStockage());
         // Response
         return $this->response->send([

@@ -26,22 +26,22 @@ class AppController extends AbstractController
      * @Route("/stats", name="stats")
      */
     public function stats(Request $request) {
-        $response = new Response();
         // Check Authority
+        $response = new Response();
         $apikey = $request->headers->get('apikey');
         $authority = $response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
         if ($authority):
             return $authority;
         endif;
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
 
-        $fileSystem = new FileSystemApi();
-        $files = $fileSystem->getFiles($em, $apikey);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        $files = $em->getRepository(File::class)->findBy(['apiKey' => $apikey], ['createDate' => 'DESC']);
         $size = 0;
         foreach ($files as $file) {
             $size += $file->getSize();
         }
-
+        
+        $fileSystem = new FileSystemApi();
         $total_space = $fileSystem->human2byte($volume->getSize().'G');
         $free_space = $total_space - $size;
         return $response->send([
