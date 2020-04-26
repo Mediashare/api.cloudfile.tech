@@ -52,6 +52,10 @@ class Volume
      */
     private $files;
 
+    public function __toString() {
+        return $this->getId();
+    }
+
     public function __construct() {
         $this->files = new ArrayCollection();
         $this->setId(\uniqid());

@@ -71,6 +71,10 @@ class File
      */
     private $volume;
 
+    public function __toString() {
+        return $this->getName();
+    }
+
     public function __construct() {
         $this->setId(\uniqid());
         $this->setPrivate(false);
