@@ -186,6 +186,7 @@ class Volume
             'email' => $this->getEmail(),
             'size' => $this->getSize(),
             'online' => $this->getOnline(),
+            'apikey' => $this->getApikey(),
             'updateDate' => $this->getUpdateDate(),
             'createDate' => $this->getCreateDate(),
         ];

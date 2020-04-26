@@ -47,13 +47,18 @@ class VolumeController extends AbstractController
     }
 
     /**
-     * @Route("/volume/edit/{id}", name="volume_edit")
+     * @Route("/volume/info", name="volume_info")
      */
-    public function edit(Request $request, string $id) {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/VolumeController.php',
-        ]);
+    public function info(Request $request) {
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
+        endif;
+        
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        return $this->response->send($volume->getInfo());
     }
 
     /**
