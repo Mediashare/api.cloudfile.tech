@@ -209,10 +209,10 @@ class Volume
             'stats' => [
                 'files' => count($this->getFiles()),
                 'stockage' => [
-                    'used' => $fileSystem->getSizeReadable($size),
                     'used_pct' => number_format($size * 100 / $total_space, 1),
+                    'used' => $fileSystem->getSizeReadable($size),
+                    'total' => $fileSystem->getSizeReadable($total_space),
                     'free' => $fileSystem->getSizeReadable($free_space),
-                    'total' => $fileSystem->getSizeReadable($total_space)
                 ]
             ],
             'updateDate' => $this->getUpdateDate(),
