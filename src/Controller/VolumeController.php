@@ -15,7 +15,6 @@ class VolumeController extends AbstractController
         $this->response = new Response();
     }
 
-
     /**
      * Display volume informations
      * @Route("/volume", name="volume")
@@ -64,9 +63,9 @@ class VolumeController extends AbstractController
 
     /**
      * Reset ApiKey from volume & files associated
-     * @Route("/volume/generate/apikey", name="volume_generate_apikey")
+     * @Route("/volume/reset/apikey", name="volume_reset_apikey")
      */
-    public function generateApiKey(Request $request) {
+    public function resetApiKey(Request $request) {
         // Check Authority
         $apikey = $request->headers->get('apikey');
         $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
