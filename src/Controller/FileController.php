@@ -30,9 +30,8 @@ class FileController extends AbstractController
         endif;
         
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
-        $result = $em->getRepository(File::class)->getPrivate($apikey, $page);
+        $files = $em->getRepository(File::class)->pagination($apikey, $page, $max = 100);
         
-        $files = $result['files'];
         $results = [];
         $size = 0;
         foreach ($files as $file) {
@@ -46,7 +45,7 @@ class FileController extends AbstractController
             'volume' => $volume->getInfo(),
             'files' => [
                 'page' => $page,
-                'counter' => $result['counter'],
+                'counter' => count($volume->getFiles()),
                 'size' => $fileSystem->getSizeReadable($size),
                 'results' => $results
             ],
@@ -72,7 +71,10 @@ class FileController extends AbstractController
             ], 404);
         endif;
         
-        return $this->response->send($file->getInfo());
+        return $this->response->send([
+            'status' => 'success',
+            'file' => $file->getInfo()
+        ]);
     }
 
     /**

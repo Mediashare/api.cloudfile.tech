@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\File;
+use App\Service\FileSystemApi;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VolumeRepository")
@@ -36,7 +38,7 @@ class Volume
      * @ORM\Column(type="boolean")
      */
     private $online;
-
+    
     /**
      * @ORM\Column(type="datetime")
      */
@@ -190,12 +192,29 @@ class Volume
     }
 
     public function getInfo(): array {
+        $size = 0;
+        foreach ($this->getFiles() as $file):
+            $size += $file->getSize();
+        endforeach;
+
+        $fileSystem = new FileSystemApi();
+        $total_space = $fileSystem->human2byte($this->getSize().'G');
+        $free_space = $total_space - $size;
         return [
             'id' => $this->getId(),
             'email' => $this->getEmail(),
             'size' => $this->getSize(),
             'online' => $this->getOnline(),
             'apikey' => $this->getApikey(),
+            'stats' => [
+                'files' => count($this->getFiles()),
+                'stockage' => [
+                    'used' => $fileSystem->getSizeReadable($size),
+                    'used_pct' => number_format($size * 100 / $total_space, 1),
+                    'free' => $fileSystem->getSizeReadable($free_space),
+                    'total' => $fileSystem->getSizeReadable($total_space)
+                ]
+            ],
             'updateDate' => $this->getUpdateDate(),
             'createDate' => $this->getCreateDate(),
         ];

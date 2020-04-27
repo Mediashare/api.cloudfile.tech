@@ -27,7 +27,7 @@ class UploadController extends AbstractController
             return $authority;
         endif;
         
-        $apikey = $request->headers->get('apikey');
+        // Get Volume
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         
         $files = $request->files;

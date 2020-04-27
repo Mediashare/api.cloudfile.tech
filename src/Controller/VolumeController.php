@@ -15,12 +15,33 @@ class VolumeController extends AbstractController
         $this->response = new Response();
     }
 
+
     /**
+     * Display volume informations
+     * @Route("/volume", name="volume")
+     */
+    public function index(Request $request) {
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
+        endif;
+        
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        return $this->response->send([
+            'status' => 'success',
+            'volume' => $volume->getInfo()
+        ]);
+    }
+
+    /**
+     * Create new volume
      * @Route("/volume/new", name="volume_new")
      */
     public function new(Request $request) {
-        if ($this->getParameter('volume_password') 
-            && $request->get('volume_password') !== $this->getParameter('volume_password')):
+        if ($this->getParameter('cloudfile_password') 
+            && $request->get('cloudfile_password') !== $this->getParameter('cloudfile_password')):
                 return $this->response->send([
                     'status' => 'error',
                     'message' => 'Authority not valid for volume creation.'
@@ -37,19 +58,15 @@ class VolumeController extends AbstractController
 
         return $this->response->send([
             'status' => 'success',
-            'volume' => [
-                'id' => $volume->getId(),
-                'email' => $volume->getEmail(),
-                'apikey' => $volume->getApiKey(),
-                'size' => $volume->getSize(),
-            ]
+            'volume' => $volume->getInfo()
         ]);
     }
 
     /**
-     * @Route("/volume/info", name="volume_info")
+     * Reset ApiKey from volume & files associated
+     * @Route("/volume/generate/apikey", name="volume_generate_apikey")
      */
-    public function info(Request $request) {
+    public function generateApiKey(Request $request) {
         // Check Authority
         $apikey = $request->headers->get('apikey');
         $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
@@ -58,37 +75,24 @@ class VolumeController extends AbstractController
         endif;
         
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
-        return $this->response->send($volume->getInfo());
-    }
+        $volume->generateApiKey();
 
-    /**
-     * @Route("/volumes/retrieve", name="volumes_retrieve")
-     */
-    public function retrieve(Request $request) {
-        if ($this->getParameter('volume_password') 
-            && $request->get('volume_password') !== $this->getParameter('volume_password')):
-                return $this->response->send([
-                    'status' => 'error',
-                    'message' => 'Authority not valid for volume creation.'
-                ]);
-        endif;
-        
-        $email = $request->get('email');
-        $em = $this->getDoctrine()->getManager();
-        $volumes = $em->getRepository(Volume::class)->findBy(['email' => $email]);
-
-        $results = [];
-        foreach ($volumes as $volume):
-            $results[] = $volume->getInfo();
+        foreach ($volume->getFiles() as $file):
+            $file->setApiKey($volume->getApiKey());
         endforeach;
 
+        $volume->setUpdateDate(new \DateTime());
+        $em->persist($volume);
+        $em->flush();
+        
         return $this->response->send([
             'status' => 'success',
-            'results' => $results
+            'volume' => $volume->getInfo()
         ]);
     }
 
     /**
+     * Remove all files from volume
      * @Route("/volume/clear", name="volume_clear")
      */
     public function clear(Request $request) {
@@ -121,34 +125,7 @@ class VolumeController extends AbstractController
     }
 
     /**
-     * @Route("/volume/generate/apikey", name="volume_generate_apikey")
-     */
-    public function generateApiKey(Request $request) {
-        // Check Authority
-        $apikey = $request->headers->get('apikey');
-        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
-        if ($authority):
-            return $authority;
-        endif;
-        
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
-        $volume->generateApiKey();
-
-        foreach ($volume->getFiles() as $file):
-            $file->setApiKey($volume->getApiKey());
-        endforeach;
-
-        $volume->setUpdateDate(new \DateTime());
-        $em->persist($volume);
-        $em->flush();
-        
-        return $this->response->send([
-            'status' => 'success',
-            'volume' => $volume->getInfo()
-        ]);
-    }
-
-    /**
+     * Delete volume & all files associated
      * @Route("/volume/delete", name="volume_delete")
      */
     public function delete(Request $request) {
@@ -176,6 +153,34 @@ class VolumeController extends AbstractController
         return $this->response->send([
             'status' => 'success',
             'message' => 'Volume  ['.$volume->getId().'] was deleted.'
+        ]);
+    }
+
+    /**
+     * Retrieve your volume(s) with email associated
+     * @Route("/volume/retrieve", name="volume_retrieve")
+     */
+    public function retrieve(Request $request) {
+        if ($this->getParameter('cloudfile_password') 
+            && $request->get('cloudfile_password') !== $this->getParameter('cloudfile_password')):
+                return $this->response->send([
+                    'status' => 'error',
+                    'message' => 'Authority not valid for volume creation.'
+                ]);
+        endif;
+        
+        $email = $request->get('email');
+        $em = $this->getDoctrine()->getManager();
+        $volumes = $em->getRepository(Volume::class)->findBy(['email' => $email]);
+
+        $results = [];
+        foreach ($volumes as $volume):
+            $results[] = $volume->getInfo();
+        endforeach;
+
+        return $this->response->send([
+            'status' => 'success',
+            'volumes' => $results
         ]);
     }
 }

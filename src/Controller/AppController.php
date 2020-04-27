@@ -33,30 +33,10 @@ class AppController extends AbstractController
         if ($authority):
             return $authority;
         endif;
-
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
-        $size = 0;
-        foreach ($volume->getFiles() as $file) {
-            $size += $file->getSize();
-        }
-        
-        $fileSystem = new FileSystemApi();
-        $total_space = $fileSystem->human2byte($volume->getSize().'G');
-        $free_space = $total_space - $size;
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);        
         return $response->send([
             'status' => 'success',
             'volume' => $volume->getInfo(),
-            'stats' => [
-                'files' => [
-                    'counter' => count($volume->getFiles()),
-                ],
-                'stockage' => [
-                    'used' => $fileSystem->getSizeReadable($size),
-                    'used_pct' => number_format($size * 100 / $total_space, 1),
-                    'free' => $fileSystem->getSizeReadable($free_space),
-                    'total' => $fileSystem->getSizeReadable($total_space)
-                ]
-            ],
         ]);
     }
 }
