@@ -2,13 +2,13 @@ easy_admin:
    entities:
         Volume:
             class: App\Entity\Volume
-            disabled_actions: ['delete']
             list:
                 actions: ['show']
-                fields: ['id', 'email', 'size', 'apikey', 'files', 'updateDate', 'createDate']
+                fields: ['id', 'email', 'size', 'apikey', 'files', 'updateDate', 'createDate', 'online']
         File:
             class: App\Entity\File
-            disabled_actions: ['new', 'delete']
+            disabled_actions: ['new']
             list:
                 actions: ['show']
                 fields: ['id', 'name', 'size', 'mimeType', 'volume', 'createDate']
+
