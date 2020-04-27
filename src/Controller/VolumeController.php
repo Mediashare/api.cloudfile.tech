@@ -78,9 +78,9 @@ class VolumeController extends AbstractController
         $volumes = $em->getRepository(Volume::class)->findBy(['email' => $email]);
 
         $results = [];
-        foreach ($volumes as $volume) {
+        foreach ($volumes as $volume):
             $results[] = $volume->getInfo();
-        }
+        endforeach;
 
         return $this->response->send([
             'status' => 'success',
@@ -92,31 +92,28 @@ class VolumeController extends AbstractController
      * @Route("/volume/clear", name="volume_clear")
      */
     public function clear(Request $request) {
-        $apiKey = $request->headers->get('apikey');
-        if (!$apiKey):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'ApiKey not found in Header.'
-            ]);
-        endif;
-        $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apiKey, 'online' => true]);
-        if (!$volume):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'Volume not found with your ApiKey.'
-            ]);
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
         endif;
 
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         // Remove file(s)
         $fileSystem = new FileSystemApi();
-        foreach ($volume->getFiles() as $file) {    
+        foreach ($volume->getFiles() as $file):
             // Remove to database
             $em->remove($file);
             $em->flush();
             // Remove file stockage
             $fileSystem->remove($file->getStockage());
-        }
+        endforeach;
+        
+        $volume->setUpdateDate(new \DateTime());
+        $em->persist($volume);
+        $em->flush();
+
         return $this->response->send([
             'status' => 'success',
             'message' => 'All files from volume ['.$volume->getId().'] was deleted.'
@@ -127,23 +124,21 @@ class VolumeController extends AbstractController
      * @Route("/volume/generate/apikey", name="volume_generate_apikey")
      */
     public function generateApiKey(Request $request) {
-        $apiKey = $request->headers->get('apikey');
-        if (!$apiKey):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'ApiKey not found in Header.'
-            ]);
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
         endif;
-        $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apiKey, 'online' => true]);
-        if (!$volume):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'Volume not found with your ApiKey.'
-            ]);
-        endif;
-
+        
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         $volume->generateApiKey();
+
+        foreach ($volume->getFiles() as $file):
+            $file->setApiKey($volume->getApiKey());
+        endforeach;
+
+        $volume->setUpdateDate(new \DateTime());
         $em->persist($volume);
         $em->flush();
         
@@ -154,12 +149,33 @@ class VolumeController extends AbstractController
     }
 
     /**
-     * @Route("/volume/delete/{id}", name="volume_delete")
+     * @Route("/volume/delete", name="volume_delete")
      */
-    public function delete(Request $request, string $id) {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/VolumeController.php',
+    public function delete(Request $request) {
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
+        endif;
+        
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        // Remove file(s)
+        $fileSystem = new FileSystemApi();
+        foreach ($volume->getFiles() as $file) {    
+            // Remove to database
+            $em->remove($file);
+            $em->flush();
+            // Remove file stockage
+            $fileSystem->remove($file->getStockage());
+        }
+        // Delete Volume
+        $em->remove($volume);
+        $em->flush();
+        
+        return $this->response->send([
+            'status' => 'success',
+            'message' => 'Volume  ['.$volume->getId().'] was deleted.'
         ]);
     }
 }
