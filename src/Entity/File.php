@@ -226,7 +226,7 @@ class File
             if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'): $http = 'https://';
             else: $http = 'http://'; endif;
             $host = $http.trim($_SERVER['HTTP_HOST'], '/');
-            var_dump($_SERVER['HTTP_REFERER']);die;
+            var_dump($_SERVER);die;
         endif;
         return [
             'id' => $this->getId(),
