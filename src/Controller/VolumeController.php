@@ -154,32 +154,4 @@ class VolumeController extends AbstractController
             'message' => 'Volume  ['.$volume->getId().'] was deleted.'
         ]);
     }
-
-    /**
-     * Retrieve your volume(s) with email associated
-     * @Route("/volume/retrieve", name="volume_retrieve")
-     */
-    public function retrieve(Request $request) {
-        if ($this->getParameter('cloudfile_password') 
-            && $request->get('cloudfile_password') !== $this->getParameter('cloudfile_password')):
-                return $this->response->send([
-                    'status' => 'error',
-                    'message' => 'Authority not valid for volume creation.'
-                ]);
-        endif;
-        
-        $email = $request->get('email');
-        $em = $this->getDoctrine()->getManager();
-        $volumes = $em->getRepository(Volume::class)->findBy(['email' => $email]);
-
-        $results = [];
-        foreach ($volumes as $volume):
-            $results[] = $volume->getInfo();
-        endforeach;
-
-        return $this->response->send([
-            'status' => 'success',
-            'volumes' => $results
-        ]);
-    }
 }
