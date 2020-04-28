@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe3bc221bedf3446f5d3088019ce321b",
+    "content-hash": "70a36b6eb9e2001536b1dccaa581a25a",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1396,16 +1396,16 @@
         },
         {
             "name": "mediashare/kernel",
-            "version": "0.2.9",
+            "version": "0.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Mediashare/kernel.git",
-                "reference": "c66b48ff270d6f902b43a55b3c52e3e19996dbc3"
+                "reference": "04bc23ed354ff64b61cad2e1579fa59018c4cec4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Mediashare/kernel/zipball/c66b48ff270d6f902b43a55b3c52e3e19996dbc3",
-                "reference": "c66b48ff270d6f902b43a55b3c52e3e19996dbc3",
+                "url": "https://api.github.com/repos/Mediashare/kernel/zipball/04bc23ed354ff64b61cad2e1579fa59018c4cec4",
+                "reference": "04bc23ed354ff64b61cad2e1579fa59018c4cec4",
                 "shasum": ""
             },
             "require": {
@@ -1433,7 +1433,7 @@
                 }
             ],
             "description": "Mediashare Kernel with all public modules provided.",
-            "time": "2020-04-19T10:22:14+00:00"
+            "time": "2020-04-28T06:21:58+00:00"
         },
         {
             "name": "mediashare/modules-provider",
