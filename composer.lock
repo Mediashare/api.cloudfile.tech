@@ -1476,16 +1476,16 @@
         },
         {
             "name": "mediashare/show-content",
-            "version": "1.1.6",
+            "version": "1.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Mediashare/ShowContent.git",
-                "reference": "25f195afabc5bc39f02bd33cc5b31cb407e63aae"
+                "reference": "80de4d6fec77b9a4567e0469edfc54e786fa9c8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Mediashare/ShowContent/zipball/25f195afabc5bc39f02bd33cc5b31cb407e63aae",
-                "reference": "25f195afabc5bc39f02bd33cc5b31cb407e63aae",
+                "url": "https://api.github.com/repos/Mediashare/ShowContent/zipball/80de4d6fec77b9a4567e0469edfc54e786fa9c8c",
+                "reference": "80de4d6fec77b9a4567e0469edfc54e786fa9c8c",
                 "shasum": ""
             },
             "require": {
@@ -1512,7 +1512,7 @@
                 }
             ],
             "description": "Detect file type & generate html view for web interface user-friendly. (Image/Video/Audio/Text/Markdown)",
-            "time": "2020-04-27T08:35:57+00:00"
+            "time": "2020-04-28T04:48:39+00:00"
         },
         {
             "name": "nikic/php-parser",
