@@ -223,6 +223,7 @@ class File
         if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
             $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
         else:
+            dd($_SERVER['HTTPS']);
             if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'): $http = 'https://';
             else: $http = 'http://'; endif;
             $host = $http.trim($_SERVER['HTTP_HOST'], '/');
