@@ -1396,16 +1396,16 @@
         },
         {
             "name": "mediashare/kernel",
-            "version": "0.3.9",
+            "version": "0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Mediashare/kernel.git",
-                "reference": "04bc23ed354ff64b61cad2e1579fa59018c4cec4"
+                "reference": "ce794d8b2a01f874f220fa90d7d05af0db40ec55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Mediashare/kernel/zipball/04bc23ed354ff64b61cad2e1579fa59018c4cec4",
-                "reference": "04bc23ed354ff64b61cad2e1579fa59018c4cec4",
+                "url": "https://api.github.com/repos/Mediashare/kernel/zipball/ce794d8b2a01f874f220fa90d7d05af0db40ec55",
+                "reference": "ce794d8b2a01f874f220fa90d7d05af0db40ec55",
                 "shasum": ""
             },
             "require": {
@@ -1433,7 +1433,7 @@
                 }
             ],
             "description": "Mediashare Kernel with all public modules provided.",
-            "time": "2020-04-28T06:21:58+00:00"
+            "time": "2020-04-28T06:45:45+00:00"
         },
         {
             "name": "mediashare/modules-provider",
