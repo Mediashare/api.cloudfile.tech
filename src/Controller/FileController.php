@@ -134,7 +134,7 @@ class FileController extends AbstractController
         if ($showContent->file->getType() === "text"):
             $showContent->file->content = \file_get_contents($file->getPath());
         endif;
-        $showContent->cache = $this->getParameter('project_dir').'/var/cache';
+        $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
         return new \Symfony\Component\HttpFoundation\Response($showContent->show());
     }
 
