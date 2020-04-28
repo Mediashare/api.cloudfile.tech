@@ -3,13 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\File;
+use App\Entity\Proxy;
 use App\Entity\Volume;
 use App\Service\Response;
 use App\Service\FileSystemApi;
+use Mediashare\ShowContent\ShowContent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FileController extends AbstractController
@@ -100,6 +103,66 @@ class FileController extends AbstractController
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
+    }
+
+    /**
+     * @Route("/render/{id}", name="render")
+     */
+    public function renderFile(Request $request, string $id) {
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
+        endif;
+        
+        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
+        if (!$file):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'File not found.',
+            ], 404);
+        endif;
+
+        // Generate proxy url for bypass apikey protection
+        $proxy = new Proxy($file);
+        $em->persist($proxy);
+        $em->flush();
+        $url = $this->generateUrl('proxy', ['id' => $proxy->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $showContent = new ShowContent($url);
+        $showContent->file->mimeType = $file->getMimeType();
+        if ($showContent->file->getType() === "text"):
+            $showContent->file->content = \file_get_contents($file->getPath());
+        endif;
+        $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
+        return new \Symfony\Component\HttpFoundation\Response($showContent->show());
+    }
+
+
+    /**
+     * @Route("/proxy/{id}", name="proxy")
+     */
+    public function proxy(string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $proxy = $em->getRepository(Proxy::class)->find($id);
+        if ($proxy):
+            $date = new \DateTime();
+            $diff = (int) $date->diff($proxy->getCreateDate())->format('%h%');
+            if ($diff > 6):
+                $em->remove($proxy);
+                $em->flush();
+            endif;
+            $response = new BinaryFileResponse($proxy->getFile()->getPath(), 200);
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
+            return $response;
+        else:
+        endif;
+
+        return $this->response->send([
+            'status' => 'error',
+            'message' => 'Your proxy session was not found.'
+        ]);
     }
 
     /**
