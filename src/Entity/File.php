@@ -237,6 +237,7 @@ class File
             'urls' => [
                 'info' => $host.'/info/'.$this->getId(),
                 'show' => $host.'/show/'.$this->getId(),
+                'render' => $host.'/render/'.$this->getId(),
                 'download' => $host.'/download/'.$this->getId(),
                 'remove' => $host.'/remove/'.$this->getId(),
             ],
