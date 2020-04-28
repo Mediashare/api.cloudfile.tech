@@ -23,14 +23,14 @@ class Proxy
     private $file;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="datetime")
      */
-    private $displayed;
+    private $createDate;
 
     public function __construct(File $file) {
         $this->setId(\uniqid());
         $this->setFile($file);
-        $this->setDisplayed(0);
+        $this->setCreateDate(new \DateTime());
     }
 
     public function getId(): ?string
@@ -43,18 +43,6 @@ class Proxy
         return $this;
     }
 
-    public function getDisplayed(): ?int
-    {
-        return $this->displayed;
-    }
-
-    public function setDisplayed(int $displayed): self
-    {
-        $this->displayed = $displayed;
-
-        return $this;
-    }
-
     public function getFile(): ?File
     {
         return $this->file;
@@ -63,6 +51,18 @@ class Proxy
     public function setFile(?File $file): self
     {
         $this->file = $file;
+
+        return $this;
+    }
+
+    public function getCreateDate(): ?\DateTime
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate(\DateTime $createDate): self
+    {
+        $this->createDate = $createDate;
 
         return $this;
     }

@@ -134,7 +134,7 @@ class FileController extends AbstractController
         if ($showContent->file->getType() === "text"):
             $showContent->file->content = \file_get_contents($file->getPath());
         endif;
-        $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
+        // $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
         return new \Symfony\Component\HttpFoundation\Response($showContent->show());
     }
 
@@ -146,16 +146,17 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $proxy = $em->getRepository(Proxy::class)->find($id);
         if ($proxy):
-            $proxy->setDisplayed($proxy->getDisplayed() + 1);
-            $em->persist($proxy);
+            $date = new \DateTime();
+            $diff = (int) $date->diff($proxy->getCreateDate())->format('%h%');
+            if ($diff > 6):
+                $em->remove($proxy);
+                $em->flush();
+            endif;
             $response = new BinaryFileResponse($proxy->getFile()->getPath(), 200);
             $response->headers->set('Access-Control-Allow-Origin', '*');
             $response->headers->set('Access-Control-Allow-Headers', '*');
-            if ($proxy->getDisplayed() == 2):
-                $em->remove($proxy);
-            endif;
-            $em->flush();
             return $response;
+        else:
         endif;
 
         return $this->response->send([
