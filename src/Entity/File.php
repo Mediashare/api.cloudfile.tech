@@ -223,10 +223,9 @@ class File
         if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
             $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
         else:
-            if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'): $http = 'https://';
+            if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'): $http = 'https://';
             else: $http = 'http://'; endif;
             $host = $http.trim($_SERVER['HTTP_HOST'], '/');
-            var_dump($_SERVER);die;
         endif;
         return [
             'id' => $this->getId(),
