@@ -130,6 +130,7 @@ class FileController extends AbstractController
         $em->flush();
         $url = $this->generateUrl('proxy', ['id' => $proxy->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         $showContent = new ShowContent($url);
+        dd($file->getMimeType());
         $showContent->file->mimeType = $file->getMimeType();
         if ($showContent->file->getType() === "text"):
             $showContent->file->content = \file_get_contents($file->getPath());
