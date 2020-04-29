@@ -136,7 +136,8 @@ class FileController extends AbstractController
             if ($showContent->file->getMimeType() === "text/plain"):
                 $showContent->file->mimeType = "text/markdown";
             elseif ($showContent->file->getMimeType() === "text/x-php"):
-                $showContent->file->content = str_replace('<?php', '&lt;?php', $showContent->file->getContent());
+                $showContent->file->content = str_replace('<?', '&lt;?', $showContent->file->getContent());
+                $showContent->file->content = str_replace('?>', '?&gt;', $showContent->file->getContent());
             endif;
         endif;
         $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
