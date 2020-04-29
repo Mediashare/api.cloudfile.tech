@@ -12,13 +12,17 @@ WORKDIR /home/CloudFile-API
 RUN composer install
 RUN bin/console doctrine:database:create
 RUN bin/console doctrine:schema:update --force
+RUN mkdir var/stockage
 RUN chmod -R 777 var
 EXPOSE 8080
 
-RUN sed -i '/^ *cloudfile_password/s/=.*/= ""/' .env
+# RUN sed -i '/^ *cloudfile_password/s/=.*/= "" /' .env
 RUN sed -i '/^ *memory_limit/s/=.*/= -1/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *post_max_size/s/=.*/= 10000M/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *upload_max_filesize/s/=.*/= 10000M/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *max_file_uploads/s/=.*/= 10000/' /etc/php/7.3/cli/php.ini
 
-CMD [ "bin/console", "server:run", "0.0.0.0:8080" ] 
+CMD [ "php", "-S", "0.0.0.0:8080", "-t", "public" ]
+
+# docker build -t mediashare/cloudfile-api .
+# docker run --rm -p 127.0.0.1:8080:8080 mediashare/cloudfile-api
