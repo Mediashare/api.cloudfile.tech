@@ -155,6 +155,7 @@ class FileController extends AbstractController
             $response = new BinaryFileResponse($proxy->getFile()->getPath(), 200);
             $response->headers->set('Access-Control-Allow-Origin', '*');
             $response->headers->set('Access-Control-Allow-Headers', '*');
+            $response->headers->set('Content-Type', $proxy->getFile()->getMimeType());
             return $response;
         else:
         endif;
