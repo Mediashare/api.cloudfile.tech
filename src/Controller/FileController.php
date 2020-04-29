@@ -132,10 +132,12 @@ class FileController extends AbstractController
         $showContent = new ShowContent($url);
         $showContent->file->mimeType = $file->getMimeType();
         if ($showContent->file->getType() === "text"):
+            $showContent->file->content = \file_get_contents($file->getPath());
             if ($showContent->file->getMimeType() === "text/plain"):
                 $showContent->file->mimeType = "text/markdown";
+            elseif ($showContent->file->getMimeType() === "text/x-php"):
+                $showContent->file->content = str_replace('<?php', '&lt;?php', $showContent->file->getContent());
             endif;
-            $showContent->file->content = \file_get_contents($file->getPath());
         endif;
         $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
         return new \Symfony\Component\HttpFoundation\Response($showContent->show());
