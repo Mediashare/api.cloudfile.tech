@@ -25,4 +25,4 @@ RUN sed -i '/^ *max_file_uploads/s/=.*/= 10000/' /etc/php/7.3/cli/php.ini
 CMD [ "php", "-S", "0.0.0.0:8080", "-t", "public" ]
 
 # docker build -t mediashare/cloudfile-api .
-# docker run --rm -p 127.0.0.1:8080:8080 mediashare/cloudfile-api
+# docker run -p 127.0.0.1:8080:8080 mediashare/cloudfile-api
