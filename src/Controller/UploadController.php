@@ -41,7 +41,6 @@ class UploadController extends AbstractController
                 ]);
             endif;
             // Upload file(s)
-            $stockage = $this->getParameter('stockage');
             $fileSystem = new FileSystemApi();
             $results = [];
             $size = 0;
@@ -52,7 +51,7 @@ class UploadController extends AbstractController
                     $id = \uniqid();
                 }
                 // Upload file
-                $file = $fileSystem->upload($id, $file, $stockage);
+                $file = $fileSystem->upload($id, $file, $volume->getStockage());
                 // Set metadata
                 $file->setMetadata($_REQUEST);
                 // ApiKey & Volume

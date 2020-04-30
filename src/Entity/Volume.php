@@ -35,6 +35,11 @@ class Volume
     private $size;
 
     /**
+     * @ORM\Column(type="string", length=9999)
+     */
+    private $stockage;
+
+    /**
      * @ORM\Column(type="boolean")
      */
     private $online;
@@ -116,6 +121,18 @@ class Volume
     public function setSize(int $size): self
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function getStockage(): ?string
+    {
+        return $this->stockage;
+    }
+
+    public function setStockage(string $stockage): self
+    {
+        $this->stockage = $stockage;
 
         return $this;
     }
@@ -218,6 +235,5 @@ class Volume
             'updateDate' => $this->getUpdateDate(),
             'createDate' => $this->getCreateDate(),
         ];
-    }
-    
+    }    
 }

@@ -15,8 +15,8 @@ class AdminController extends EasyAdminController
         $em = $this->getDoctrine()->getManager();
         
         if (get_class($entity) === Volume::class):
+            $this->clearVolume($entity);
             foreach ($entity->getFiles() as $file):    
-                $this->removeFile($file);
                 $em->remove($file);
                 $em->flush();
             endforeach;
@@ -51,6 +51,10 @@ class AdminController extends EasyAdminController
 
     }
 
+    private function clearVolume(Volume $volume) {
+        $fileSystem = new FileSystemApi();
+        $fileSystem->remove($volume->getStockage());
+    }
     private function removeFile(File $file) {
         // Remove file stockage
         $fileSystem = new FileSystemApi(); 

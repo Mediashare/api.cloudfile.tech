@@ -50,6 +50,7 @@ class VolumeController extends AbstractController
         $volume = new Volume();
         $volume->setEmail($request->get('email')); // Email association
         $volume->setSize($request->get('size')); // Gb
+        $volume->setStockage(rtrim($this->getParameter('stockage'), '/').'/'.$volume->getId());
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($volume);
@@ -103,14 +104,14 @@ class VolumeController extends AbstractController
         endif;
 
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        
         // Remove file(s)
         $fileSystem = new FileSystemApi();
+        $fileSystem->remove($volume->getStockage());
         foreach ($volume->getFiles() as $file):
             // Remove to database
             $em->remove($file);
             $em->flush();
-            // Remove file stockage
-            $fileSystem->remove($file->getStockage());
         endforeach;
         
         $volume->setUpdateDate(new \DateTime());
@@ -136,14 +137,15 @@ class VolumeController extends AbstractController
         endif;
         
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        
         // Remove file(s)
         $fileSystem = new FileSystemApi();
+        $fileSystem->remove($volume->getStockage());
         foreach ($volume->getFiles() as $file) {    
             // Remove to database
             $em->remove($file);
             $em->flush();
             // Remove file stockage
-            $fileSystem->remove($file->getStockage());
         }
         // Delete Volume
         $em->remove($volume);
