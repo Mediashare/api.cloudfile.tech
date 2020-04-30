@@ -145,7 +145,6 @@ class VolumeController extends AbstractController
             // Remove to database
             $em->remove($file);
             $em->flush();
-            // Remove file stockage
         }
         // Delete Volume
         $em->remove($volume);
