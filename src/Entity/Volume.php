@@ -20,6 +20,11 @@ class Volume
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $name;
+
+    /**
      * @ORM\Column(type="string", length=500)
      */
     private $email;
@@ -89,6 +94,18 @@ class Volume
 
         return $this;
     }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }   
 
     public function getEmail(): ?string
     {
@@ -237,6 +254,7 @@ class Volume
         $free_space = $total_space - $size;
         return [
             'id' => $this->getId(),
+            'name' => $this->getName(),
             'email' => $this->getEmail(),
             'size' => $this->getSize(),
             'private' => $this->getPrivate(),
@@ -254,5 +272,5 @@ class Volume
             'updateDate' => $this->getUpdateDate(),
             'createDate' => $this->getCreateDate(),
         ];
-    }   
+    }
 }

@@ -48,6 +48,7 @@ class VolumeController extends AbstractController
         endif;
         
         $volume = new Volume();
+        $volume->setName($request->get('name'));
         $volume->setEmail($request->get('email')); // Email association
         $volume->setSize($request->get('size')); // Gb
         $volume->setStockage(rtrim($this->getParameter('stockage'), '/').'/'.$volume->getId());
@@ -75,6 +76,9 @@ class VolumeController extends AbstractController
         
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         
+        if ($name = (string) $request->get('name')):
+            $volume->setSize($name);
+        endif;
         if ($size = (int) $request->get('size')):
             $volume->setSize($size);
         endif;
