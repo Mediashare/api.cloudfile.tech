@@ -39,7 +39,7 @@ class SearchController extends AbstractController
         if (!empty($queries)):
             foreach ($files as $index => $file):
                 foreach ($queries as $query => $value):
-                    if ($score = $this->searchInArray($file->getInfo(), $query, $value)):
+                    if ($score = $this->searchInArray($info = $file->getInfo(), $query, $value)):
                         if (isset($results[$file->getId()])):
                             $score += $results[$file->getId()]['score'];
                         else:
@@ -47,7 +47,7 @@ class SearchController extends AbstractController
                         endif;
                         $results[$file->getId()] = [
                             'score' => $score,
-                            'file' => $file->getInfo()
+                            'file' => $info
                         ];
                     else: // Remove if score = 0
                         unset($results[$file->getId()]);
