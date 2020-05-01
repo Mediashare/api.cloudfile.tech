@@ -33,6 +33,8 @@ class SearchController extends AbstractController
         $queries = $this->getRealInput('GET');
         if (!$queries && $request->getContent()):
             $queries = \json_decode($request->getContent(), true);
+        elseif (!$queries):
+            $queries = $request->query->all();
         endif;
         $size = 0;
         $results = [];
