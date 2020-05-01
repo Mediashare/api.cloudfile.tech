@@ -63,6 +63,50 @@ class VolumeController extends AbstractController
     }
 
     /**
+     * @Route("/volume/edit", name="volume_edit")
+     */
+    public function edit(Request $request) {
+        // Check Authority
+        $apikey = $request->headers->get('apikey');
+        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        if ($authority):
+            return $authority;
+        endif;
+        
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        
+        if ($size = (int) $request->get('size')):
+            $volume->setSize($size);
+        endif;
+        if ($online = $request->get('online')):
+            if ($online == "true"):
+                $online = true;
+            else: $online = false;endif;
+            $volume->setOnline($online);
+        endif;
+        if ($private = $request->get('private')):
+            if ($private == "true"):
+                $private = true;
+            else: $private = false;endif;
+            $volume->setPrivate($private);
+            foreach ($volume->getFiles() as $file):
+                $file->setPrivate($private);
+                $em->persist($file);
+                $em->flush();
+            endforeach;
+        endif;
+        
+        $volume->setUpdateDate(new \DateTime());
+        $em->persist($volume);
+        $em->flush();
+        
+        return $this->response->send([
+            'status' => 'success',
+            'volume' => $volume->getInfo()
+        ]);
+    }
+
+    /**
      * Reset ApiKey from volume & files associated
      * @Route("/volume/reset/apikey", name="volume_reset_apikey")
      */

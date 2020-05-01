@@ -42,6 +42,11 @@ class Volume
     /**
      * @ORM\Column(type="boolean")
      */
+    private $private;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
     private $online;
     
     /**
@@ -67,6 +72,7 @@ class Volume
         $this->files = new ArrayCollection();
         $this->setId(\uniqid());
         $this->generateApiKey();
+        $this->setPrivate(true);
         $this->setOnline(true);
         $this->setCreateDate(new \DateTime());
         $this->setUpdateDate(new \DateTime());
@@ -136,6 +142,18 @@ class Volume
 
         return $this;
     }
+
+    public function getPrivate(): ?bool
+    {
+        return $this->private;
+    }
+
+    public function setPrivate(bool $private): self
+    {
+        $this->private = $private;
+
+        return $this;
+    } 
 
     public function getOnline(): ?bool
     {
@@ -235,5 +253,5 @@ class Volume
             'updateDate' => $this->getUpdateDate(),
             'createDate' => $this->getCreateDate(),
         ];
-    }    
+    }   
 }
