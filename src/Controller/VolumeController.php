@@ -153,14 +153,15 @@ class VolumeController extends AbstractController
 
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         
-        // Remove file(s)
-        $fileSystem = new FileSystemApi();
-        $fileSystem->remove($volume->getStockage());
         foreach ($volume->getFiles() as $file):
             // Remove to database
             $em->remove($file);
             $em->flush();
         endforeach;
+        
+        // Remove file(s)
+        $fileSystem = new FileSystemApi();
+        $fileSystem->remove($volume->getStockage());
         
         $volume->setUpdateDate(new \DateTime());
         $em->persist($volume);

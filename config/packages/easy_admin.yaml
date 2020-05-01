@@ -4,11 +4,11 @@ easy_admin:
             class: App\Entity\Volume
             list:
                 actions: ['show']
-                fields: ['id', 'email', 'size', 'apikey', 'files', 'updateDate', 'createDate', 'online']
+                fields: ['id', 'email', 'size', 'apikey', 'files', 'private', 'updateDate', 'online']
         File:
             class: App\Entity\File
             disabled_actions: ['new']
             list:
                 actions: ['show']
-                fields: ['id', 'name', 'size', 'mimeType', 'volume', 'createDate']
+                fields: ['id', 'name', 'size', 'mimeType', 'private', 'createDate']
 
