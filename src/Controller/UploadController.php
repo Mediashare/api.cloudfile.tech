@@ -54,6 +54,7 @@ class UploadController extends AbstractController
                 $file = $fileSystem->upload($id, $file, $volume->getStockage());
                 // Set metadata
                 $file->setMetadata($_REQUEST);
+                $file->setPrivate($volume->getPrivate());
                 // ApiKey & Volume
                 $file->setApiKey($apikey);
                 $file->setVolume($volume);

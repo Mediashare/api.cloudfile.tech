@@ -47,7 +47,8 @@ class SearchController extends AbstractController
                         endif;
                         $results[$file->getId()] = [
                             'score' => $score,
-                            'file' => $info
+                            'file' => $info,
+                            'volume' => $file->getVolume()->getInfo()
                         ];
                     else: // Remove if score = 0
                         unset($results[$file->getId()]);
