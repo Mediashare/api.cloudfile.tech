@@ -36,7 +36,6 @@ class SearchController extends AbstractController
         elseif (!$queries):
             $queries = $request->query->all();
         endif;
-        dd($queries);
         $size = 0;
         $results = [];
         if (!empty($queries)):
