@@ -239,6 +239,7 @@ class Volume
             'id' => $this->getId(),
             'email' => $this->getEmail(),
             'size' => $this->getSize(),
+            'private' => $this->getPrivate(),
             'online' => $this->getOnline(),
             'apikey' => $this->getApikey(),
             'stats' => [
