@@ -50,7 +50,10 @@ class SearchController extends AbstractController
                         $results[$file->getId()] = [
                             'score' => $score,
                             'file' => $info,
-                            'volume' => $file->getVolume()->getInfo()
+                            'volume' => [
+                                'id' => $file->getVolume()->getId(),
+                                'name' => $file->getVolume()->getName()
+                            ]
                         ];
                     else: // Remove if score = 0
                         unset($results[$file->getId()]);
