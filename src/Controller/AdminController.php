@@ -37,6 +37,9 @@ class AdminController extends EasyAdminController
         $em = $this->getDoctrine()->getManager();
         if (get_class($entity) === Volume::class):
             foreach ($entity->getFiles() as $file):
+                if ($entity->getPrivate()):
+                    $file->setPrivate(true);
+                else: $file->setPrivate(false); endif;
                 $file->setApiKey($entity->getApikey());
                 $em->persist($file);
                 $em->flush();

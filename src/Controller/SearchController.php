@@ -18,20 +18,25 @@ class SearchController extends AbstractController
     public function search(Request $request) {
         // Check Authority
         $response = new Response();
+        $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey');
-        $authority = $response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
-        if ($authority):
-            return $authority;
+        if ($apikey):
+            $authority = $response->checkAuthority($em, $apikey);
+            if ($authority):
+                return $authority;
+            endif;
+            $files = $em->getRepository(File::class)->findBy(['apiKey' => $apikey], ['createDate' => 'DESC']);
+        else:
+            $files = $em->getRepository(File::class)->findBy(['private' => false], ['createDate' => 'DESC']);
         endif;
 
-        $files = $em->getRepository(File::class)->findBy(['apiKey' => $apikey], ['createDate' => 'DESC']);
         $queries = $this->getRealInput('GET');
         if (!$queries && $request->getContent()):
             $queries = \json_decode($request->getContent(), true);
         endif;
         $size = 0;
         $results = [];
-        if ($queries):
+        if (!empty($queries)):
             foreach ($files as $index => $file):
                 foreach ($queries as $query => $value):
                     if ($score = $this->searchInArray($file->getInfo(), $query, $value)):
@@ -108,13 +113,16 @@ class SearchController extends AbstractController
         $pairs = explode("&", $source == 'POST' ? file_get_contents("php://input") : $_SERVER['QUERY_STRING']);
         $vars = array();
         foreach ($pairs as $pair) {
+            $name = null;
             $value = null;
             $nv = explode("=", $pair);
             $name = trim(urldecode($nv[0]));
             if (isset($nv[1])):
                 $value = trim(urldecode($nv[1]));
             endif;
-            $vars[$name] = $value ?? null;
+            if ($name || $value):
+                $vars[$name] = $value ?? null;
+            endif;
         }
         return $vars;
     }

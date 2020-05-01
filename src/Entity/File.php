@@ -77,7 +77,7 @@ class File
 
     public function __construct() {
         $this->setId(\uniqid());
-        $this->setPrivate(false);
+        $this->setPrivate(true);
         $this->setCreateDate(new \DateTime());
     }
 
@@ -202,7 +202,7 @@ class File
     public function setApiKey(?string $apiKey = null): self
     {
         $this->apiKey = $apiKey;
-        if ($apiKey):$this->setPrivate(true);endif;
+        
         return $this;
     }
 
