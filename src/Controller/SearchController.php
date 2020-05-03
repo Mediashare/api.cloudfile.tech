@@ -67,7 +67,6 @@ class SearchController extends AbstractController
             return $a['score'] <=> $b['score'];
         });
         $results = array_reverse($results, false);
-        $results = array_splice(array_unique($results), 0, 99);
         // Response
         $fileSystem = new FileSystemApi();
         return $response->send([
