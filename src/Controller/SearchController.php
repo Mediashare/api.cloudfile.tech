@@ -90,8 +90,8 @@ class SearchController extends AbstractController
                     $score += $percent_index_key;
                 endif;
             elseif (!$query && is_string($value) && $this->compare($value, $key)): // index !== $key && !$query && value === $key
-                \similar_text($value, $key, $percent_value_key); 
-                $score += $percent_value_key * 1.5;
+                // \similar_text($value, $key, $percent_value_key); 
+                // $score += $percent_value_key * 1.5;
             endif;
 
             // // Array recursive
