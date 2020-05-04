@@ -94,13 +94,13 @@ class SearchController extends AbstractController
                 $score += $percent_value_key * 1.5;
             endif;
 
-            // Array recursive
-            if (is_array($value)):
-                $result = $this->searchInArray((array) $value, $key, $query, $score);
-                if (!empty($result)):
-                    $score += $result;
-                endif;
-            endif;
+            // // Array recursive
+            // if (is_array($value)):
+            //     $result = $this->searchInArray((array) $value, $key, $query, $score);
+            //     if (!empty($result)):
+            //         $score += $result;
+            //     endif;
+            // endif;
         endforeach;
         return $score;
     }
