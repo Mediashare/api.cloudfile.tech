@@ -65,7 +65,7 @@ class SearchController extends AbstractController
         // Order
         usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
         $results = array_reverse($results, false);
-        $results = array_slice($results, 0, 100);
+        // $results = array_slice($results, 0, 100);
         // Response
         $fileSystem = new FileSystemApi();
         return $response->send([
@@ -81,26 +81,26 @@ class SearchController extends AbstractController
 
     private function searchInArray(array $array, string $key, ?string $query = null, ?float $score = 0) {
         foreach ($array as $index => $value):
-            // if ($this->compare($index, $key)): // index === $key
-                // \similar_text($index, $key, $percent_index_key);
-                // if ($query && is_string($value) && $this->compare($value, $query)): // index === $key && value === $query
-                //     \similar_text($value, $query, $percent_value_query);
-                //     $score += $percent_value_query + $percent_index_key;
-                // elseif (!$query): // index === $key && !$query
-                //     $score += $percent_index_key;
-                // endif;
-            // elseif (!$query && is_string($value) && $this->compare($value, $key)): // index !== $key && !$query && value === $key
-            // endif;
-            \similar_text($value, $key, $percent_value_key); 
-            $score += $percent_value_key * 1.5;
+            if ($this->compare($index, $key)): // index === $key
+                \similar_text($index, $key, $percent_index_key);
+                if ($query && is_string($value) && $this->compare($value, $query)): // index === $key && value === $query
+                    \similar_text($value, $query, $percent_value_query);
+                    $score += $percent_value_query + $percent_index_key;
+                elseif (!$query): // index === $key && !$query
+                    $score += $percent_index_key;
+                endif;
+            elseif (!$query && is_string($value) && $this->compare($value, $key)): // index !== $key && !$query && value === $key
+                \similar_text($value, $key, $percent_value_key); 
+                $score += $percent_value_key * 1.5;
+            endif;
 
-            // // Array recursive
-            // if (is_array($value)):
-            //     $result = $this->searchInArray((array) $value, $key, $query, $score);
-            //     if (!empty($result)):
-            //         $score += $result;
-            //     endif;
-            // endif;
+            // Array recursive
+            if (is_array($value)):
+                $result = $this->searchInArray((array) $value, $key, $query, $score);
+                if (!empty($result)):
+                    $score += $result;
+                endif;
+            endif;
         endforeach;
         return $score;
     }
