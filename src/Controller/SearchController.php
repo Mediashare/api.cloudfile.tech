@@ -63,9 +63,9 @@ class SearchController extends AbstractController
             endforeach;
         endif;
         // Order
-        // usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
-        // $results = array_reverse($results, false);
-        // $results = array_slice($results, 0, 100);
+        usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
+        $results = array_reverse($results, false);
+        $results = array_slice($results, 0, 100);
         // Response
         $fileSystem = new FileSystemApi();
         return $response->send([
