@@ -25,11 +25,6 @@ class Volume
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=500)
-     */
-    private $email;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $apikey;
@@ -106,18 +101,6 @@ class Volume
 
         return $this;
     }   
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
 
     public function generateApiKey(): self {
         $this->setApikey($this->rngString(32));
@@ -255,7 +238,6 @@ class Volume
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'email' => $this->getEmail(),
             'size' => $this->getSize(),
             'private' => $this->getPrivate(),
             'online' => $this->getOnline(),

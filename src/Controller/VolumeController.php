@@ -49,7 +49,6 @@ class VolumeController extends AbstractController
         
         $volume = new Volume();
         $volume->setName($request->get('name'));
-        $volume->setEmail($request->get('email')); // Email association
         $volume->setSize($request->get('size')); // Gb
         $volume->setStockage(rtrim($this->getParameter('stockage'), '/').'/'.$volume->getId());
 

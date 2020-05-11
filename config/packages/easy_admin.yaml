@@ -4,7 +4,7 @@ easy_admin:
             class: App\Entity\Volume
             list:
                 actions: ['show']
-                fields: ['id', 'email', 'size', 'apikey', 'files', 'private', 'updateDate', 'online']
+                fields: ['id', 'size', 'apikey', 'files', 'private', 'updateDate', 'online']
         File:
             class: App\Entity\File
             disabled_actions: ['new']
