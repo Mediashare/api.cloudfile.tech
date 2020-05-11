@@ -9,7 +9,7 @@ WORKDIR /home
 RUN git clone https://github.com/Mediashare/CloudFile-API
 WORKDIR /home/CloudFile-API
 
-RUN composer install
+RUN composer update
 RUN bin/console doctrine:database:create
 RUN bin/console doctrine:schema:update --force
 RUN mkdir var/stockage
@@ -21,6 +21,8 @@ RUN sed -i '/^ *memory_limit/s/=.*/= -1/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *post_max_size/s/=.*/= 10000M/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *upload_max_filesize/s/=.*/= 10000M/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *max_file_uploads/s/=.*/= 10000/' /etc/php/7.3/cli/php.ini
+RUN service apache2 restart
+
 
 CMD [ "php", "-S", "0.0.0.0:8080", "-t", "public" ]
 
