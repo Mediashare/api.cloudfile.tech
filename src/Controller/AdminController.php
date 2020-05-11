@@ -17,7 +17,8 @@ class AdminController extends EasyAdminController
         if (get_class($entity) === Volume::class):
             $this->clearVolume($entity);
             foreach ($entity->getFiles() as $file):    
-                $entity->removeFile($file);
+                $em->remove($file);
+                $em->flush();
             endforeach;
         elseif (get_class($entity) === File::class):
             $this->removeFile($entity);
