@@ -154,8 +154,7 @@ class VolumeController extends AbstractController
         
         foreach ($volume->getFiles() as $file):
             // Remove to database
-            $em->remove($file);
-            $em->flush();
+            $volume->removeFile($file);
         endforeach;
         
         // Remove file(s)
@@ -191,8 +190,7 @@ class VolumeController extends AbstractController
         $fileSystem->remove($volume->getStockage());
         foreach ($volume->getFiles() as $file) {    
             // Remove to database
-            $em->remove($file);
-            $em->flush();
+            $volume->removeFile($file);
         }
         // Delete Volume
         $em->remove($volume);
