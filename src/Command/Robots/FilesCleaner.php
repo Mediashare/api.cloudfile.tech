@@ -18,11 +18,11 @@ Class FilesCleaner {
         $progressBar = new ProgressBar($this->io, count($files));
         $progressBar->start();
         foreach ($files as $file):
-            $progressBar->advance();
             if (!$file->getVolume()):
                 $this->io->warning($file->getName() . ' is deleted because have not volume');
                 $this->removeFile($file);
             endif;
+            $progressBar->advance();
         endforeach;
         $progressBar->finish();
     }

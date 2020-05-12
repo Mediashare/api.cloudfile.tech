@@ -16,15 +16,18 @@ Class VolumesCleaner {
     public $io;
     public function run() {
         $volumes = $this->getVolumes();
-        $progressBar = new ProgressBar($this->io, count($volumes));
-        $progressBar->start();
+        $progressBarVolumes = new ProgressBar($this->io->section('Volumes'), count($volumes));
+        $progressBarVolumes->start();
         foreach ($volumes as $volume):
-            $progressBar->advance();
+            $progressBarFiles = new ProgressBar($this->io->section('Files'), count($volume->getFiles()));
             foreach ($volume->getFiles() as $file):
                 $this->status($volume, $file);
+                $progressBarFiles->advance();
             endforeach;
+            $progressBarFiles->finish();
+            $progressBarVolumes->advance();
         endforeach;
-        $progressBar->finish();
+        $progressBarVolumes->finish();
     }
 
     public function getVolumes() {
