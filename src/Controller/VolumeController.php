@@ -77,26 +77,25 @@ class VolumeController extends AbstractController
         
         if ($name = (string) $request->get('name')):
             $volume->setName($name);
-        endif;
-        if ($size = (int) $request->get('size')):
-            $volume->setSize($size);
-        endif;
-        if ($online = $request->get('online')):
-            if ($online == "true"):
-                $online = true;
-            else: $online = false;endif;
-            $volume->setOnline($online);
-        endif;
-        
+        endif;        
         if (!empty($request->get('private'))):
             $private = $request->get('private');
             if ($private == "true" || $private === true):
                 $private = true;
             else: $private = false;endif;
             $volume->setPrivate($private);
-            foreach ($volume->getFiles() as $file):
-                $file->setPrivate($private);
-            endforeach;
+        endif;
+
+        if ($request->get('cloudfile_password') === $this->getParameter('cloudfile_password')):
+            if ($size = (int) $request->get('size')):
+                $volume->setSize($size);
+            endif;
+            if ($online = $request->get('online')):
+                if ($online == "true"):
+                    $online = true;
+                else: $online = false;endif;
+                $volume->setOnline($online);
+            endif;
         endif;
         
         $volume->setUpdateDate(new \DateTime());
