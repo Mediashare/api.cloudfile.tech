@@ -6,6 +6,10 @@ use App\Entity\File;
 use App\Service\FileSystemApi;
 use Symfony\Component\Console\Helper\ProgressBar;
 
+/**
+ * FilesCleaner
+ * - Remove file if without volume
+ */
 Class FilesCleaner {
     public $em;
     public $io;
@@ -27,10 +31,17 @@ Class FilesCleaner {
         return $files;
     }
 
+    /**
+     * Remove file from database & filesystem
+     *
+     * @param File $file
+     * @return true
+     */
     public function removeFile(File $file) {
         $filesystem = new FileSystemApi();
         $filesystem->remove($file->getStockage());
         $this->em->remove($file);
         $this->em->flush();
+        return true;
     }
 }
