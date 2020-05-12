@@ -105,6 +105,7 @@ class VolumeController extends AbstractController
         
         return $this->response->send([
             'status' => 'success',
+            'message' => 'This action can take several minutes',
             'volume' => $volume->getInfo()
         ]);
     }
@@ -130,6 +131,7 @@ class VolumeController extends AbstractController
         
         return $this->response->send([
             'status' => 'success',
+            'message' => 'This action can take several minutes',
             'volume' => $volume->getInfo()
         ]);
     }
@@ -157,7 +159,7 @@ class VolumeController extends AbstractController
 
         return $this->response->send([
             'status' => 'success',
-            'message' => 'All files from volume ['.$volume->getId().'] was deleted.'
+            'message' => 'This action can take several minutes.'
         ]);
     }
 
