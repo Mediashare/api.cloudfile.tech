@@ -30,6 +30,8 @@ class RobotsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int {
         $this->io = new SymfonyStyle($input, $output);
+        $this->input = $input;
+        $this->output = $output;
         $this->robots();
         $this->io->success('All robots have finish.');
 
@@ -42,6 +44,7 @@ class RobotsCommand extends Command
             $robot = $robots->get($module->name);
             $robot->em =  $this->container->get('doctrine')->getManager();
             $robot->io = $this->io;
+            $robot->output = $this->output;
             $this->io->section('[Start] '.$module->name);
             $result = $robot->run();
             if ($result):

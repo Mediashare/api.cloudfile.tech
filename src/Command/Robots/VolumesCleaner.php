@@ -14,12 +14,13 @@ use Symfony\Component\Console\Helper\ProgressBar;
 Class VolumesCleaner {
     public $em;
     public $io;
+    public $output;
     public function run() {
         $volumes = $this->getVolumes();
-        $progressBarVolumes = new ProgressBar($this->io->section('Volumes'), count($volumes));
+        $progressBarVolumes = new ProgressBar($this->output->section('Volumes'), count($volumes));
         $progressBarVolumes->start();
         foreach ($volumes as $volume):
-            $progressBarFiles = new ProgressBar($this->io->section('Files'), count($volume->getFiles()));
+            $progressBarFiles = new ProgressBar($this->output->section('Files'), count($volume->getFiles()));
             foreach ($volume->getFiles() as $file):
                 $this->status($volume, $file);
                 $progressBarFiles->advance();
