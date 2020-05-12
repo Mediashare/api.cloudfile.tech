@@ -20,6 +20,7 @@ Class FilesCleaner {
         foreach ($files as $file):
             $progressBar->advance();
             if (!$file->getVolume()):
+                $this->io->warning($file->getName() . ' is deleted because have not volume');
                 $this->removeFile($file);
             endif;
         endforeach;
