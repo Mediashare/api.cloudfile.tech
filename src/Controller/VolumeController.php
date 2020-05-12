@@ -124,10 +124,6 @@ class VolumeController extends AbstractController
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         $volume->generateApiKey();
 
-        foreach ($volume->getFiles() as $file):
-            $file->setApiKey($volume->getApiKey());
-        endforeach;
-
         $volume->setUpdateDate(new \DateTime());
         $em->persist($volume);
         $em->flush();
@@ -150,14 +146,7 @@ class VolumeController extends AbstractController
             return $authority;
         endif;
 
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
-        
-        foreach ($volume->getFiles() as $file):
-            // Remove to database
-            $em->remove($file);
-            $em->flush();
-        endforeach;
-        
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);        
         // Remove file(s)
         $fileSystem = new FileSystemApi();
         $fileSystem->remove($volume->getStockage());
