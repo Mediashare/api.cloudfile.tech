@@ -76,9 +76,9 @@ class VolumeController extends AbstractController
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         
         if ($name = (string) $request->get('name')):
-            $volume->setSize($name);
+            $volume->setName($name);
         endif;
-        if ($size = (int) $request->get('size') && \is_int($size)):
+        if ($size = (int) $request->get('size')):
             $volume->setSize($size);
         endif;
         if ($online = $request->get('online')):
