@@ -38,7 +38,9 @@ Class VolumesCleaner {
 
     /**
      * Verify if volume & file have same status (public/private)
-     *
+     *  - Same private status
+     *  - Same ApiKey
+     * 
      * @param Volume $volume
      * @param File $file
      * @return true

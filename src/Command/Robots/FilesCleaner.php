@@ -9,6 +9,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 /**
  * FilesCleaner
  * - Remove file if without volume
+ * - Remove fil if not exist
  */
 Class FilesCleaner {
     public $em;
