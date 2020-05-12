@@ -19,11 +19,9 @@ Class FilesCleaner {
         $progressBar->start();
         foreach ($files as $file):
             if (!$file->getVolume()):
-                $this->io->warning($file->getName() . ' is deleted because have not volume');
                 $this->removeFile($file);
             endif;
             if (!\file_exists($file->getPath())):
-                $this->io->warning($file->getName() . ' is deleted because this file not found');
                 $this->removeFile($file);
             endif;
             $progressBar->advance();
