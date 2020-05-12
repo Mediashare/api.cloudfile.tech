@@ -87,8 +87,10 @@ class VolumeController extends AbstractController
             else: $online = false;endif;
             $volume->setOnline($online);
         endif;
-        if ($private = $request->get('private')):
-            if ($private == "true"):
+        
+        if (!empty($request->get('private'))):
+            $private = $request->get('private');
+            if ($private == "true" || $private === true):
                 $private = true;
             else: $private = false;endif;
             $volume->setPrivate($private);
