@@ -17,6 +17,7 @@ Class FilesCleaner {
         foreach ($files as $file):
             $progressBar->advance();
             $volume = $this->em->getRepository(Volume::class)->find($file->getVolume());
+            dd($volume);
             if (!$volume):
                 $this->removeFile($file);
             endif;
