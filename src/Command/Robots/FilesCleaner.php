@@ -3,6 +3,7 @@
 namespace App\Command\Robots;
 
 use App\Entity\File;
+use App\Entity\Volume;
 use App\Service\FileSystemApi;
 use Symfony\Component\Console\Helper\ProgressBar;
 
