@@ -96,8 +96,6 @@ class VolumeController extends AbstractController
             $volume->setPrivate($private);
             foreach ($volume->getFiles() as $file):
                 $file->setPrivate($private);
-                $em->persist($file);
-                $em->flush();
             endforeach;
         endif;
         

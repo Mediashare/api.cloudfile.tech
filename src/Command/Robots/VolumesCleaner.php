@@ -44,8 +44,19 @@ Class VolumesCleaner {
      * @return true
      */
     private function status(Volume $volume, File $file) {
+        $update = false;
+        
         if ($file->getPrivate() !== $volume->getPrivate()):
             $file->setPrivate($volume->getPrivate());
+            $update = true;
+        endif;
+        
+        if ($file->getApiKey() !== $volume->getApikey()):
+            $file->setApiKey($volume->getApikey());
+            $update = true;
+        endif;
+
+        if ($update):
             $this->em->persist($file);
             $this->em->flush();
         endif;
