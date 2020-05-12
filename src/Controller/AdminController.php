@@ -15,7 +15,7 @@ class AdminController extends EasyAdminController
         $em = $this->getDoctrine()->getManager();
         
         if (get_class($entity) === Volume::class):
-            $this->clearVolume($entity);
+            $this->removeVolume($entity);
             foreach ($entity->getFiles() as $file):    
                 $em->remove($file);
                 $em->flush();
@@ -35,16 +35,6 @@ class AdminController extends EasyAdminController
 
     public function UpdateEntity($entity) {
         $em = $this->getDoctrine()->getManager();
-        if (get_class($entity) === Volume::class):
-            foreach ($entity->getFiles() as $file):
-                if ($entity->getPrivate()):
-                    $file->setPrivate(true);
-                else: $file->setPrivate(false); endif;
-                $file->setApiKey($entity->getApikey());
-                $em->persist($file);
-                $em->flush();
-            endforeach;
-        endif;
         $em->persist($entity);
         $em->flush();
         return $this->redirectToRoute('easyadmin', [
@@ -54,7 +44,7 @@ class AdminController extends EasyAdminController
 
     }
 
-    private function clearVolume(Volume $volume) {
+    private function removeVolume(Volume $volume) {
         $fileSystem = new FileSystemApi();
         $fileSystem->remove($volume->getStockage());
     }
