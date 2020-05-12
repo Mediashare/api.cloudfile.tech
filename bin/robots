@@ -1,0 +1,6 @@
+#!/bin/bash
+while :
+do
+	bin/console robots
+	sleep 1
+done
