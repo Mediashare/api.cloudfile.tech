@@ -78,7 +78,7 @@ class VolumeController extends AbstractController
         if ($name = (string) $request->get('name')):
             $volume->setSize($name);
         endif;
-        if ($size = (int) $request->get('size')):
+        if ($size = (int) $request->get('size') && \is_int($size)):
             $volume->setSize($size);
         endif;
         if ($online = $request->get('online')):
