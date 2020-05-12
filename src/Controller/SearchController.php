@@ -40,26 +40,28 @@ class SearchController extends AbstractController
         $results = [];
         if (!empty($queries)):
             foreach ($files as $index => $file):
-                foreach ($queries as $query => $value):
-                    if ($score = $this->searchInArray($info = $file->getInfo(), $query, $value)):
-                        if (isset($results[$file->getId()])):
-                            $score += $results[$file->getId()]['score'];
-                        else:
-                            $size += $file->getSize();
+                if ($file->getVolume()):
+                    foreach ($queries as $query => $value):
+                        if ($score = $this->searchInArray($info = $file->getInfo(), $query, $value)):
+                            if (isset($results[$file->getId()])):
+                                $score += $results[$file->getId()]['score'];
+                            else:
+                                $size += $file->getSize();
+                            endif;
+                            $results[$file->getId()] = [
+                                'score' => $score,
+                                'file' => $info,
+                                'volume' => [
+                                    'id' => $file->getVolume()->getId(),
+                                    'name' => $file->getVolume()->getName()
+                                ]
+                            ];
+                        else: // Remove if score = 0
+                            unset($results[$file->getId()]);
+                            break;
                         endif;
-                        $results[$file->getId()] = [
-                            'score' => $score,
-                            'file' => $info,
-                            'volume' => [
-                                'id' => $file->getVolume()->getId(),
-                                'name' => $file->getVolume()->getName()
-                            ]
-                        ];
-                    else: // Remove if score = 0
-                        unset($results[$file->getId()]);
-                        break;
-                    endif;
-                endforeach;
+                    endforeach;
+                endif;
             endforeach;
         endif;
         // Order
