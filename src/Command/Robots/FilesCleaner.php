@@ -3,7 +3,6 @@
 namespace App\Command\Robots;
 
 use App\Entity\File;
-use App\Entity\Volume;
 use App\Service\FileSystemApi;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -16,10 +15,9 @@ Class FilesCleaner {
         $progressBar->start();
         foreach ($files as $file):
             $progressBar->advance();
-            $volume = $this->em->getRepository(Volume::class)->find($file->getVolume());
-            if (!$volume):
+            if (!$file->getVolume()):
+                $this->removeFile($file);
             endif;
-            $this->removeFile($file);
         endforeach;
         $progressBar->finish();
     }
