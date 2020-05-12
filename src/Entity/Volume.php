@@ -60,7 +60,7 @@ class Volume
     private $updateDate;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\File", mappedBy="volume")
+     * @ORM\OneToMany(targetEntity="App\Entity\File", mappedBy="volume", cascade={"remove", "persist"})
      */
     private $files;
 
