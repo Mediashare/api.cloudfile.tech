@@ -35,6 +35,9 @@ class AdminController extends EasyAdminController
 
     public function UpdateEntity($entity) {
         $em = $this->getDoctrine()->getManager();
+        if (get_class($entity) === Volume::class):
+            $entity->setUpdateDate(new \DateTime());
+        endif;
         $em->persist($entity);
         $em->flush();
         return $this->redirectToRoute('easyadmin', [
