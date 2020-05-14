@@ -19,16 +19,27 @@ class FileRepository extends ServiceEntityRepository
         parent::__construct($registry, File::class);
     }
 
-    public function pagination(string $apiKey, int $page, ?int $max = 100) {
+    public function pagination(?string $apiKey = null, int $page, ?int $max = 100) {
         $first_result = $max * ($page - 1);
-        $files = $this->createQueryBuilder('f')
-            ->andWhere('f.apiKey = :apiKey')
-            ->setParameter('apiKey', $apiKey)
-            ->orderBy('f.createDate', 'DESC')
-            ->setFirstResult($first_result)
-            ->setMaxResults($max)
-            ->getQuery()
-            ->getResult();
+        if ($apiKey):
+            $files = $this->createQueryBuilder('f')
+                ->andWhere('f.apiKey = :apiKey')
+                ->setParameter('apiKey', $apiKey)
+                ->orderBy('f.createDate', 'DESC')
+                ->setFirstResult($first_result)
+                ->setMaxResults($max)
+                ->getQuery()
+                ->getResult();
+        else:
+            $files = $this->createQueryBuilder('f')
+                ->andWhere('f.private = :private')
+                ->setParameter('private', false)
+                ->orderBy('f.createDate', 'DESC')
+                ->setFirstResult($first_result)
+                ->setMaxResults($max)
+                ->getQuery()
+                ->getResult();
+        endif;
 
         return $files;
     }

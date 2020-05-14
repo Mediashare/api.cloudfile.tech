@@ -27,12 +27,18 @@ class FileController extends AbstractController
     public function list(Request $request, ?int $page = 1) {
         // Check Authority
         $apikey = $request->headers->get('apikey');
-        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
-        if ($authority):
-            return $authority;
+        if ($apikey):
+            $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+            if ($authority):
+                return $authority;
+            endif;
+            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+            $counter = count($volume->getFiles());
+            $volume = $volume->getInfo();
+        else:
+            $counter = count($em->getRepository(File::class)->findBy(['private' => false]));
+            $volume = null;
         endif;
-        
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         $files = $em->getRepository(File::class)->pagination($apikey, $page, $max = 100);
         
         $results = [];
@@ -45,10 +51,10 @@ class FileController extends AbstractController
         $fileSystem = new FileSystemApi();
         return $this->response->send([
             'status' => 'success',
-            'volume' => $volume->getInfo(),
+            'volume' => $volume,
             'files' => [
                 'page' => $page,
-                'counter' => count($volume->getFiles()),
+                'counter' => $counter,
                 'size' => $fileSystem->getSizeReadable($size),
                 'results' => $results
             ],
@@ -61,12 +67,16 @@ class FileController extends AbstractController
     public function info(Request $request, string $id) {
         // Check Authority
         $apikey = $request->headers->get('apikey');
-        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
-        if ($authority):
-            return $authority;
+        if ($apikey):
+            $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+            if ($authority):
+                return $authority;
+            endif;
+            $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
+        else:
+            $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
 
-        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
@@ -86,12 +96,16 @@ class FileController extends AbstractController
     public function show(Request $request, string $id) {
         // Check Authority
         $apikey = $request->headers->get('apikey');
-        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
-        if ($authority):
-            return $authority;
+        if ($apikey):
+            $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+            if ($authority):
+                return $authority;
+            endif;
+            $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
+        else:
+            $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
-        
-        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
+
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
@@ -111,12 +125,16 @@ class FileController extends AbstractController
     public function renderFile(Request $request, string $id) {
         // Check Authority
         $apikey = $request->headers->get('apikey');
-        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
-        if ($authority):
-            return $authority;
+        if ($apikey):
+            $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+            if ($authority):
+                return $authority;
+            endif;
+            $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
+        else:
+            $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
         
-        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
@@ -178,12 +196,16 @@ class FileController extends AbstractController
     public function download(Request $request, string $id) {
         // Check Authority
         $apikey = $request->headers->get('apikey');
-        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
-        if ($authority):
-            return $authority;
+        if ($apikey):
+            $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+            if ($authority):
+                return $authority;
+            endif;
+            $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
+        else:
+            $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
-
-        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
+        
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
