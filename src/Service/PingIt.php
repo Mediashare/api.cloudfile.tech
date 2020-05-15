@@ -13,12 +13,13 @@ Class PingIt {
         $this->request = $kernel->get('Curl');
     }
 
-    public function send(?string $status = 'success', ?string $name = 'Ping!', ?string $message = null) {
+    public function send(?string $name = 'Ping!', ?string $message = null, ?string $icon = 'map-pin', ?string $color = 'primary') {
         $url = $this->url.'/api/ping/'.$this->apikey;
         $response = $this->request->post($url, [
-            'status' => $status,
             'name' => $name,
-            'message' => $message
+            'message' => $message,
+            'icon' => $icon,
+            'color' => $color,
         ]);
         $response = \json_decode($response);
         return $response;

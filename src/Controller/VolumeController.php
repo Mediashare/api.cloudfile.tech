@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Volume;
+use App\Service\PingIt;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,6 +56,9 @@ class VolumeController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $em->persist($volume);
         $em->flush();
+
+        $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
+        $ping->send('Volume created', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'folder', 'success');
 
         return $this->response->send([
             'status' => 'success',
@@ -127,7 +131,10 @@ class VolumeController extends AbstractController
         $volume->setUpdateDate(new \DateTime());
         $em->persist($volume);
         $em->flush();
-        
+
+        $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
+        $ping->send('Volume ApiKey reseted', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'refresh-cw', 'warning');
+
         return $this->response->send([
             'status' => 'success',
             'message' => 'This action can take several minutes',
@@ -156,6 +163,9 @@ class VolumeController extends AbstractController
         $em->persist($volume);
         $em->flush();
 
+        $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
+        $ping->send('Volume clear', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'file-minus', 'warning');
+
         return $this->response->send([
             'status' => 'success',
             'message' => 'This action can take several minutes.'
@@ -183,6 +193,9 @@ class VolumeController extends AbstractController
         // Delete Volume
         $em->remove($volume);
         $em->flush();
+
+        $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
+        $ping->send('Volume deleted', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'trash', 'danger');
         
         return $this->response->send([
             'status' => 'success',

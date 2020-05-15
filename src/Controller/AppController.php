@@ -46,22 +46,4 @@ class AppController extends AbstractController
             ],
         ]);
     }
-
-    /**
-     * @Route("/stats", name="stats")
-     */
-    public function stats(Request $request) {
-        // Check Authority
-        $response = new Response();
-        $apikey = $request->headers->get('apikey');
-        $authority = $response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
-        if ($authority):
-            return $authority;
-        endif;
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);        
-        return $response->send([
-            'status' => 'success',
-            'volume' => $volume->getInfo(),
-        ]);
-    }
 }
