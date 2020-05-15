@@ -31,7 +31,7 @@ class RobotsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int {
         $this->pingIt = new PingIt("McVgeZXvLu8H9JUsQIiGP6wNqTE2rC5k");
-        $test = $this->pingIt->send('success', '[CloudFile - API] Robots', 'The robots start the job!');
+        $this->pingIt->send('success', '[CloudFile - API] Robots', 'The robots start the job!');
         $this->io = new SymfonyStyle($input, $output);
         $this->input = $input;
         $this->output = $output;

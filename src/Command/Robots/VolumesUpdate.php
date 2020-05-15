@@ -8,10 +8,10 @@ use App\Service\FileSystemApi;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
- * VolumesCleaner
+ * VolumesUpdate
  * - Check Volume Status
  */
-Class VolumesCleaner {
+Class VolumesUpdate {
     public $em;
     public $io;
     public $output;
