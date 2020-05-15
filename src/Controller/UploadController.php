@@ -69,7 +69,7 @@ class UploadController extends AbstractController
             }
             $size = $fileSystem->getSizeReadable($size);
             $pingIt = new PingIt('Vz78OgPqSfCbGojilKEh16BtWDrIMQsy');
-            $ping->send('File(s) uploaded', '['.$volume->getId().'] '.$volume->getName().' receveid '.count($results).' ('.$size.')', 'upload-cloud', 'success');
+            $pingIt->send('File(s) uploaded', '['.$volume->getId().'] '.$volume->getName().' receveid '.count($results).' ('.$size.')', 'upload-cloud', 'success');
             // Response
             return $this->response->send([
                 'status' => 'success',

@@ -58,7 +58,7 @@ class VolumeController extends AbstractController
         $em->flush();
 
         $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
-        $ping->send('Volume created', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'folder', 'success');
+        $pingIt->send('Volume created', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'folder', 'success');
 
         return $this->response->send([
             'status' => 'success',
@@ -133,7 +133,7 @@ class VolumeController extends AbstractController
         $em->flush();
 
         $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
-        $ping->send('Volume ApiKey reseted', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'refresh-cw', 'warning');
+        $pingIt->send('Volume ApiKey reseted', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'refresh-cw', 'warning');
 
         return $this->response->send([
             'status' => 'success',
@@ -164,7 +164,7 @@ class VolumeController extends AbstractController
         $em->flush();
 
         $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
-        $ping->send('Volume clear', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'file-minus', 'warning');
+        $pingIt->send('Volume clear', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'file-minus', 'warning');
 
         return $this->response->send([
             'status' => 'success',
@@ -195,7 +195,7 @@ class VolumeController extends AbstractController
         $em->flush();
 
         $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
-        $ping->send('Volume deleted', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'trash', 'danger');
+        $pingIt->send('Volume deleted', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'trash', 'danger');
         
         return $this->response->send([
             'status' => 'success',
