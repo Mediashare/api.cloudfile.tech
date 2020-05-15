@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\File;
 use App\Entity\Proxy;
 use App\Entity\Volume;
+use App\Service\PingIt;
 use Mediashare\ModulesProvider\Config;
 use Mediashare\ModulesProvider\Modules;
 use Symfony\Component\Console\Command\Command;
@@ -29,12 +30,13 @@ class RobotsCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int {
+        $this->pingIt = new PingIt("McVgeZXvLu8H9JUsQIiGP6wNqTE2rC5k");
+        $test = $this->pingIt->send('success', '[CloudFile - API] Robots', 'The robots start the job!');
         $this->io = new SymfonyStyle($input, $output);
         $this->input = $input;
         $this->output = $output;
         $this->robots();
-        $this->io->success('All robots have finish.');
-
+        $this->io->success('All robots have finish their jobs.');
         return 0;
     }
 
@@ -42,9 +44,11 @@ class RobotsCommand extends Command
         $robots = $this->getRobots();
         foreach ($robots->getModules() as $module):
             $robot = $robots->get($module->name);
-            $robot->em =  $this->container->get('doctrine')->getManager();
+            $robot->container = $this->container;
+            $robot->em = $this->container->get('doctrine')->getManager();
             $robot->io = $this->io;
             $robot->output = $this->output;
+            $robot->pingIt = $this->pingIt;
             $this->io->section('[Start] '.$module->name);
             $result = $robot->run();
             if ($result):

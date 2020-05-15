@@ -15,6 +15,7 @@ Class VolumesCleaner {
     public $em;
     public $io;
     public $output;
+    public $pingIt;
     public function run() {
         $volumes = $this->getVolumes();
         $progressBarVolumes = new ProgressBar($this->output->section('Volumes'), count($volumes));
