@@ -57,8 +57,8 @@ class VolumeController extends AbstractController
         $em->persist($volume);
         $em->flush();
 
-        $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
-        $pingIt->send('Volume created', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'folder', 'success');
+        $pingIt = new PingIt($this->getParameter('pingit_volumes'));
+        $pingIt->send('Volume created', '['.$volume->getId().'] '.$volume->getName().' - ('.$volume->getSize().'Gb) has been created.', 'icon icon-plus', 'success');
 
         return $this->response->send([
             'status' => 'success',
@@ -132,8 +132,8 @@ class VolumeController extends AbstractController
         $em->persist($volume);
         $em->flush();
 
-        $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
-        $pingIt->send('Volume ApiKey reseted', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'refresh-cw', 'warning');
+        $pingIt = new PingIt($this->getParameter('pingit_volumes'));
+        $pingIt->send('Volume reset ApiKey', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) ApiKey has been regenerated.', 'fa fa-key', 'warning');
 
         return $this->response->send([
             'status' => 'success',
@@ -163,8 +163,8 @@ class VolumeController extends AbstractController
         $em->persist($volume);
         $em->flush();
 
-        $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
-        $pingIt->send('Volume clear', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'file-minus', 'warning');
+        $pingIt = new PingIt($this->getParameter('pingit_volumes'));
+        $pingIt->send('Volume clear', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) has been cleared.', 'fa fa-recycle', 'warning');
 
         return $this->response->send([
             'status' => 'success',
@@ -194,8 +194,8 @@ class VolumeController extends AbstractController
         $em->remove($volume);
         $em->flush();
 
-        $pingIt = new PingIt('bm2rRHjztGVpXWJKO75Q30Uu91nFIYvh');
-        $pingIt->send('Volume deleted', '['.$volume->getId().'] '.$volume->getName().' - '.$volume->getSize(), 'trash', 'danger');
+        $pingIt = new PingIt($this->getParameter('pingit_volumes'));
+        $pingIt->send('Volume deleted', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) has been deleted.', 'feather icon-trash', 'danger');
         
         return $this->response->send([
             'status' => 'success',

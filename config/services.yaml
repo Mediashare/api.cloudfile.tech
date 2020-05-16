@@ -7,6 +7,10 @@ parameters:
     stockage: '%env(resolve:stockage)%'
     kernel_dir: '%kernel.project_dir%'
     cloudfile_password: '%env(cloudfile_password)%'
+    pingit_robots: '%env(pingit_robots)%'
+    pingit_uploads: '%env(pingit_uploads)%'
+    pingit_volumes: '%env(pingit_volumes)%'
+    
 services:
     # default configuration for services in *this* file
     _defaults:

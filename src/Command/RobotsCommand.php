@@ -30,13 +30,14 @@ class RobotsCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int {
-        $this->pingIt = new PingIt("McVgeZXvLu8H9JUsQIiGP6wNqTE2rC5k");
-        $this->pingIt->send('[CloudFile - API] Robots', 'The robots start the job!', 'map-pin', 'success');
+        $this->pingIt = new PingIt($this->container->getParameter('pingit_robots'));
+        $this->pingIt->send('[API] The robots start the job!', null, 'feather icon-radio', 'primary');
         $this->io = new SymfonyStyle($input, $output);
         $this->input = $input;
         $this->output = $output;
         $this->robots();
         $this->io->success('All robots have finish their jobs.');
+        $this->pingIt->send('[API] The robots finish the job!', null, 'feather icon-radio', 'success');
         return 0;
     }
 
