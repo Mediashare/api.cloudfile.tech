@@ -58,7 +58,7 @@ class VolumeController extends AbstractController
         $em->flush();
 
         $pingIt = new PingIt($this->getParameter('pingit_volumes'));
-        $pingIt->send('[API] Volume created', '['.$volume->getId().'] '.$volume->getName().' - ('.$volume->getSize().'Gb) has been created.', 'feather icon-plus', 'success');
+        $pingIt->send('[API] Volume created', '['.$volume->getId().'] '.$volume->getName().' - ('.$volume->getSize().'Gb) has been created.', 'feather icon-folder', 'success');
 
         return $this->response->send([
             'status' => 'success',
