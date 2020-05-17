@@ -42,20 +42,13 @@ class SearchController extends AbstractController
             foreach ($files as $index => $file):
                 if ($file->getVolume()):
                     foreach ($queries as $query => $value):
-                        if ($score = $this->searchInArray($info = $file->getInfo(), $query, $value)):
-                            if (isset($results[$file->getId()])):
-                                $score += $results[$file->getId()]['score'];
-                            else:
-                                $size += $file->getSize();
+                        if (!$value):
+                            if ($this->compare($file->getName(), $query)):
+                                \similar_text($file->getName(), $query, $score); 
+                                $results = $this->addResult($results, $file, $score);
                             endif;
-                            $results[$file->getId()] = [
-                                'score' => $score,
-                                'file' => $info,
-                                'volume' => [
-                                    'id' => $file->getVolume()->getId(),
-                                    'name' => $file->getVolume()->getName()
-                                ]
-                            ];
+                        elseif ($score = $this->searchInArray($file->getInfo(), $query, $value)):
+                            $results = $this->addResult($results, $file, $score);
                         else: // Remove if score = 0
                             unset($results[$file->getId()]);
                             break;
@@ -114,6 +107,23 @@ class SearchController extends AbstractController
         else:
             return false;
         endif;
+    }
+
+    private function addResult(array $results, File $file, float $score): array {
+        if (isset($results[$file->getId()])):
+            $score += $results[$file->getId()]['score'];
+        else:
+            $size += $file->getSize();
+        endif;
+        $results[$file->getId()] = [
+            'score' => $score,
+            'file' => $file->getInfo(),
+            'volume' => [
+                'id' => $file->getVolume()->getId(),
+                'name' => $file->getVolume()->getName()
+            ]
+        ];
+        return $results;
     }
 
     private function getRealInput($source) {
