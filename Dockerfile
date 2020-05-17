@@ -21,6 +21,8 @@ RUN sed -i '/^ *memory_limit/s/=.*/= -1/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *post_max_size/s/=.*/= 10000M/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *upload_max_filesize/s/=.*/= 10000M/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *max_file_uploads/s/=.*/= 10000/' /etc/php/7.3/cli/php.ini
+RUN sed -i '/^ *max_execution_time/s/=.*/= 360/' /etc/php/7.3/cli/php.ini
+RUN sed -i '/^ *max_input_time/s/=.*/= 360/' /etc/php/7.3/cli/php.ini
 # RUN service apache2 restart
 
 RUN echo "nohup php -S 0.0.0.0:8080 -t public >/dev/null 2>&1 &" >> ~/.bashrc
