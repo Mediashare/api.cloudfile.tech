@@ -5,51 +5,24 @@ CloudFile is a simple file storage solution that can be consumed via an API. Use
 ```bash
 git clone https://github.com/Mediashare/CloudFile-API
 cd CloudFile-API
-composer install
+composer update
 bin/console doctrine:schema:update --force
+chmod -R 777 var
 ```
 You can edit files stockage directory in .env file
 
+```bash
+stockage=%kernel.project_dir%/var/stockage
+cloudfile_password="MyCloudFilePassword" 
 ```
-stockage=/var/stockage
-```
-### Api endpoint
-* ``/`` All files
-* ``/list/{page}`` List files by page
-* ``/stats`` Cloud storage statistiques
-* ``/upload`` Upload file(s)
-* ``/search`` Search file(s)
-* ``/info/{id}`` File informations
-* ``/show/{id}`` Show file
-* ``/download/{id}`` Download file
-* ``/remove/{id}`` Remove file
-
-### Usages
-#### Use curl command line tool
+### Create volume storage
 ```bash
 curl \
-  -F "file=@/home/user1/Desktop/image1.jpg" \
-  -F "file2=@/home/user1/Desktop/image2.jpg" \
-  localhost:8000/upload
+  -X POST \
+  -F "name=My first volume" \
+  -F "size=5" \ # Gb
+  -F "cloudfile_password=MyCloudFilePassword" \ # If not blank 
+  http://localhost:8000/volume/new
 ```
-#### Use ApiKey for private cloud
-```bash
-curl \
-  -F "file=@/home/user1/Desktop/image1.jpg" \
-  -H "ApiKey: xxxxxxx" \
-  localhost:8000/upload
-```
-#### Add metadata to file(s)
-You can add metadata to file(s) with GET & POST methods.
-```bash
-curl \
-  -F "file=@/home/user1/Desktop/image1.jpg" \
-  -F "category=image" \
-  localhost:8000/upload?foo=bar
-```
-#### Search file(s)
-```bash
-curl localhost:8000/search?image1.jpg
-curl localhost:8000/search?category=image
-curl localhost:8000/search?category=image&name=image1.jpg
-```
+## API Documentation
+You can follow the [Documentation](http://doc.cloudfile.tech) for interaction with your CloudFile server.
