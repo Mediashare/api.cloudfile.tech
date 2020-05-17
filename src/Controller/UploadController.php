@@ -42,6 +42,7 @@ class UploadController extends AbstractController
                 ]);
             endif;
             // Upload file(s)
+            $pingIt = new PingIt($this->getParameter('pingit_uploads'));
             $fileSystem = new FileSystemApi();
             $results = [];
             $size = 0;
@@ -66,10 +67,11 @@ class UploadController extends AbstractController
                 
                 $results[] = $file->getInfo();
                 $size += $file->getSize();
+                
+                // PingIt
+                $pingIt->send('[API] File uploaded - '.$file->getName(), '['.$volume->getId().'] '.$volume->getName().' receveid '.$file->getName().' file - '.$fileSystem->getSizeReadable($file->getSize()), 'feather icon-save', 'success');
             }
             $size = $fileSystem->getSizeReadable($size);
-            $pingIt = new PingIt($this->getParameter('pingit_uploads'));
-            $pingIt->send('[API] File(s) uploaded', '['.$volume->getId().'] '.$volume->getName().' receveid '.count($results).' ('.$size.') file(s).', 'feather icon-save', 'success');
             // Response
             return $this->response->send([
                 'status' => 'success',
