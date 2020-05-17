@@ -44,8 +44,10 @@ class SearchController extends AbstractController
                     foreach ($queries as $query => $value):
                         if (!$value && $this->compare($file->getName(), $query)):
                             \similar_text($file->getName(), $query, $score); 
+                            if (!isset($results[$file->getInfo()])): $size += $file->getSize(); endif;
                             $results = $this->addResult($results, $file, $score);
                         elseif ($value && $score = $this->searchInArray($file->getInfo(), $query, $value)):
+                            if (!isset($results[$file->getInfo()])): $size += $file->getSize(); endif;
                             $results = $this->addResult($results, $file, $score);
                         else: // Remove if score = 0
                             unset($results[$file->getId()]);
@@ -110,8 +112,6 @@ class SearchController extends AbstractController
     private function addResult(array $results, File $file, float $score): array {
         if (isset($results[$file->getId()])):
             $score += $results[$file->getId()]['score'];
-        else:
-            $size += $file->getSize();
         endif;
         $results[$file->getId()] = [
             'score' => $score,
