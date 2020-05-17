@@ -69,7 +69,7 @@ class UploadController extends AbstractController
                 $size += $file->getSize();
                 
                 // PingIt
-                $pingIt->send('[API] File uploaded - '.$file->getName(), '['.$volume->getId().'] '.$volume->getName().' receveid '.$file->getName().' file - '.$fileSystem->getSizeReadable($file->getSize()), 'feather icon-save', 'success');
+                $pingIt->send('[API] File uploaded '.$file->getName(), '['.$volume->getId().'] '.$volume->getName().' receveid '.$file->getName().' file - '.$fileSystem->getSizeReadable($file->getSize()), 'feather icon-save', 'success');
             }
             $size = $fileSystem->getSizeReadable($size);
             // Response
