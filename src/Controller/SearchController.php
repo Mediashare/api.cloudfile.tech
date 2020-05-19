@@ -42,11 +42,11 @@ class SearchController extends AbstractController
             foreach ($files as $index => $file):
                 if ($file->getVolume()):
                     foreach ($queries as $query => $value):
-                        if (!$value && $this->compare($file->getName(), $query)):
+                        if (!$value && $this->compare($file->getName(), $query)): // Simple search in file name
                             \similar_text($file->getName(), $query, $score); 
                             if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
                             $results = $this->addResult($results, $file, $score);
-                        elseif ($value && $score = $this->searchInArray($file->getInfo(), $query, $value)):
+                        elseif ($value && $score = $this->searchInArray($file->getInfo(), $query, $value)): // Complexe search in all file data
                             if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
                             $results = $this->addResult($results, $file, $score);
                         else: // Remove if score = 0
@@ -115,7 +115,7 @@ class SearchController extends AbstractController
         endif;
         $results[$file->getId()] = [
             'score' => $score,
-            'file' => $file->getInfo(),
+            'file' => $file->getInfo($all_data = false),
             'volume' => [
                 'id' => $file->getVolume()->getId(),
                 'name' => $file->getVolume()->getName()

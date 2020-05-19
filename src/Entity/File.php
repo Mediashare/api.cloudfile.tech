@@ -218,32 +218,37 @@ class File
         return $this;
     }
 
-    public function getInfo(): array {
+    public function getInfo(?bool $all_data = true): array {
         $fileSystem = new FileSystemApi();
-        if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
-            $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
-        else:
-            if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'): $http = 'https://';
-            else: $http = 'http://'; endif;
-            $host = $http.trim($_SERVER['HTTP_HOST'], '/');
-        endif;
-        return [
+        $info = [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'mimeType' => $this->getMimeType(),
             'size' => $fileSystem->getSizeReadable($this->getSize()),
-            'checksum' => $this->getChecksum(),
-            'metadata' => $this->getMetadata(),
-            'private' => $this->getPrivate(),
             'createDate' => (array) $this->getCreateDate(),
-            'urls' => [
+        ];
+        
+        if ($all_data):
+            if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
+                $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
+            else:
+                if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'): $http = 'https://';
+                else: $http = 'http://'; endif;
+                $host = $http.trim($_SERVER['HTTP_HOST'], '/');
+            endif;
+            $info['urls'] = [
                 'info' => $host.'/info/'.$this->getId(),
                 'show' => $host.'/show/'.$this->getId(),
                 'render' => $host.'/render/'.$this->getId(),
                 'download' => $host.'/download/'.$this->getId(),
                 'remove' => $host.'/remove/'.$this->getId(),
-            ],
-        ];
+            ];
+            $info['mimeType'] = $this->getMimeType();
+            $info['checksum'] = $this->getChecksum();
+            $info['metadata'] = $this->getMetadata(); 
+            $info['private'] = $this->getPrivate();
+        endif;
+
+        return $info;
     }
 
     public function getVolume(): ?Volume
