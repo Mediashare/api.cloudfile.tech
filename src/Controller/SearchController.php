@@ -75,7 +75,6 @@ class SearchController extends AbstractController
     }
 
     private function searchInArray(array $array, string $key, ?string $query = null, ?float $score = 0) {
-        dd('fuck off');
         foreach ($array as $index => $value):
             if ($this->compare($index, $key)): // index === $key
                 \similar_text($index, $key, $percent_index_key);
