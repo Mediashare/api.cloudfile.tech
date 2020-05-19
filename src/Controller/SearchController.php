@@ -49,7 +49,7 @@ class SearchController extends AbstractController
                             $results = $this->addResult($results, $file, $score);
                         elseif ($value && $score = $this->searchInArray($file->getInfo(), $query, $value)): // Complexe search in all file data
                             if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
-                            $results = $this->addResult($results, $file, $score);
+                            $results = $this->addResult($results, $file, $score, $all_data = true);
                         else: // Remove if score = 0
                             unset($results[$file->getId()]);
                             break;
@@ -110,13 +110,13 @@ class SearchController extends AbstractController
         endif;
     }
 
-    private function addResult(array $results, File $file, float $score): array {
+    private function addResult(array $results, File $file, float $score, ?bool $all_data = false): array {
         if (isset($results[$file->getId()])):
             $score += $results[$file->getId()]['score'];
         endif;
         $results[$file->getId()] = [
             'score' => $score,
-            'file' => $file->getInfo($all_data = false),
+            'file' => $file->getInfo($all_data),
             'volume' => [
                 'id' => $file->getVolume()->getId(),
                 'name' => $file->getVolume()->getName()
