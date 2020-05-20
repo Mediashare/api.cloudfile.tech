@@ -22,7 +22,7 @@ class VolumeController extends AbstractController
      */
     public function list() {
         $em = $this->getDoctrine()->getManager();
-        $volumes = $em->getRepository(Volume::class)->findBy(['private' => false, 'online' => true]);
+        $volumes = $em->getRepository(Volume::class)->findBy(['private' => false, 'online' => true], ['updateDate' => 'DESC']);
         foreach ($volumes as $volume):
             $results[] = $volume->getInfo($all_data = false);
         endforeach;
