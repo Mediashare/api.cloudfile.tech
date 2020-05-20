@@ -226,23 +226,28 @@ class Volume
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
 
-    public function getInfo(): array {
-        $size = 0;
-        foreach ($this->getFiles() as $file):
-            $size += $file->getSize();
-        endforeach;
-
-        $fileSystem = new FileSystemApi();
-        $total_space = $fileSystem->human2byte($this->getSize().'G');
-        $free_space = $total_space - $size;
-        return [
+    public function getInfo(?bool $all_data = true): array {
+        $info = [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'size' => $this->getSize(),
-            'private' => $this->getPrivate(),
-            'online' => $this->getOnline(),
-            'apikey' => $this->getApikey(),
-            'stats' => [
+            'updateDate' => $this->getUpdateDate(),
+            'createDate' => $this->getCreateDate(),
+        ];
+
+        if ($all_data):
+            $info['size'] = $this->getSize();
+            $info['private'] = $this->getPrivate();
+            $info['online'] = $this->getOnline();
+            $info['apikey'] = $this->getApikey();
+            // Stats
+            $size = 0;
+            foreach ($this->getFiles() as $file):
+                $size += $file->getSize();
+            endforeach;
+            $fileSystem = new FileSystemApi();
+            $total_space = $fileSystem->human2byte($this->getSize().'G');
+            $free_space = $total_space - $size;
+            $info['stats'] = [
                 'files' => count($this->getFiles()),
                 'stockage' => [
                     'used_pct' => number_format($size * 100 / $total_space, 1),
@@ -250,9 +255,9 @@ class Volume
                     'total' => $fileSystem->getSizeReadable($total_space),
                     'free' => $fileSystem->getSizeReadable($free_space),
                 ]
-            ],
-            'updateDate' => $this->getUpdateDate(),
-            'createDate' => $this->getCreateDate(),
-        ];
+            ];
+        endif;
+
+        return $info;
     }
 }

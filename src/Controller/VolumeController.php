@@ -17,10 +17,25 @@ class VolumeController extends AbstractController
     }
 
     /**
+     * Display all volumes public
+     * @Route("/volumes", name="volumes")
+     */
+    public function list() {        
+        $volumes = $em->getRepository(Volume::class)->findBy(['private' => false, 'online' => true]);
+        foreach ($volumes as $volume):
+            $results[] = $volume->getInfo();
+        endforeach;
+        return $this->response->send([
+            'status' => 'success',
+            'volumes' => $results
+        ]);
+    }
+
+    /**
      * Display volume informations
      * @Route("/volume", name="volume")
      */
-    public function index(Request $request) {
+    public function volume(Request $request) {
         // Check Authority
         $apikey = $request->headers->get('apikey');
         $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
