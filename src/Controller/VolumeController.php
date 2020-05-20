@@ -20,10 +20,11 @@ class VolumeController extends AbstractController
      * Display all volumes public
      * @Route("/volumes", name="volumes")
      */
-    public function list() {        
+    public function list() {
+        $em = $this->getDoctrine()->getManager();
         $volumes = $em->getRepository(Volume::class)->findBy(['private' => false, 'online' => true]);
         foreach ($volumes as $volume):
-            $results[] = $volume->getInfo();
+            $results[] = $volume->getInfo($all_data = false);
         endforeach;
         return $this->response->send([
             'status' => 'success',
