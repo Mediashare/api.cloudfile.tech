@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Entity\File;
 use App\Entity\Proxy;
 use App\Entity\Volume;
-use App\Service\PingIt;
+use Mediashare\PingIt\PingIt;
 use Mediashare\ModulesProvider\Config;
 use Mediashare\ModulesProvider\Modules;
 use Symfony\Component\Console\Command\Command;

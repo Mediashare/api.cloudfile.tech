@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Volume;
-use App\Service\PingIt;
 use App\Service\Response;
+use Mediashare\PingIt\PingIt;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
