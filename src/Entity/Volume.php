@@ -219,23 +219,25 @@ class Volume
             $info['private'] = $this->getPrivate();
             $info['online'] = $this->getOnline();
             $info['apikey'] = $this->getApikey();
+            
             // Stats
+            $info['stats']['files'] = count($this->getFiles());
             $size = 0;
             foreach ($this->getFiles() as $file):
                 $size += $file->getSize();
             endforeach;
+
             $fileSystem = new FileSystemApi();
-            $total_space = $fileSystem->human2byte($this->getSize().'G');
-            $free_space = $total_space - $size;
-            $info['stats'] = [
-                'files' => count($this->getFiles()),
-                'stockage' => [
+            if ($this->getSize() > 0):
+                $total_space = $fileSystem->human2byte($this->getSize().'G');
+                $free_space = $total_space - $size;
+                $info['stats']['stockage'] = [
                     'used_pct' => number_format($size * 100 / $total_space, 1),
                     'used' => $fileSystem->getSizeReadable($size),
                     'total' => $fileSystem->getSizeReadable($total_space),
                     'free' => $fileSystem->getSizeReadable($free_space),
-                ]
-            ];
+                ];
+            endif;
         endif;
 
         return $info;
