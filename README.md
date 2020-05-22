@@ -4,7 +4,7 @@ CloudFile is a simple file storage solution that can be consumed via an API. Use
 * File Hosting
 * Private or Public Volume
 * Pretty render file with [ShowContent](https://packagist.org/packages/mediashare/show-content)
-* Multi Disks usage
+* Load balancing of files across multiple hard drives
 * Backup with another CloudFile instance
 
 ## Getting Start
