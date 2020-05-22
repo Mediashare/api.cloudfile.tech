@@ -58,10 +58,12 @@ class UploadController extends AbstractController
                 // Select Disk Storage
                 $disk_usage = 100;
                 foreach ($em->getRepository(Disk::class)->findAll() as $disk):
-                    $info = $disk->getInfo();
-                    if ((int) $info['size']['used_pct'] < $disk_usage):
-                        $disk_usage = (int) $info['size']['used_pct'];
-                        $disk_selected = $disk;
+                    if (\file_exists($disk->getPath())):
+                        $info = $disk->getInfo();
+                        if ((int) $info['size']['used_pct'] < $disk_usage):
+                            $disk_usage = (int) $info['size']['used_pct'];
+                            $disk_selected = $disk;
+                        endif;
                     endif;
                 endforeach;
                 // Upload file
