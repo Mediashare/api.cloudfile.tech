@@ -12,7 +12,6 @@ WORKDIR /home/CloudFile-API
 RUN composer update
 RUN bin/console doctrine:database:create
 RUN bin/console doctrine:schema:update --force
-RUN mkdir var/stockage
 RUN chmod -R 777 var
 EXPOSE 8080
 

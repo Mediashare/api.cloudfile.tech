@@ -35,6 +35,8 @@ class InstallController extends AbstractController
             
             $config = new Config();
             $config->setCloudfilePassword($request->get('cloudfile_password'));
+            $config->setBackupHost($request->get('backup_host'));
+            $config->setBackupApikey($request->get('backup_apikey'));
             $em->persist($config);
 
             $disk = new Disk();
