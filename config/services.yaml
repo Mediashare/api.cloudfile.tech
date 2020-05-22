@@ -8,6 +8,7 @@ parameters:
     pingit_robots: '%env(pingit_robots)%'
     pingit_uploads: '%env(pingit_uploads)%'
     pingit_volumes: '%env(pingit_volumes)%'
+    pingit_backup: '%env(pingit_backup)%'
     
 services:
     # default configuration for services in *this* file
