@@ -1,5 +1,9 @@
 easy_admin:
    entities:
+        Disk:
+            class: App\Entity\Disk
+            list:
+                actions: ['show']
         Volume:
             class: App\Entity\Volume
             list:

@@ -4,7 +4,6 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    stockage: '%env(resolve:stockage)%'
     kernel_dir: '%kernel.project_dir%'
     cloudfile_password: '%env(cloudfile_password)%'
     pingit_robots: '%env(pingit_robots)%'

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\File;
 use App\Entity\Volume;
+use App\Entity\Disk;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,9 +26,10 @@ class AppController extends AbstractController
             $volumes_size += $volume->getSize();
         endforeach;
 
-        $free_space = \disk_free_space($this->getParameter('stockage'));
-        $total_space = \disk_total_space($this->getParameter('stockage'));
-        $used_space = $total_space - $free_space;
+        $disks = $em->getRepository(Disk::class)->findAll();
+        foreach ($disks as $key => $disk):
+            $disks[$key] = $disk->getInfo();
+        endforeach;
 
         return $response->send([
             'status' => 'success',
@@ -38,12 +40,7 @@ class AppController extends AbstractController
             'files' => [
                 'counter' => count($em->getRepository(File::class)->findAll())
             ],
-            'stockage' => [
-                'used_pct' => number_format($used_space * 100 / $total_space, 1),
-                'used' => $fileSystem->getSizeReadable($used_space),
-                'total' => $fileSystem->getSizeReadable($total_space),
-                'free' => $fileSystem->getSizeReadable($free_space),
-            ],
+            'disks' => $disks
         ]);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Disk;
 use App\Entity\File;
 use App\Entity\Volume;
+use Mediashare\Kernel\Kernel;
 use App\Service\FileSystemApi;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +39,27 @@ class AdminController extends EasyAdminController
         $em = $this->getDoctrine()->getManager();
         if (get_class($entity) === Volume::class):
             $entity->setUpdateDate(new \DateTime());
+        elseif (get_class($entity) === Disk::class):
+            $kernel = new Kernel();
+            $mkdir = $kernel->get('Mkdir');
+            $mkdir->setPath($entity->getPath());
+            $mkdir->run();
+        endif;
+        $em->persist($entity);
+        $em->flush();
+        return $this->redirectToRoute('easyadmin', [
+            'action' => 'list',
+            'entity' => $entity
+        ]);
+
+    }
+    public function persistEntity($entity) {
+        $em = $this->getDoctrine()->getManager();
+        if (get_class($entity) === Disk::class):
+            $kernel = new Kernel();
+            $mkdir = $kernel->get('Mkdir');
+            $mkdir->setPath($entity->getPath());
+            $mkdir->run();
         endif;
         $em->persist($entity);
         $em->flush();

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Disk;
 use App\Entity\Volume;
 use App\Service\Response;
 use Mediashare\PingIt\PingIt;
@@ -67,10 +68,19 @@ class VolumeController extends AbstractController
         $volume = new Volume();
         $volume->setName($request->get('name'));
         $volume->setSize($request->get('size')); // Gb
-        $volume->setStockage(rtrim($this->getParameter('stockage'), '/').'/'.$volume->getId());
 
+        // Disk Storage
         $em = $this->getDoctrine()->getManager();
-        $em->persist($volume);
+        $disk_usage = 100;
+        foreach ($em->getRepository(Disk::class)->findAll() as $disk):
+            $info = $disk->getInfo();
+            if ((int) $info['size']['used_pct'] < $disk_usage):
+                $disk_usage = (int) $info['size']['used_pct'];
+                $volume->setDisk($disk);
+            endif;
+        endforeach;
+
+        $em->persist($volume, $disk);
         $em->flush();
 
         $pingIt = new PingIt($this->getParameter('pingit_volumes'));

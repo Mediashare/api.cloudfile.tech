@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Disk;
 use App\Entity\File;
 use App\Service\FileSystemApi;
 use Doctrine\ORM\Mapping as ORM;
@@ -35,11 +36,6 @@ class Volume
     private $size;
 
     /**
-     * @ORM\Column(type="string", length=9999)
-     */
-    private $stockage;
-
-    /**
      * @ORM\Column(type="boolean")
      */
     private $private;
@@ -63,6 +59,13 @@ class Volume
      * @ORM\OneToMany(targetEntity="App\Entity\File", mappedBy="volume", cascade={"remove", "persist"})
      */
     private $files;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Disk::class, inversedBy="volumes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $disk;
+    private $stockage;
 
     public function __toString() {
         return $this->getId();
@@ -127,18 +130,6 @@ class Volume
     public function setSize(int $size): self
     {
         $this->size = $size;
-
-        return $this;
-    }
-
-    public function getStockage(): ?string
-    {
-        return $this->stockage;
-    }
-
-    public function setStockage(string $stockage): self
-    {
-        $this->stockage = $stockage;
 
         return $this;
     }
@@ -222,8 +213,20 @@ class Volume
         return $this;
     }
 
-    private function rngString($length = 32) {
-        return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+    public function getDisk(): ?Disk
+    {
+        return $this->disk;
+    }
+
+    public function setDisk(?Disk $disk): self
+    {
+        $this->disk = $disk;
+
+        return $this;
+    }
+
+    public function getStockage(): string {
+        return rtrim($this->getDisk()->getPath(), '/').'/'.$this->getId();
     }
 
     public function getInfo(?bool $all_data = true): array {
@@ -259,5 +262,9 @@ class Volume
         endif;
 
         return $info;
+    }
+
+    private function rngString($length = 32) {
+        return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
 }
