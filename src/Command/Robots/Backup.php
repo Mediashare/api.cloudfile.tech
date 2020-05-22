@@ -91,7 +91,7 @@ Class Backup {
     }
 
     private function createZip(Disk $disk) {
-        if (file_exists($disk->getPath())):
+        if (count(scandir(rtrim($disk->getPath(), '/').'/')) > 2):
             // Initialize archive object
             $zip = new ZipArchive();
             $zip->open($zipPath = $this->container->getParameter('kernel_dir').'/var/'.$disk->getName().' - backup.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
