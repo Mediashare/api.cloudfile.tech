@@ -67,9 +67,9 @@ class AdminController extends EasyAdminController
     }
 
     private function removeVolume(Volume $volume) {
+        $fileSystem = new FileSystemApi();
         $disks = $this->em->getRepository(Disk::class)->findAll();
         foreach ($disks as $disk):
-            $fileSystem = new FileSystemApi();
             $fileSystem->remove(rtrim($disk->getPath(), '/').'/'.$volume->getId());
         endforeach;
     }

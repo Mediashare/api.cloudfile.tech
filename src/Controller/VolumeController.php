@@ -69,6 +69,7 @@ class VolumeController extends AbstractController
         $volume->setName($request->get('name'));
         $volume->setSize($request->get('size')); // Gb
 
+        $em = $this->getDoctrine()->getManager();
         $em->persist($volume);
         $em->flush();
 
@@ -174,7 +175,6 @@ class VolumeController extends AbstractController
         $fileSystem = new FileSystemApi();
         $disks = $em->getRepository(Disk::class)->findAll();
         foreach ($disks as $disk):
-            $fileSystem = new FileSystemApi();
             $fileSystem->remove(rtrim($disk->getPath(), '/').'/'.$volume->getId());
         endforeach;
         
@@ -209,7 +209,6 @@ class VolumeController extends AbstractController
         $fileSystem = new FileSystemApi();
         $disks = $this->em->getRepository(Disk::class)->findAll();
         foreach ($disks as $disk):
-            $fileSystem = new FileSystemApi();
             $fileSystem->remove(rtrim($disk->getPath(), '/').'/'.$volume->getId());
         endforeach;
 
