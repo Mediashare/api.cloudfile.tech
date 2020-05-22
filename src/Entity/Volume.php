@@ -62,7 +62,7 @@ class Volume
 
     /**
      * @ORM\ManyToOne(targetEntity=Disk::class, inversedBy="volumes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $disk;
     private $stockage;
