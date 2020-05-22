@@ -66,6 +66,14 @@ class UploadController extends AbstractController
                         endif;
                     endif;
                 endforeach;
+
+                if (empty($disk_selected)):
+                    return $this->json([
+                        'status' => 'error',
+                        'message' => 'No disk has been found!'
+                    ]);
+                endif;
+
                 // Upload file
                 $file = $fileSystem->upload($id, $file, $disk_selected, $volume);
 
