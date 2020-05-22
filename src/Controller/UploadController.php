@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Disk;
 use App\Entity\File;
 use App\Entity\Volume;
 use App\Service\Response;
@@ -52,8 +53,18 @@ class UploadController extends AbstractController
                 while ($em->getRepository(File::class)->find($id)) { // Check $id if already used
                     $id = \uniqid();
                 }
+
+                // Select Disk Storage
+                $disk_usage = 100;
+                foreach ($em->getRepository(Disk::class)->findAll() as $disk):
+                    $info = $disk->getInfo();
+                    if ((int) $info['size']['used_pct'] < $disk_usage):
+                        $disk_usage = (int) $info['size']['used_pct'];
+                        $stockage = rtrim($disk->getPath(), '/').'/'.$volume->getId();
+                    endif;
+                endforeach;
                 // Upload file
-                $file = $fileSystem->upload($id, $file, $volume->getStockage());
+                $file = $fileSystem->upload($id, $file, $stockage);
                 // Set metadata
                 $file->setMetadata($_REQUEST);
                 $file->setPrivate($volume->getPrivate());

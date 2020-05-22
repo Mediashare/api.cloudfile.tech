@@ -30,11 +30,6 @@ class Disk
      */
     private $path;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Volume::class, mappedBy="disk")
-     */
-    private $volumes;
-
     public function __toString(): string {
         return $this->getName();
     }

@@ -69,17 +69,6 @@ class VolumeController extends AbstractController
         $volume->setName($request->get('name'));
         $volume->setSize($request->get('size')); // Gb
 
-        // Disk Storage
-        $em = $this->getDoctrine()->getManager();
-        $disk_usage = 100;
-        foreach ($em->getRepository(Disk::class)->findAll() as $disk):
-            $info = $disk->getInfo();
-            if ((int) $info['size']['used_pct'] < $disk_usage):
-                $disk_usage = (int) $info['size']['used_pct'];
-                $volume->setDisk($disk);
-            endif;
-        endforeach;
-
         $em->persist($volume, $disk);
         $em->flush();
 
@@ -183,7 +172,11 @@ class VolumeController extends AbstractController
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);        
         // Remove file(s)
         $fileSystem = new FileSystemApi();
-        $fileSystem->remove($volume->getStockage());
+        $disks = $em->getRepository(Disk::class)->findAll();
+        foreach ($disks as $disk):
+            $fileSystem = new FileSystemApi();
+            $fileSystem->remove(rtrim($disk->getPath(), '/').'/'.$volume->getId());
+        endforeach;
         
         $volume->setUpdateDate(new \DateTime());
         $em->persist($volume);
@@ -214,7 +207,11 @@ class VolumeController extends AbstractController
         
         // Remove file(s)
         $fileSystem = new FileSystemApi();
-        $fileSystem->remove($volume->getStockage());
+        $disks = $this->em->getRepository(Disk::class)->findAll();
+        foreach ($disks as $disk):
+            $fileSystem = new FileSystemApi();
+            $fileSystem->remove(rtrim($disk->getPath(), '/').'/'.$volume->getId());
+        endforeach;
 
         // Delete Volume
         $em->remove($volume);

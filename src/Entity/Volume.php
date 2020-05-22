@@ -60,13 +60,6 @@ class Volume
      */
     private $files;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Disk::class, inversedBy="volumes")
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $disk;
-    private $stockage;
-
     public function __toString() {
         return $this->getId();
     }
@@ -211,22 +204,6 @@ class Volume
         }
 
         return $this;
-    }
-
-    public function getDisk(): ?Disk
-    {
-        return $this->disk;
-    }
-
-    public function setDisk(?Disk $disk): self
-    {
-        $this->disk = $disk;
-
-        return $this;
-    }
-
-    public function getStockage(): string {
-        return rtrim($this->getDisk()->getPath(), '/').'/'.$this->getId();
     }
 
     public function getInfo(?bool $all_data = true): array {

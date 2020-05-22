@@ -14,20 +14,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\EasyAdminController;
 class AdminController extends EasyAdminController
 {
     public function removeEntity($entity) {
-        $em = $this->getDoctrine()->getManager();
-        
         if (get_class($entity) === Volume::class):
             $this->removeVolume($entity);
             foreach ($entity->getFiles() as $file):    
-                $em->remove($file);
-                $em->flush();
+                $this->em->remove($file);
+                $this->em->flush();
             endforeach;
         elseif (get_class($entity) === File::class):
             $this->removeFile($entity);
         endif;
         
-        $em->remove($entity);
-        $em->flush();
+        $this->em->remove($entity);
+        $this->em->flush();
 
         return $this->redirectToRoute('easyadmin', [
             'action' => 'list',
@@ -36,7 +34,6 @@ class AdminController extends EasyAdminController
     }
 
     public function UpdateEntity($entity) {
-        $em = $this->getDoctrine()->getManager();
         if (get_class($entity) === Volume::class):
             $entity->setUpdateDate(new \DateTime());
         elseif (get_class($entity) === Disk::class):
@@ -45,8 +42,8 @@ class AdminController extends EasyAdminController
             $mkdir->setPath($entity->getPath());
             $mkdir->run();
         endif;
-        $em->persist($entity);
-        $em->flush();
+        $this->em->persist($entity);
+        $this->em->flush();
         return $this->redirectToRoute('easyadmin', [
             'action' => 'list',
             'entity' => $entity
@@ -54,15 +51,14 @@ class AdminController extends EasyAdminController
 
     }
     public function persistEntity($entity) {
-        $em = $this->getDoctrine()->getManager();
         if (get_class($entity) === Disk::class):
             $kernel = new Kernel();
             $mkdir = $kernel->get('Mkdir');
             $mkdir->setPath($entity->getPath());
             $mkdir->run();
         endif;
-        $em->persist($entity);
-        $em->flush();
+        $this->em->persist($entity);
+        $this->em->flush();
         return $this->redirectToRoute('easyadmin', [
             'action' => 'list',
             'entity' => $entity
@@ -71,8 +67,11 @@ class AdminController extends EasyAdminController
     }
 
     private function removeVolume(Volume $volume) {
-        $fileSystem = new FileSystemApi();
-        $fileSystem->remove($volume->getStockage());
+        $disks = $this->em->getRepository(Disk::class)->findAll();
+        foreach ($disks as $disk):
+            $fileSystem = new FileSystemApi();
+            $fileSystem->remove(rtrim($disk->getPath(), '/').'/'.$volume->getId());
+        endforeach;
     }
     private function removeFile(File $file) {
         // Remove file stockage
