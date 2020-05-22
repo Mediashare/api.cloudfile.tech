@@ -59,7 +59,7 @@ class VolumeController extends AbstractController
      */
     public function new(Request $request) {
         $em = $this->getDoctrine()->getManager();
-        if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
+        if (!$em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
             return $this->response->send([
                 'status' => 'error',
                 'message' => 'Authority not valid for volume creation.'
@@ -106,7 +106,7 @@ class VolumeController extends AbstractController
             $volume->setPrivate($private);
         endif;
 
-        if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
+        if (!$em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
             if ($size = (int) $request->get('size')):
                 $volume->setSize($size);
             endif;
