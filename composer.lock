@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07b7f2e21588758c2c7d8cf976294343",
+    "content-hash": "bb815ccc6b7f723e6ca9ac01cf1b3445",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1658,6 +1658,42 @@
                 "relative"
             ],
             "time": "2019-02-05T23:41:09+00:00"
+        },
+        {
+            "name": "mediashare/cloudfile",
+            "version": "0.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Mediashare/CloudFile-SDK.git",
+                "reference": "0b977ef1686a3fa20c3b9b0a221b98070d5cc9ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Mediashare/CloudFile-SDK/zipball/0b977ef1686a3fa20c3b9b0a221b98070d5cc9ab",
+                "reference": "0b977ef1686a3fa20c3b9b0a221b98070d5cc9ab",
+                "shasum": ""
+            },
+            "require": {
+                "kyranrana/cloudflare-bypass": "^3.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mediashare\\CloudFile\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mediashare",
+                    "email": "mediashare.supp@gmail.com"
+                }
+            ],
+            "description": "Php library for interact with cloudfile api",
+            "time": "2020-05-20T07:05:17+00:00"
         },
         {
             "name": "mediashare/kernel",

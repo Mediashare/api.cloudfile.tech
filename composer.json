@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "doctrine/annotations": "^1.8",
         "easycorp/easyadmin-bundle": "^2.3",
+        "mediashare/cloudfile": "^0.0.7",
         "mediashare/kernel": "*",
         "mediashare/modules-provider": "^0.2.4",
         "mediashare/pingit": "^0.0.2",

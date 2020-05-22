@@ -111,6 +111,9 @@ class UploadController extends AbstractController
      */
     private function checkVokumeSize(Volume $volume, $files): bool {
         $fileSystem = new FileSystemApi();
+        if ($volume->getSize() < 0):
+            return true;
+        endif;
         $volume_size = $fileSystem->human2byte($volume->getSize().'Gb');
         $files_size = 0;
         foreach ($volume->getFiles() as $file) {
