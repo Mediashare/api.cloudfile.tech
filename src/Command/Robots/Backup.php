@@ -58,13 +58,13 @@ Class Backup {
     private function backupDisks() {        
         foreach ($this->em->getRepository(Disk::class)->findAll() as $disk):
             $zipPath = $this->createZip($disk);
-            if ($this->checksum($zipPath)):
+            if ($zipPath && $this->checksum($zipPath)):
                 $upload = $this->upload($zipPath);
                 if ($upload):
                     $this->pingIt->send('[BackUp] Storage '.$disk->getName().' has been uploaded', null, 'feather icon-upload', 'primary');
                 endif;
+                \unlink($zipPath);
             endif;
-            \unlink($zipPath);
         endforeach;
         
     }
@@ -112,8 +112,9 @@ Class Backup {
             }
         }
         // Zip archive will be created only after closing object
-        dd($zip);
-        $zip->close();
-        return $zipPath;
+        if (file_exists($zipPath)):
+            $zip->close();
+            return $zipPath;
+        else: return false; endif;
     }
 }
