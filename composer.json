@@ -19,6 +19,7 @@
         "symfony/framework-bundle": "5.0.*",
         "symfony/maker-bundle": "^1.14",
         "symfony/orm-pack": "^1.0",
+        "symfony/twig-pack": "^1.0",
         "symfony/yaml": "5.0.*"
     },
     "require-dev": {
