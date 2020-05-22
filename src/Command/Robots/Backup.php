@@ -91,28 +91,29 @@ Class Backup {
     }
 
     private function createZip(Disk $disk) {
-        // Initialize archive object
-        $zip = new ZipArchive();
-        $zip->open($zipPath = $this->container->getParameter('kernel_dir').'/var/'.$disk->getName().' - backup.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        if (file_exists($disk->getPath())):
+            // Initialize archive object
+            $zip = new ZipArchive();
+            $zip->open($zipPath = $this->container->getParameter('kernel_dir').'/var/'.$disk->getName().' - backup.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
-        // Create recursive directory iterator
-        /** @var SplFileInfo[] $files */
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($disk->getPath()),
-            RecursiveIteratorIterator::LEAVES_ONLY
-        );
-        foreach ($files as $name => $file) {
-            // Skip directories (they would be added automatically)
-            if (!$file->isDir()) {
-                // Get real and relative path for current file
-                $filePath = $file->getRealPath();
-                $relativePath = substr($filePath, strlen($disk->getPath()) + 1);
-                // Add current file to archive
-                $zip->addFile($filePath, $relativePath);
+            // Create recursive directory iterator
+            /** @var SplFileInfo[] $files */
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($disk->getPath()),
+                RecursiveIteratorIterator::LEAVES_ONLY
+            );
+            foreach ($files as $name => $file) {
+                // Skip directories (they would be added automatically)
+                if (!$file->isDir()) {
+                    // Get real and relative path for current file
+                    $filePath = $file->getRealPath();
+                    $relativePath = substr($filePath, strlen($disk->getPath()) + 1);
+                    // Add current file to archive
+                    $zip->addFile($filePath, $relativePath);
+                }
             }
-        }
-        // Zip archive will be created only after closing object
-        if (file_exists($zipPath)):
+            // Zip archive will be created only after closing object
+        
             $zip->close();
             return $zipPath;
         else: return false; endif;
