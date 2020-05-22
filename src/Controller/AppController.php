@@ -23,7 +23,9 @@ class AppController extends AbstractController
 
         $volumes_size = 0;
         foreach ($volumes = $em->getRepository(Volume::class)->findAll() as $volume):
-            $volumes_size += $volume->getSize();
+            if ($volume->getSize() > 0):
+                $volumes_size += $volume->getSize();
+            endif;
         endforeach;
 
         $disks = $em->getRepository(Disk::class)->findAll();
