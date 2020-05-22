@@ -113,7 +113,6 @@ Class Backup {
                 }
             }
             // Zip archive will be created only after closing object
-        
             $zip->close();
             return $zipPath;
         else: return false; endif;
