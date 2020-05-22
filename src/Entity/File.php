@@ -63,7 +63,7 @@ class File
 
     /**
      * @ORM\ManyToOne(targetEntity=Disk::class, inversedBy="files")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $disk;
 
