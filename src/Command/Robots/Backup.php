@@ -92,7 +92,7 @@ Class Backup {
 
     private function createZip(Disk $disk) {
         // Initialize archive object
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
         $zip->open($zipPath = $this->container->getParameter('kernel_dir').'/var/'.$disk->getName().' - backup.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         // Create recursive directory iterator
