@@ -207,7 +207,7 @@ class VolumeController extends AbstractController
         
         // Remove file(s)
         $fileSystem = new FileSystemApi();
-        $disks = $this->em->getRepository(Disk::class)->findAll();
+        $disks = $em->getRepository(Disk::class)->findAll();
         foreach ($disks as $disk):
             $fileSystem->remove(rtrim($disk->getPath(), '/').'/'.$volume->getId());
         endforeach;
