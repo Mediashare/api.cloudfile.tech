@@ -69,7 +69,7 @@ class VolumeController extends AbstractController
         $volume->setName($request->get('name'));
         $volume->setSize($request->get('size')); // Gb
 
-        $em->persist($volume, $disk);
+        $em->persist($volume);
         $em->flush();
 
         $pingIt = new PingIt($this->getParameter('pingit_volumes'));
