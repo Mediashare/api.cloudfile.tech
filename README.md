@@ -1,5 +1,12 @@
 # CloudFile-API
 CloudFile is a simple file storage solution that can be consumed via an API. Useful for all your projects, CloudFile allows the storage of files (images, videos, texts, applications...) with an public or private access.
+## Features
+* File Hosting
+* Private or Public Volume
+* Pretty render file with [ShowContent](https://packagist.org/packages/mediashare/show-content)
+* Multi Disks usage
+* Backup with another CloudFile instance
+
 ## Getting Start
 ### Installation
 ```bash
