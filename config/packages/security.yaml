@@ -18,7 +18,7 @@ security:
             security: false
         main:
             anonymous: lazy
-            # provider: users_in_memory
+            provider: app_user_provider
             http_basic:
                 realm: CloudFile Administration
             guard:
