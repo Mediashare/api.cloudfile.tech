@@ -30,6 +30,11 @@ class Disk
      */
     private $path;
 
+    /**
+     * @ORM\OneToMany(targetEntity=File::class, mappedBy="disk")
+     */
+    private $files;
+
     public function __toString(): string {
         return $this->getName();
     }
@@ -37,6 +42,7 @@ class Disk
     public function __construct() {
         $this->setId(\uniqid());
         $this->volumes = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -106,6 +112,9 @@ class Disk
 
     public function getInfo(): array {
         $fileSystem = new FileSystemApi();
+        if (!\file_exists($this->getPath())):
+            $fileSystem->mkdir($this->getPath());
+        endif;
         $free_space = \disk_free_space($this->getPath());
         $total_space = \disk_total_space($this->getPath());
         $used_space = $total_space - $free_space;
@@ -118,5 +127,36 @@ class Disk
                 'free' => $fileSystem->getSizeReadable($free_space),
             ],
         ];
+    }
+
+    /**
+     * @return Collection|File[]
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(File $file): self
+    {
+        if (!$this->files->contains($file)) {
+            $this->files[] = $file;
+            $file->setDisk($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(File $file): self
+    {
+        if ($this->files->contains($file)) {
+            $this->files->removeElement($file);
+            // set the owning side to null (unless already changed)
+            if ($file->getDisk() === $this) {
+                $file->setDisk(null);
+            }
+        }
+
+        return $this;
     }
 }

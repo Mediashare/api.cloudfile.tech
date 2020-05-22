@@ -16,7 +16,6 @@ RUN mkdir var/stockage
 RUN chmod -R 777 var
 EXPOSE 8080
 
-# RUN sed -i '/^ *cloudfile_password/s/=.*/= "" /' .env
 RUN sed -i '/^ *memory_limit/s/=.*/= -1/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *post_max_size/s/=.*/= 10000M/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *upload_max_filesize/s/=.*/= 10000M/' /etc/php/7.3/cli/php.ini

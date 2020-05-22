@@ -1,5 +1,11 @@
 easy_admin:
-   entities:
+    site_name: CloudFile
+    entities:
+        Config:
+            class: App\Entity\Config
+            disabled_actions: ['new', 'delete']
+            list:
+                actions: ['show']
         Disk:
             class: App\Entity\Disk
             list:

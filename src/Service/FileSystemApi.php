@@ -1,6 +1,8 @@
 <?php
 namespace App\Service;
 
+use App\Entity\Disk;
+use App\Entity\Volume;
 use Mediashare\Kernel\Kernel;
 use Doctrine\ORM\EntityManager;
 use App\Entity\File as FileEntity;
@@ -16,11 +18,10 @@ Class FileSystemApi {
         $this->mkdir = $kernel->get('Mkdir');
         $this->filesystem = new Fs();
     }
-    public function upload(string $id, File $file, string $stockage): FileEntity {
+    public function upload(string $id, File $file, Disk $disk, Volume $volume): FileEntity {
         // Create destination if not exist
-        $destination = \rtrim($stockage, '/') . '/' . $id;
-        $this->mkdir->setPath($destination);
-        $this->mkdir->run();
+        $destination = rtrim($disk->getPath(), '/').'/'.$volume->getId().'/'.$id;
+        $this->mkdir($destination);
 
         $file->move(
             $destination, 
@@ -29,18 +30,24 @@ Class FileSystemApi {
         $FileEntity = new FileEntity();
         $FileEntity->setId($id);
         $FileEntity->setName($file->getClientOriginalName());
-        $FileEntity->setStockage($destination);
-        $FileEntity->setPath($destination . '/' . $name);
+        $FileEntity->setDisk($disk);
+        $FileEntity->setVolume($volume);
+        $FileEntity->setFilename($name);
         $FileEntity->setSize(\filesize($FileEntity->getPath()));
         $FileEntity->setMimeType(mime_content_type($FileEntity->getPath()));
         $FileEntity->setChecksum();
 
         return $FileEntity;
     }
+    public function mkdir(string $path) {
+        if (!\file_exists($path)):
+            $this->mkdir->setPath($path);
+            $this->mkdir->run();
+        endif;
+    }
     public function move(string $path, string $destination) {
         // Create destination if not exist
-        $this->mkdir->setPath(dirname($destination));
-        $this->mkdir->run();
+        $this->mkdir(dirname($destination));
         // Move
         $this->filesystem->rename($path, $destination);
     }

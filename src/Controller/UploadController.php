@@ -35,13 +35,14 @@ class UploadController extends AbstractController
         $files = $request->files;
         if (count($files) > 0):
             // Check Espace Disk
-            $free_disk = $this->checkDisk($volume, $files); 
+            $free_disk = $this->checkVokumeSize($volume, $files); 
             if (!$free_disk):
                 return $this->response->send([
                     'status' => 'error',
                     'message' => 'There is a missing of space on your volume disk.'
                 ]);
             endif;
+
             // Upload file(s)
             $pingIt = new PingIt($this->getParameter('pingit_uploads'));
             $fileSystem = new FileSystemApi();
@@ -60,18 +61,19 @@ class UploadController extends AbstractController
                     $info = $disk->getInfo();
                     if ((int) $info['size']['used_pct'] < $disk_usage):
                         $disk_usage = (int) $info['size']['used_pct'];
-                        $stockage = rtrim($disk->getPath(), '/').'/'.$volume->getId();
+                        $disk_selected = $disk;
                     endif;
                 endforeach;
                 // Upload file
-                $file = $fileSystem->upload($id, $file, $stockage);
+                $file = $fileSystem->upload($id, $file, $disk_selected, $volume);
+
                 // Set metadata
                 $file->setMetadata($_REQUEST);
                 $file->setPrivate($volume->getPrivate());
                 // ApiKey & Volume
                 $file->setApiKey($apikey);
-                $file->setVolume($volume);
                 $volume->setUpdateDate(new \DateTime());
+
                 // Record
                 $em->persist($file, $volume);
                 $em->flush();
@@ -107,7 +109,7 @@ class UploadController extends AbstractController
      * @param array $files
      * @return bool
      */
-    private function checkDisk(Volume $volume, $files): bool {
+    private function checkVokumeSize(Volume $volume, $files): bool {
         $fileSystem = new FileSystemApi();
         $volume_size = $fileSystem->human2byte($volume->getSize().'Gb');
         $files_size = 0;

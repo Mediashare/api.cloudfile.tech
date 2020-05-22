@@ -76,6 +76,6 @@ class AdminController extends EasyAdminController
     private function removeFile(File $file) {
         // Remove file stockage
         $fileSystem = new FileSystemApi(); 
-        $fileSystem->remove($file->getStockage());
+        $fileSystem->remove(dirname($file->getPath()));
     }
 }

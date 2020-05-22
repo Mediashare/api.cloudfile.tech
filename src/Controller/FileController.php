@@ -256,7 +256,7 @@ class FileController extends AbstractController
         $em->flush();
         // Remove file stockage
         $fileSystem = new FileSystemApi();
-        $fileSystem->remove($file->getStockage());
+        $fileSystem->remove(dirname($file->getPath()));
         // Response
         return $this->response->send([
             'status' => 'success',

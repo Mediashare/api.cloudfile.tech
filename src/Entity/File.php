@@ -22,16 +22,6 @@ class File
     private $name;
 
     /**
-     * @ORM\Column(type="string")
-     */
-    private $stockage;
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $path;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $size;
@@ -71,6 +61,17 @@ class File
      */
     private $volume;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Disk::class, inversedBy="files")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $disk;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $filename;
+
     public function __toString() {
         return $this->getName();
     }
@@ -101,30 +102,6 @@ class File
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStockage(): ?string
-    {
-        return $this->stockage;
-    }
-
-    public function setStockage(string $stockage): self
-    {
-        $this->stockage = $stockage;
-
-        return $this;
-    }
-
-    public function getPath(): ?string
-    {
-        return $this->path;
-    }
-
-    public function setPath(string $path): self
-    {
-        $this->path = $path;
 
         return $this;
     }
@@ -261,5 +238,34 @@ class File
         $this->volume = $volume;
 
         return $this;
+    }
+
+    public function getDisk(): ?Disk
+    {
+        return $this->disk;
+    }
+
+    public function setDisk(?Disk $disk): self
+    {
+        $this->disk = $disk;
+
+        return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(string $filename): self
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+    public function getPath(): ?string
+    {
+        return \rtrim($this->getDisk()->getPath(), '/').'/'.$this->getVolume()->getId().'/'.$this->getId().'/'.$this->getFilename();
     }
 }

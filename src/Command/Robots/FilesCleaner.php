@@ -43,7 +43,7 @@ Class FilesCleaner {
      */
     public function removeFile(File $file) {
         $filesystem = new FileSystemApi();
-        $filesystem->remove($file->getStockage());
+        $filesystem->remove(\dirname($file->getPath()));
         $this->em->remove($file);
         $this->em->flush();
         return true;

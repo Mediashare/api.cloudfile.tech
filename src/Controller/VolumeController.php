@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Disk;
+use App\Entity\Config;
 use App\Entity\Volume;
 use App\Service\Response;
 use Mediashare\PingIt\PingIt;
@@ -57,19 +58,18 @@ class VolumeController extends AbstractController
      * @Route("/volume/new", name="volume_new")
      */
     public function new(Request $request) {
-        if ($this->getParameter('cloudfile_password') 
-            && $request->get('cloudfile_password') !== $this->getParameter('cloudfile_password')):
-                return $this->response->send([
-                    'status' => 'error',
-                    'message' => 'Authority not valid for volume creation.'
-                ]);
+        $em = $this->getDoctrine()->getManager();
+        if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'Authority not valid for volume creation.'
+            ]);
         endif;
         
         $volume = new Volume();
         $volume->setName($request->get('name'));
         $volume->setSize($request->get('size')); // Gb
 
-        $em = $this->getDoctrine()->getManager();
         $em->persist($volume);
         $em->flush();
 
@@ -106,7 +106,7 @@ class VolumeController extends AbstractController
             $volume->setPrivate($private);
         endif;
 
-        if ($request->get('cloudfile_password') === $this->getParameter('cloudfile_password')):
+        if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
             if ($size = (int) $request->get('size')):
                 $volume->setSize($size);
             endif;

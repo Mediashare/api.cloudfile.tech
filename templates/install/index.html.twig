@@ -1,6 +1,67 @@
-<!DOCTYPE html>
-    <title>Installation</title>
+{% extends 'base.html.twig' %}
+
+{% block title %}Installation{% endblock %}
 
 {% block content %}
-
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h1 class="card-title">
+                        CloudFile Installation
+                    </h1>
+                </div>
+                <form id="form_installation" method="POST">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <p>
+                                CloudFile is a simple file storage solution that can be consumed via an API. <br> 
+                                Useful for all your projects, CloudFile allows the storage of files in a public or private cloud.
+                            </p>
+                            <hr class="separate">
+                            <h3>Administration</h3>
+                            <p>
+                                <strong>You need to create a login to manage your CloudFile storage server.</strong>
+                            </p>
+                            <div class="form-group">
+                                <label for="username"><strong>Username*</strong></label>
+                                <input type="text" class="form-control" name="username" id="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password"><strong>Password*</strong></label>
+                                <input name="password" type="password" class="form-control" id="password" required>
+                            </div>
+                            <hr class="separate">
+                            <h3>Disk Storage</h3>
+                            <p>
+                                Please provide us with the information of the <strong>hard drive to be used</strong>. <br>
+                                CloudFile supports the use of <strong>multiple hard drives</strong>, you can add them from the administration.
+                            </p>
+                            <div class="form-group">
+                                <label for="disk_name"><strong>Name</strong></label>
+                                <input name="disk_name" type="text" class="form-control" id="disk_name" required value="First Disk">
+                            </div>
+                            <div class="form-group">
+                                <label for="disk_path"><strong>Path</strong></label>
+                                <input name="disk_path" type="text" class="form-control" id="disk_path" required value="{{ project_dir }}/var/stockage">
+                            </div>
+                            <hr class="separate">
+                            <h3>API Security</h3>
+                            <p>
+                                You can add a password to <strong>protect the creation and resizing of Volume</strong>. <br>
+                                If CloudFile Password is null then anyone will be able to access volume creation/editing via the API.
+                            </p>
+                            <div class="form-group">
+                                <label for="cloudfile_password"><strong>CloudFile Password</strong></label>
+                                <input name="cloudfile_password" type="password" class="form-control" id="cloudfile_password">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="card-footer text-right">
+                    <button form="form_installation" type="submit" class="btn btn-outline-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

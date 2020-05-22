@@ -8,13 +8,10 @@ cd CloudFile-API
 composer update
 bin/console doctrine:schema:update --force
 chmod -R 777 var
+php -S localhost:8000 -t public/
 ```
-You can edit files stockage directory in .env file
+To finish the installation go to [http://localhost:8000/install](http://localhost:8000/install)
 
-```bash
-stockage=%kernel.project_dir%/var/stockage
-cloudfile_password="MyCloudFilePassword" 
-```
 ### Create volume storage
 ```bash
 curl \
