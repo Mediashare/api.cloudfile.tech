@@ -77,6 +77,13 @@ class UploadController extends AbstractController
                 // Upload file
                 $file = $fileSystem->upload($id, $file, $disk_selected, $volume);
 
+                // Metadata
+                // Check if description is base64
+                if (isset($_REQUEST['description'])):
+                    if ($this->is_base64_string($_REQUEST['description'])):
+                        $_REQUEST['description'] = \base64_decode($_REQUEST['description']);
+                    endif;
+                endif;
                 // Set metadata
                 $file->setMetadata($_REQUEST);
                 $file->setPrivate($volume->getPrivate());
@@ -136,6 +143,18 @@ class UploadController extends AbstractController
             return false;
         else:
             return true;
+        endif;
+    }
+
+    private function is_base64_string(string $string) {
+        // first check if we're dealing with an actual valid base64 encoded string
+        if (($decoded = base64_decode($string, true)) === false) return false;
+        // now check whether the decoded data could be actual text
+        $encodage = mb_detect_encoding($decoded);
+        if (in_array($encodage, array('UTF-8', 'ASCII'))):
+            return true;
+        else:
+            return false;
         endif;
     }
 }
