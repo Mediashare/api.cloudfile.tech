@@ -103,6 +103,7 @@ class SearchController extends AbstractController
 
     // levenshtein || similar_text
     private function compare(string $haystack, string $needle) {
+        if (strlen($haystack) < strlen($needle)) return false;
         if (\strpos(\strtolower($haystack), \strtolower($needle)) !== false):
             return true;
         else:
