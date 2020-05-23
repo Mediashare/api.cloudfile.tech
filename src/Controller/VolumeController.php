@@ -171,8 +171,13 @@ class VolumeController extends AbstractController
             return $authority;
         endif;
 
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);        
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         // Remove file(s)
+        foreach ($volume->getFiles() as $file):
+            $volume->removeFile($file);
+            $em->remove($file);
+        endforeach;
+        // Remove file(s) from Disks
         $fileSystem = new FileSystemApi();
         $disks = $em->getRepository(Disk::class)->findAll();
         foreach ($disks as $disk):
@@ -207,6 +212,11 @@ class VolumeController extends AbstractController
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
         
         // Remove file(s)
+        foreach ($volume->getFiles() as $file):
+            $volume->removeFile($file);
+            $em->remove($file);
+        endforeach;
+        // Remove file(s) from Disks
         $fileSystem = new FileSystemApi();
         $disks = $em->getRepository(Disk::class)->findAll();
         foreach ($disks as $disk):

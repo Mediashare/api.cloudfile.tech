@@ -27,6 +27,7 @@ Class FilesCleaner {
             endif;
             $progressBar->advance();
         endforeach;
+        $this->em->flush();
         $progressBar->finish();
     }
 
@@ -45,7 +46,6 @@ Class FilesCleaner {
         $filesystem = new FileSystemApi();
         $filesystem->remove(\dirname($file->getPath()));
         $this->em->remove($file);
-        $this->em->flush();
         return true;
     }
 }

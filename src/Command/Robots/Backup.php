@@ -50,6 +50,7 @@ Class Backup {
         if ($this->checksum($database)):
             $upload = $this->upload($database);
             if ($upload):
+                $this->io->writeln('<info>Database has been uploaded</info>');
                 $this->pingIt->send('[BackUp] Database has been uploaded', null, 'feather icon-upload', 'primary');
             endif;
         endif;
@@ -61,7 +62,8 @@ Class Backup {
             if ($zipPath && $this->checksum($zipPath)):
                 $upload = $this->upload($zipPath);
                 if ($upload):
-                    $this->pingIt->send('[BackUp] Storage '.$disk->getName().' has been uploaded', null, 'feather icon-upload', 'primary');
+                    $this->io->writeln('<info>Disk '.$disk->getName().' has been uploaded</info>');
+                    $this->pingIt->send('[BackUp] Disk '.$disk->getName().' has been uploaded', null, 'feather icon-upload', 'primary');
                 endif;
                 \unlink($zipPath);
             endif;
