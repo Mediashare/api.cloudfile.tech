@@ -56,7 +56,7 @@ class UploadController extends AbstractController
                 }
 
                 // Select Disk Storage
-                $disk_usage = 100;
+                $disk_usage = 99;
                 foreach ($em->getRepository(Disk::class)->findAll() as $disk):
                     if (\file_exists($disk->getPath())):
                         $info = $disk->getInfo();
