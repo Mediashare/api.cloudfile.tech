@@ -26,6 +26,8 @@ Class Backup {
         $config = $this->getBackupConfig();
         if ($config):
             $this->pingIt->send('[BackUp] The backup is started!', 'The backup system has been started.', 'feather icon-radio', 'primary');
+            // Remove old backups
+            $this->removeOldBackups();
             // Backup Database
             $this->backupDatabase();
             // Backup Disks
@@ -43,6 +45,33 @@ Class Backup {
                 return $config;
             endif;
         return false;
+    }
+
+    private function removeOldBackups() {
+        $cloudfile = new CloudFile($this->backup_host, $this->backup_apikey);
+        $status = $cloudfile->stats();
+        if ($status['status'] !== 'success'): 
+            $this->pingIt->send('[BackUp] CloudFile API server is down!', null, 'feather icon-radio', 'danger');
+            return false; 
+        endif;
+
+        // Get all backups
+        $results = $cloudfile->file()->list();
+        $backups = $results['files']['results'];
+        while (count($results['files']['results']) === 100) {
+            $results = $cloudfile->file()->list($results['files']['page'] + 1);
+            $backups = array_merge($backups, $results['files']['results']);
+        }
+        // Check date for deletion
+        $date = new \DateTime();
+        foreach ($backups as $backup):
+            $backup_date = new \DateTime($backup['createDate']['date']);
+            if ($date->diff($backup_date)->days > 0):
+                $remove = $cloudfile->file()->remove($backup['id']);
+                $this->io->writeln('<comment>Old Backup has been deleted</comment>');
+            endif;
+        endforeach;
+        $this->io->writeln('<info>Old Backup has been checked</info>');
     }
 
     private function backupDatabase() {
