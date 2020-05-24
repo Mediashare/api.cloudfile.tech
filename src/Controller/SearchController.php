@@ -17,7 +17,6 @@ class SearchController extends AbstractController
      */
     public function search(Request $request) {
         // Check Authority
-        $response = new Response();
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey');
         if ($apikey):
@@ -40,7 +39,7 @@ class SearchController extends AbstractController
         $size = 0;
         $results = [];
         if (!empty($queries)):
-            foreach ($files as $index => $file):
+            foreach ($files as $file):
                 if ($file->getVolume()):
                     foreach ($queries as $query => $value):
                         if (!$value && $this->compare($file->getName(), $query)): // Simple search in file name
@@ -64,6 +63,7 @@ class SearchController extends AbstractController
         // $results = array_slice($results, 0, 100);
         // Response
         $fileSystem = new FileSystemApi();
+        $response = new Response();
         return $response->send([
             'status' => 'success',
             'queries' => $queries,
