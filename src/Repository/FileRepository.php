@@ -50,12 +50,14 @@ class FileRepository extends ServiceEntityRepository
             $query = $this->createQueryBuilder('f')
                 ->where('f.apiKey = :apiKey')
                 ->setParameter('apiKey', $apiKey)
-                ->orderBy('f.createDate', 'DESC');
+                ->orderBy('f.createDate', 'DESC')
+                ->setMaxResults(10000);
         else:
             $query = $this->createQueryBuilder('f')
                 ->where('f.private = :private')
                 ->setParameter('private', false)
-                ->orderBy('f.createDate', 'DESC');
+                ->orderBy('f.createDate', 'DESC')
+                ->setMaxResults(10000);
         endif;
 
         $classMetadata = $this->registry->getManager()->getClassMetadata(File::class);
@@ -66,7 +68,7 @@ class FileRepository extends ServiceEntityRepository
             if (!$value): $value = $column; $column = 'name'; endif;
             if (in_array($classMetadata->getColumnName($column), $fields)):
                 $query = $query->andWhere('f.'.$column.' LIKE :'.$column.'_'.$index)->setParameter($column.'_'.$index, '%'.$value.'%');
-            else: unset($parameters[$column]); endif;
+            endif;
         endforeach;
         $files = $query->getQuery()->getResult();
 
@@ -76,14 +78,10 @@ class FileRepository extends ServiceEntityRepository
             foreach ($files as $index => $file):
                 foreach ($parameters as $column => $value):
                     if (!$value): $value = $column; endif;
-                    if ($score = $this->compare($file->getName(), $value)): // Simple search in file name
-                        $results = $this->addResult($results, $file, $score, $all_data = true);
-                    else: 
-                        unset($results[$file->getId()]);
-                        break;
-                    endif;
+                    $score = $this->compare($file->getName(), $value);
+                    $results = $this->addResult($results, $file, $score, $all_data = true);
                 endforeach;
-                if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
+                $size += $file->getSize();
             endforeach;
         endif;
 
@@ -97,15 +95,22 @@ class FileRepository extends ServiceEntityRepository
         ];
     }
 
-
     // levenshtein || similar_text
     private function compare(string $haystack, string $needle): ?int {
         $max_cost = strlen($haystack);
-        $score = \levenshtein($haystack, $needle);
-        if ($score <= $max_cost):
-            return $score;
+        if ($max_cost > 250):
+            if (\strpos(strtolower($haystack), strtolower($needle)) !== false):
+                return $max_cost - \strlen($needle);
+            else:
+                return false;
+            endif;
         else:
-            return false;
+            $score = \levenshtein($haystack, $needle);
+            if ($score < $max_cost):
+                return $score;
+            else:
+                return false;
+            endif;
         endif;
     }
 
