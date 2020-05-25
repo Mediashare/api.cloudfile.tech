@@ -61,10 +61,9 @@ class FileRepository extends ServiceEntityRepository
         $classMetadata = $this->registry->getManager()->getClassMetadata(File::class);
         $fields = $classMetadata->getColumnNames();
         foreach ($parameters as $column => $value):
-            if (!$value): $value = $column; $column = 'name'; endif;
+            if (!$value): unset($parameters[$column]); $value = $column; $column = 'name'; $parameters[$column] = $value; endif;
             if (in_array($classMetadata->getColumnName($column), $fields)):
                 $query = $query->andWhere('f.'.$column.' LIKE :'.$column)->setParameter($column, '%'.$value.'%');
-                unset($parameters[$column]);
             endif;
         endforeach;
         $files = $query->getQuery()->getResult();
@@ -73,14 +72,17 @@ class FileRepository extends ServiceEntityRepository
         $results = [];
         foreach ($files as $index => $file):
             foreach ($parameters as $key => $value):
-                if ($value && $score = $this->searchInArray($file->getInfo(), $key, $value)): // Complexe search in all file data
-                    if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
+                if ($this->compare($file->getName(), $key)): // Simple search in file name
+                    \similar_text($file->getName(), $key, $score); 
+                    $results = $this->addResult($results, $file, $score, $all_data = true);
+                elseif ($score = $this->searchInArray($file->getInfo(), $key, $value)): // Complexe search in all file data
                     $results = $this->addResult($results, $file, $score, $all_data = true);
                 else: 
                     unset($results[$file->getId()]);
                     break;
                 endif;
             endforeach;
+            if (isset($results[$file->getId()])): $size += $file->getSize(); endif;
         endforeach;
 
         // Order
