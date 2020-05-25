@@ -50,7 +50,7 @@ class FileRepository extends ServiceEntityRepository
             $query = $this->createQueryBuilder('f')
                 ->where('f.apiKey = :apiKey')
                 ->setParameter('apiKey', $apiKey)
-                ->orderBy('f.name', 'ASC')
+                ->orderBy('length(f.name)', 'ASC')
                 ->setMaxResults($max);
         else:
             $query = $this->createQueryBuilder('f')
