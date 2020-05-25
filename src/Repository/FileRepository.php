@@ -61,18 +61,19 @@ class FileRepository extends ServiceEntityRepository
         $classMetadata = $this->registry->getManager()->getClassMetadata(File::class);
         $fields = $classMetadata->getColumnNames();
         foreach ($parameters as $column => $value):
-            if (!$value): unset($parameters[$column]); $value = $column; $column = 'name'; $parameters[$column] = $value; endif;
+            if (!$value): $value = $column; $column = 'name'; endif;
             if (in_array($classMetadata->getColumnName($column), $fields)):
                 $query = $query->andWhere('f.'.$column.' LIKE :'.$column)->setParameter($column, '%'.$value.'%');
+                unset($parameters[$column]);
             endif;
         endforeach;
         $files = $query->getQuery()->getResult();
         
         $size = 0;
         $results = [];
-        foreach ($files as $column => $file):
+        foreach ($files as $index => $file):
             foreach ($parameters as $key => $value):
-                if ($score = $this->searchInArray($file->getInfo(), $key, $value)): // Complexe search in all file data
+                if ($value && $score = $this->searchInArray($file->getInfo(), $key, $value)): // Complexe search in all file data
                     if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
                     $results = $this->addResult($results, $file, $score, $all_data = true);
                 else: 
@@ -84,7 +85,7 @@ class FileRepository extends ServiceEntityRepository
 
         // Order
         usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
-        // $results = array_reverse($results, false);
+        $results = array_reverse($results, false);
 
         return [
             'size' => $size,
@@ -93,17 +94,17 @@ class FileRepository extends ServiceEntityRepository
     }
 
     private function searchInArray(array $array, string $key, ?string $query = null, ?float $score = 0) {
-        foreach ($array as $column => $value):
-            if ($this->compare($column, $key)): // index === $key
-                $percent_index_key = \levenshtein($column, $key);
+        foreach ($array as $index => $value):
+            if ($this->compare($index, $key)): // index === $key
+                \similar_text($index, $key, $percent_index_key);
                 if ($query && is_string($value) && $this->compare($value, $query)): // index === $key && value === $query
-                    $percent_value_query = \levenshtein($value, $query);
+                    \similar_text($value, $query, $percent_value_query);
                     $score += $percent_value_query + $percent_index_key;
                 elseif (!$query): // index === $key && !$query
                     $score += $percent_index_key;
                 endif;
             elseif (!$query && is_string($value) && $this->compare($value, $key)): // index !== $key && !$query && value === $key
-                $percent_value_key = \levenshtein($value, $key); 
+                \similar_text($value, $key, $percent_value_key); 
                 $score += $percent_value_key * 1.5;
             endif;
 
