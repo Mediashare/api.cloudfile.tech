@@ -87,7 +87,8 @@ class FileRepository extends ServiceEntityRepository
             endforeach;
         endif;
         usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
-
+        $results = array_reverse($results, false);
+        
         return [
             'size' => $size,
             'results' => $results
