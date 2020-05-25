@@ -71,23 +71,22 @@ class FileRepository extends ServiceEntityRepository
             endif;
         endforeach;
         $files = $query->getQuery()->getResult();
-
+        
+        // Order files by score
         $size = 0;
         $results = [];
         if (!empty($parameters)):
             foreach ($files as $index => $file):
+                $score = 0;
                 foreach ($parameters as $column => $value):
                     if (!$value): $value = $column; endif;
-                    $score = $this->compare($file->getName(), $value);
-                    $results = $this->addResult($results, $file, $score, $all_data = true);
+                    $score += $this->compare($file->getName(), $value);
                 endforeach;
+                $results = $this->addResult($results, $file, $score, $all_data = true);
                 $size += $file->getSize();
             endforeach;
         endif;
-
-        // Order
         usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
-        // $results = array_reverse($results, false);
 
         return [
             'size' => $size,
@@ -115,9 +114,6 @@ class FileRepository extends ServiceEntityRepository
     }
 
     private function addResult(array $results, File $file, float $score, ?bool $all_data = false): array {
-        if (isset($results[$file->getId()])):
-            $score += $results[$file->getId()]['score'];
-        endif;
         $results[$file->getId()] = [
             'score' => $score,
             'file' => $file->getInfo($all_data),
