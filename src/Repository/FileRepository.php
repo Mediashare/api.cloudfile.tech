@@ -60,35 +60,36 @@ class FileRepository extends ServiceEntityRepository
 
         $classMetadata = $this->registry->getManager()->getClassMetadata(File::class);
         $fields = $classMetadata->getColumnNames();
+        $index = 0;
         foreach ($parameters as $column => $value):
-            if (!$value): unset($parameters[$column]); $value = $column; $column = 'name'; $parameters[$column] = $value; endif;
+            $index++; 
+            if (!$value): $value = $column; $column = 'name'; endif;
             if (in_array($classMetadata->getColumnName($column), $fields)):
-                $query = $query->andWhere('f.'.$column.' LIKE :'.$column)->setParameter($column, '%'.$value.'%');
-            endif;
+                $query = $query->andWhere('f.'.$column.' LIKE :'.$column.'_'.$index)->setParameter($column.'_'.$index, '%'.$value.'%');
+            else: unset($parameters[$column]); endif;
         endforeach;
         $files = $query->getQuery()->getResult();
-        
+
         $size = 0;
         $results = [];
-        foreach ($files as $index => $file):
-            foreach ($parameters as $key => $value):
-                if ($this->compare($file->getName(), $key)): // Simple search in file name
-                    \similar_text($file->getName(), $key, $score); 
-                    $results = $this->addResult($results, $file, $score, $all_data = true);
-                elseif ($score = $this->searchInArray($file->getInfo(), $key, $value)): // Complexe search in all file data
-                    if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
-                    $results = $this->addResult($results, $file, $score, $all_data = true);
-                else: 
-                    unset($results[$file->getId()]);
-                    break;
-                endif;
+        if (!empty($parameters)):
+            foreach ($files as $index => $file):
+                foreach ($parameters as $column => $value):
+                    if (!$value): $value = $column; endif;
+                    if ($score = $this->compare($file->getName(), $value)): // Simple search in file name
+                        $results = $this->addResult($results, $file, $score, $all_data = true);
+                    else: 
+                        unset($results[$file->getId()]);
+                        break;
+                    endif;
+                endforeach;
+                if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
             endforeach;
-            if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
-        endforeach;
+        endif;
 
         // Order
         usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
-        $results = array_reverse($results, false);
+        // $results = array_reverse($results, false);
 
         return [
             'size' => $size,
@@ -96,37 +97,13 @@ class FileRepository extends ServiceEntityRepository
         ];
     }
 
-    private function searchInArray(array $array, string $key, ?string $query = null, ?float $score = 0) {
-        foreach ($array as $index => $value):
-            if ($this->compare($index, $key)): // index === $key
-                \similar_text($index, $key, $percent_index_key);
-                if ($query && is_string($value) && $this->compare($value, $query)): // index === $key && value === $query
-                    \similar_text($value, $query, $percent_value_query);
-                    $score += $percent_value_query + $percent_index_key;
-                elseif (!$query): // index === $key && !$query
-                    $score += $percent_index_key;
-                endif;
-            elseif (!$query && is_string($value) && $this->compare($value, $key)): // index !== $key && !$query && value === $key
-                \similar_text($value, $key, $percent_value_key); 
-                $score += $percent_value_key * 1.5;
-            endif;
-
-            // Array recursive
-            if (is_array($value)):
-                $result = $this->searchInArray((array) $value, $key, $query, $score);
-                if (!empty($result)):
-                    $score += $result;
-                endif;
-            endif;
-        endforeach;
-        return $score;
-    }
 
     // levenshtein || similar_text
-    private function compare(string $haystack, string $needle) {
-        if (strlen($haystack) < strlen($needle)) return false;
-        if (\strpos(\strtolower($haystack), \strtolower($needle)) !== false):
-            return true;
+    private function compare(string $haystack, string $needle): ?int {
+        $max_cost = strlen($haystack);
+        $score = \levenshtein($haystack, $needle);
+        if ($score <= $max_cost):
+            return $score;
         else:
             return false;
         endif;
