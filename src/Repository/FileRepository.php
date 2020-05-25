@@ -76,13 +76,14 @@ class FileRepository extends ServiceEntityRepository
                     \similar_text($file->getName(), $key, $score); 
                     $results = $this->addResult($results, $file, $score, $all_data = true);
                 elseif ($score = $this->searchInArray($file->getInfo(), $key, $value)): // Complexe search in all file data
+                    if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
                     $results = $this->addResult($results, $file, $score, $all_data = true);
                 else: 
                     unset($results[$file->getId()]);
                     break;
                 endif;
             endforeach;
-            if (isset($results[$file->getId()])): $size += $file->getSize(); endif;
+            if (!isset($results[$file->getId()])): $size += $file->getSize(); endif;
         endforeach;
 
         // Order
