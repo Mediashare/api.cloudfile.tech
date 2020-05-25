@@ -50,14 +50,12 @@ class FileRepository extends ServiceEntityRepository
             $query = $this->createQueryBuilder('f')
                 ->where('f.apiKey = :apiKey')
                 ->setParameter('apiKey', $apiKey)
-                ->orderBy('length(f.name)', 'ASC')
-                ->setMaxResults($max);
+                ->orderBy('length(f.name)', 'ASC');
         else:
             $query = $this->createQueryBuilder('f')
                 ->where('f.private = :private')
                 ->setParameter('private', false)
-                ->orderBy('length(f.name)', 'ASC')
-                ->setMaxResults($max);
+                ->orderBy('length(f.name)', 'ASC');
         endif;
 
         $classMetadata = $this->registry->getManager()->getClassMetadata(File::class);
@@ -75,19 +73,22 @@ class FileRepository extends ServiceEntityRepository
         // Order files by score
         $size = 0;
         $results = [];
-        if (!empty($parameters)):
-            foreach ($files as $index => $file):
-                $score = 0;
-                foreach ($parameters as $column => $value):
-                    if (!$value): $value = $column; endif;
-                    $score += $this->compare($file->getName(), $value);
-                endforeach;
-                $results = $this->addResult($results, $file, $score, $all_data = true);
-                $size += $file->getSize();
+        foreach ($files as $index => $file):
+            $score = 1;
+            foreach ($parameters as $column => $value):
+                if (!$value): $value = $column; $column = "name"; endif;
+                $file_score = $this->searchInArray($file->getInfo(), $column, $value);
+                if (!$file_score): $score = 0; break; 
+                else: $score += $file_score; endif;
             endforeach;
-        endif;
+            if ($score):
+                $results = $this->addResult($results, $file, $score, $all_data = false);
+                $size += $file->getSize();
+            endif;
+        endforeach;
+
         usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
-        // $results = array_reverse($results, false);
+        $results = array_reverse($results, false);
 
         return [
             'size' => $size,
@@ -95,22 +96,26 @@ class FileRepository extends ServiceEntityRepository
         ];
     }
 
+    private function searchInArray(array $array, string $column, string $needle) {
+        $score = 0;
+        foreach ($array as $field => $value):
+            if (\is_array($value)):
+                $score += $this->searchInArray($value, $column, $needle);
+            elseif (strpos(strtolower($field), strtolower($column)) !== false):
+                $score += $this->compare($value, $needle);
+            endif;
+        endforeach;
+
+        return $score;
+    }
+
     // levenshtein || similar_text
-    private function compare(string $haystack, string $needle): ?int {
-        $max_cost = strlen($haystack);
-        if ($max_cost > 250):
-            if (\strpos(strtolower($haystack), strtolower($needle)) !== false):
-                return $max_cost - \strlen($needle);
-            else:
-                return false;
-            endif;
+    private function compare(string $haystack, string $needle) {
+        if (\strpos(strtolower($haystack), strtolower($needle)) !== false):
+            \similar_text($haystack, $needle, $score);
+            return $score;
         else:
-            $score = \levenshtein($haystack, $needle);
-            if ($score < $max_cost):
-                return $score;
-            else:
-                return false;
-            endif;
+            return false;
         endif;
     }
 
