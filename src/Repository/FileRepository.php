@@ -50,13 +50,13 @@ class FileRepository extends ServiceEntityRepository
             $query = $this->createQueryBuilder('f')
                 ->where('f.apiKey = :apiKey')
                 ->setParameter('apiKey', $apiKey)
-                ->orderBy('f.createDate', 'DESC')
+                ->orderBy('f.name', 'ASC')
                 ->setMaxResults($max);
         else:
             $query = $this->createQueryBuilder('f')
                 ->where('f.private = :private')
                 ->setParameter('private', false)
-                ->orderBy('f.createDate', 'DESC')
+                ->orderBy('length(f.name)', 'ASC')
                 ->setMaxResults($max);
         endif;
 
@@ -87,8 +87,8 @@ class FileRepository extends ServiceEntityRepository
             endforeach;
         endif;
         usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
-        $results = array_reverse($results, false);
-        
+        // $results = array_reverse($results, false);
+
         return [
             'size' => $size,
             'results' => $results
