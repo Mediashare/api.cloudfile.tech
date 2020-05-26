@@ -26,12 +26,14 @@ Class Backup {
         $config = $this->getBackupConfig();
         if ($config):
             $this->pingIt->send('[BackUp] The backup is started!', 'The backup system has been started.', 'feather icon-radio', 'primary');
-            // Remove old backups
-            $this->removeOldBackups();
             // Backup Database
-            $this->backupDatabase();
+            $database = $this->backupDatabase();
             // Backup Disks
-            $this->backupDisks();
+            $disks = $this->backupDisks();
+            if ($database || $disks):
+                // Remove old backups
+                $this->removeOldBackups();
+            endif;
             $this->pingIt->send('[BackUp] The backup is ready!', 'The backup system has been finished.', 'feather icon-save', 'success');
         endif;
     }
@@ -81,8 +83,10 @@ Class Backup {
             if ($upload):
                 $this->io->writeln('<info>Database has been uploaded</info>');
                 $this->pingIt->send('[BackUp] Database has been uploaded', null, 'feather icon-upload', 'primary');
+                return true;
             endif;
         endif;
+        return false;
     }
 
     private function backupDisks() {        
@@ -93,11 +97,12 @@ Class Backup {
                 if ($upload):
                     $this->io->writeln('<info>Disk '.$disk->getName().' has been uploaded</info>');
                     $this->pingIt->send('[BackUp] Disk '.$disk->getName().' has been uploaded', null, 'feather icon-upload', 'primary');
+                    return true;
                 endif;
                 \unlink($zipPath);
             endif;
         endforeach;
-        
+        return false;
     }
 
     private function checksum(string $file) {
