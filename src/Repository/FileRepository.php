@@ -45,7 +45,7 @@ class FileRepository extends ServiceEntityRepository
         return $files;
     }
 
-    public function search(?array $parameters = [], ?string $apiKey = null, int $page = 1, ?int $max = 1000) {
+    public function search(?array $parameters = [], ?string $apiKey = null) {
         if ($apiKey):
             $query = $this->createQueryBuilder('f')
                 ->where('f.apiKey = :apiKey')
@@ -82,7 +82,7 @@ class FileRepository extends ServiceEntityRepository
                 else: $score += $file_score; endif;
             endforeach;
             if ($score):
-                $results = $this->addResult($results, $file, $score, $all_data = false);
+                $results = $this->addResult($results, $file, $score, $all_data = true);
                 $size += $file->getSize();
             endif;
         endforeach;
@@ -112,7 +112,7 @@ class FileRepository extends ServiceEntityRepository
     // levenshtein || similar_text
     private function compare(string $haystack, string $needle) {
         if (\strpos(strtolower($haystack), strtolower($needle)) !== false):
-            \similar_text($haystack, $needle, $score);
+            \similar_text(strtolower($haystack), strtolower($needle), $score);
             return $score;
         else:
             return false;
