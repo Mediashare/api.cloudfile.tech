@@ -22,7 +22,7 @@ Class FilesCleaner {
             if (!$file->getVolume()):
                 $this->removeFile($file);
             endif;
-            if (!\file_exists($file->getPath())):
+            if (file_exists($file->getDisk()->getPath()) && !\file_exists($file->getPath())):
                 $this->removeFile($file);
             endif;
             $progressBar->advance();
