@@ -32,7 +32,7 @@ Class Backup {
                 // Backup Disks
                 $disks = $this->backupDisks();
                 if ($disks):
-                    // Remove old backups
+                    // Remove old backups for free space
                     $this->removeOldBackups();
                 endif;
             endif;    

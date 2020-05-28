@@ -10,11 +10,23 @@ easy_admin:
             class: App\Entity\Disk
             list:
                 actions: ['show']
+            edit:
+                fields: 
+                    - id
+                    - name
+                    - path
         Volume:
             class: App\Entity\Volume
             list:
                 actions: ['show']
-                fields: ['id', 'size', 'apikey', 'files', 'private', 'updateDate', 'online']
+                fields: ['id', 'size', 'apikey', 'private', 'updateDate', 'online']
+            edit:
+                fields: 
+                    - id
+                    - size
+                    - private
+                    - online
+                    - apikey
         File:
             class: App\Entity\File
             disabled_actions: ['new']
