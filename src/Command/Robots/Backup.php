@@ -28,14 +28,12 @@ Class Backup {
             $this->pingIt->send('[BackUp] The backup is started!', 'The backup system has been started.', 'feather icon-radio', 'primary');
             // Backup Database
             $database = $this->backupDatabase();
-            if ($database):
-                // Backup Disks
-                $disks = $this->backupDisks();
-                if ($disks):
-                    // Remove old backups for free space
-                    $this->removeOldBackups();
-                endif;
-            endif;    
+            // Backup Disks
+            $disks = $this->backupDisks();
+            if ($database || $disks):
+                // Remove old backups for free space
+                $this->removeOldBackups();
+            endif;
             $this->pingIt->send('[BackUp] The backup is ready!', 'The backup system has been finished.', 'feather icon-save', 'success');
         endif;
     }
