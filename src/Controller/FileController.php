@@ -225,6 +225,7 @@ class FileController extends AbstractController
         );
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
+        $response->headers->set('Content-Length', $file->getSize());
         return $response;
     }
 
