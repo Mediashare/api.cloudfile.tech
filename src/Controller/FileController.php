@@ -27,7 +27,7 @@ class FileController extends AbstractController
     public function list(Request $request, ?int $page = 1) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey');
+        $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $this->response->checkAuthority($em, $apikey);
             if ($authority):
@@ -68,7 +68,7 @@ class FileController extends AbstractController
     public function info(Request $request, string $id) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey');
+        $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $this->response->checkAuthority($em, $apikey);
             if ($authority):
@@ -98,7 +98,7 @@ class FileController extends AbstractController
     public function show(Request $request, string $id) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey');
+        $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $this->response->checkAuthority($em, $apikey);
             if ($authority):
@@ -128,7 +128,7 @@ class FileController extends AbstractController
     public function renderFile(Request $request, string $id) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey');
+        $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $this->response->checkAuthority($em, $apikey);
             if ($authority):
@@ -200,7 +200,7 @@ class FileController extends AbstractController
     public function download(Request $request, string $id) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey');
+        $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $this->response->checkAuthority($em, $apikey);
             if ($authority):
@@ -234,7 +234,7 @@ class FileController extends AbstractController
     public function remove(Request $request, string $id) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey');
+        $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         $authority = $this->response->checkAuthority($em, $apikey);
         if ($authority):
             return $authority;
