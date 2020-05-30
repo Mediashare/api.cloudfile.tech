@@ -19,13 +19,12 @@ easy_admin:
             class: App\Entity\Volume
             list:
                 actions: ['show']
-                fields: ['id', 'size', 'apikey', 'private', 'updateDate', 'online']
+                fields: ['id', 'size', 'apikey', 'private', 'updateDate']
             edit:
                 fields: 
                     - id
                     - size
                     - private
-                    - online
                     - apikey
         File:
             class: App\Entity\File

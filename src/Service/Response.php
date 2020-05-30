@@ -28,7 +28,7 @@ Class Response {
                 'message' => 'ApiKey not found in Header.'
             ]);
         endif;
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         if (!$volume):
             return $this->send([
                 'status' => 'error',

@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\File;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Volume;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method File|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,12 +21,12 @@ class FileRepository extends ServiceEntityRepository
         parent::__construct($registry, File::class);
     }
 
-    public function pagination(?string $apiKey = null, ?int $page = 1, ?int $max = 100) {
+    public function pagination(?Volume $volume = null, ?int $page = 1, ?int $max = 100) {
         $first_result = $max * ($page - 1);
-        if ($apiKey):
+        if ($volume):
             $files = $this->createQueryBuilder('f')
-                ->andWhere('f.apiKey = :apiKey')
-                ->setParameter('apiKey', $apiKey)
+                ->andWhere('f.volume = :volume')
+                ->setParameter('volume', $volume)
                 ->orderBy('f.createDate', 'DESC')
                 ->setFirstResult($first_result)
                 ->setMaxResults($max)
@@ -45,11 +46,11 @@ class FileRepository extends ServiceEntityRepository
         return $files;
     }
 
-    public function search(?array $parameters = [], ?string $apiKey = null) {
-        if ($apiKey):
+    public function search(?array $parameters = [], ?Volume $volume = null) {
+        if ($volume):
             $query = $this->createQueryBuilder('f')
-                ->where('f.apiKey = :apiKey')
-                ->setParameter('apiKey', $apiKey)
+                ->where('f.volume = :volume')
+                ->setParameter('volume', $volume)
                 ->orderBy('length(f.name)', 'ASC');
         else:
             $query = $this->createQueryBuilder('f')

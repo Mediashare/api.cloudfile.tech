@@ -33,14 +33,14 @@ class FileController extends AbstractController
             if ($authority):
                 return $authority;
             endif;
-            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
             $counter = count($volume->getFiles());
             $volume = $volume->getInfo();
         else:
             $counter = count($em->getRepository(File::class)->findBy(['private' => false]));
             $volume = null;
         endif;
-        $files = $em->getRepository(File::class)->pagination($apikey, $page, $max = 100);
+        $files = $em->getRepository(File::class)->pagination($volume, $page, $max = 100);
         
         $results = [];
         $size = 0;
@@ -74,7 +74,8 @@ class FileController extends AbstractController
             if ($authority):
                 return $authority;
             endif;
-            $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
+            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+            $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']);    
         else:
             $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
@@ -104,7 +105,8 @@ class FileController extends AbstractController
             if ($authority):
                 return $authority;
             endif;
-            $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
+            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+            $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']); 
         else:
             $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
@@ -134,7 +136,8 @@ class FileController extends AbstractController
             if ($authority):
                 return $authority;
             endif;
-            $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
+            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+            $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']);        
         else:
             $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
@@ -206,7 +209,8 @@ class FileController extends AbstractController
             if ($authority):
                 return $authority;
             endif;
-            $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
+            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+            $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']);
         else:
             $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
@@ -241,7 +245,8 @@ class FileController extends AbstractController
             return $authority;
         endif;
 
-        $file = $em->getRepository(File::class)->findOneBy(['apiKey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+        $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']);    
         if (!$file):
             return $this->response->send([
                 'status' => 'error',

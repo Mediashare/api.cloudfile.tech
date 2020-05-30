@@ -39,11 +39,6 @@ class Volume
      * @ORM\Column(type="boolean")
      */
     private $private;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $online;
     
     /**
      * @ORM\Column(type="datetime")
@@ -69,7 +64,6 @@ class Volume
         $this->setId(\uniqid());
         $this->generateApiKey();
         $this->setPrivate(true);
-        $this->setOnline(true);
         $this->setCreateDate(new \DateTime());
         $this->setUpdateDate(new \DateTime());
 
@@ -135,18 +129,6 @@ class Volume
     public function setPrivate(bool $private): self
     {
         $this->private = $private;
-
-        return $this;
-    } 
-
-    public function getOnline(): ?bool
-    {
-        return $this->online;
-    }
-
-    public function setOnline(bool $online): self
-    {
-        $this->online = $online;
 
         return $this;
     }
@@ -217,7 +199,6 @@ class Volume
         if ($all_data):
             $info['size'] = $this->getSize();
             $info['private'] = $this->getPrivate();
-            $info['online'] = $this->getOnline();
             $info['apikey'] = $this->getApikey();
             
             // Stats

@@ -30,7 +30,7 @@ class UploadController extends AbstractController
         endif;
         
         // Get Volume
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         
         $files = $request->files;
         if (count($files) > 0):

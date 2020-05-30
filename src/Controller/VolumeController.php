@@ -24,7 +24,7 @@ class VolumeController extends AbstractController
      */
     public function list() {
         $em = $this->getDoctrine()->getManager();
-        $volumes = $em->getRepository(Volume::class)->findBy(['private' => false, 'online' => true], ['updateDate' => 'DESC']);
+        $volumes = $em->getRepository(Volume::class)->findBy(['private' => false], ['updateDate' => 'DESC']);
         $results = [];
         foreach ($volumes as $volume):
             $results[] = $volume->getInfo($all_data = false);
@@ -47,7 +47,7 @@ class VolumeController extends AbstractController
             return $authority;
         endif;
         
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         return $this->response->send([
             'status' => 'success',
             'volume' => $volume->getInfo()
@@ -94,7 +94,7 @@ class VolumeController extends AbstractController
             return $authority;
         endif;
         
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         
         if ($name = (string) $request->get('name')):
             $volume->setName($name);
@@ -107,15 +107,9 @@ class VolumeController extends AbstractController
             $volume->setPrivate($private);
         endif;
 
-        if (!$em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
+        if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
             if ($size = (int) $request->get('size')):
                 $volume->setSize($size);
-            endif;
-            if ($online = $request->get('online')):
-                if ($online == "true"):
-                    $online = true;
-                else: $online = false;endif;
-                $volume->setOnline($online);
             endif;
         endif;
         
@@ -142,7 +136,7 @@ class VolumeController extends AbstractController
             return $authority;
         endif;
         
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         $volume->generateApiKey();
 
         $volume->setUpdateDate(new \DateTime());
@@ -171,7 +165,7 @@ class VolumeController extends AbstractController
             return $authority;
         endif;
 
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         // Remove file(s)
         foreach ($volume->getFiles() as $file):
             $volume->removeFile($file);
@@ -209,7 +203,7 @@ class VolumeController extends AbstractController
             return $authority;
         endif;
         
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey, 'online' => true]);
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         
         // Remove file(s)
         foreach ($volume->getFiles() as $file):
