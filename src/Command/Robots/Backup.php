@@ -28,9 +28,9 @@ Class Backup {
             $this->pingIt->send('[BackUp] The backup is started!', 'The backup system has been started.', 'feather icon-radio', 'primary');
             // Backup Database
             $database = $this->backupDatabase();
-            // Backup Disks
-            $disks = $this->backupDisks();
-            if ($database || $disks):
+            if ($database):
+                // Backup Disks
+                $disks = $this->backupDisks();
                 // Remove old backups for free space
                 $this->removeOldBackups();
             endif;
