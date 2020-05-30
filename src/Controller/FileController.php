@@ -35,12 +35,12 @@ class FileController extends AbstractController
             endif;
             $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
             $counter = count($volume->getFiles());
-            $volume = $volume->getInfo();
         else:
             $counter = count($em->getRepository(File::class)->findBy(['private' => false]));
             $volume = null;
         endif;
         $files = $em->getRepository(File::class)->pagination($volume, $page, $max = 100);
+        if ($volume): $volume = $volume->getInfo(); endif;
         
         $results = [];
         $size = 0;
