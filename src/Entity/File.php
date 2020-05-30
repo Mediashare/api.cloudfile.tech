@@ -195,39 +195,6 @@ class File
         return $this;
     }
 
-    public function getInfo(?bool $all_data = true): array {
-        $fileSystem = new FileSystemApi();
-        $info = [
-            'id' => $this->getId(),
-            'name' => $this->getName(),
-            'size' => $fileSystem->getSizeReadable($this->getSize()),
-            'createDate' => (array) $this->getCreateDate(),
-        ];
-        
-        if ($all_data):
-            if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
-                $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
-            else:
-                if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'): $http = 'https://';
-                else: $http = 'http://'; endif;
-                $host = $http.trim($_SERVER['HTTP_HOST'], '/');
-            endif;
-            $info['urls'] = [
-                'info' => $host.'/info/'.$this->getId(),
-                'show' => $host.'/show/'.$this->getId(),
-                'render' => $host.'/render/'.$this->getId(),
-                'download' => $host.'/download/'.$this->getId(),
-                'remove' => $host.'/remove/'.$this->getId(),
-            ];
-            $info['mimeType'] = $this->getMimeType();
-            $info['checksum'] = $this->getChecksum();
-            $info['metadata'] = $this->getMetadata(); 
-            $info['private'] = $this->getPrivate();
-        endif;
-
-        return $info;
-    }
-
     public function getVolume(): ?Volume
     {
         return $this->volume;
@@ -267,5 +234,38 @@ class File
     public function getPath(): ?string
     {
         return \rtrim($this->getDisk()->getPath(), '/').'/'.$this->getVolume()->getId().'/'.$this->getId().'/'.$this->getFilename();
+    }
+
+    public function getInfo(?bool $all_data = true): array {
+        $fileSystem = new FileSystemApi();
+        $info = [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'size' => $fileSystem->getSizeReadable($this->getSize()),
+            'createDate' => (array) $this->getCreateDate(),
+        ];
+        
+        if ($all_data):
+            if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
+                $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
+            else:
+                if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'): $http = 'https://';
+                else: $http = 'http://'; endif;
+                $host = $http.trim($_SERVER['HTTP_HOST'], '/');
+            endif;
+            $info['urls'] = [
+                'info' => $host.'/info/'.$this->getId(),
+                'show' => $host.'/show/'.$this->getId(),
+                'render' => $host.'/render/'.$this->getId(),
+                'download' => $host.'/download/'.$this->getId(),
+                'remove' => $host.'/remove/'.$this->getId(),
+            ];
+            $info['mimeType'] = $this->getMimeType();
+            $info['checksum'] = $this->getChecksum();
+            $info['metadata'] = $this->getMetadata(); 
+            $info['private'] = $this->getPrivate();
+        endif;
+
+        return $info;
     }
 }
