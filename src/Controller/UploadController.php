@@ -168,14 +168,14 @@ class UploadController extends AbstractController
     private function checkAuthority($apikey) {
         $em = $this->getDoctrine()->getManager();
         if (!$apikey):
-            return $this->reponse->send([
+            return $this->response->send([
                 'status' => 'error',
                 'message' => 'ApiKey not found in Header.'
             ]);
         endif;
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         if (!$volume):
-            return $this->reponse->send([
+            return $this->response->send([
                 'status' => 'error',
                 'message' => 'Volume not found with your apikey.'
             ]);
