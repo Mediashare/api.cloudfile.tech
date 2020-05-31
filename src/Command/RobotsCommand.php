@@ -43,7 +43,7 @@ class RobotsCommand extends Command
     protected function robots() {
         $robots = $this->getRobots();
         foreach ($robots->getModules() as $module):
-            if ($module->name !== 'BackUp'):
+            if ($module->name !== 'Backup'):
                 $robot = $robots->get($module->name);
                 $robot->container = $this->container;
                 $robot->em = $this->container->get('doctrine')->getManager();
