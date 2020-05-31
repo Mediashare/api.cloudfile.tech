@@ -53,6 +53,11 @@ Class VolumesUpdate {
             $file->setPrivate($volume->getPrivate());
             $update = true;
         endif;
+        
+        if ($file->getApikey() === $volume->getApikey()):
+            $file->generateApiKey();
+            $update = true;
+        endif;
 
         if ($update):
             $this->em->persist($file);
