@@ -162,11 +162,10 @@ class FileController extends AbstractController
             endif;
         endif;
 
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Headers: *");
         $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
-        $response = new \Symfony\Component\HttpFoundation\Response($showContent->show());
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-        return $response;
+        return new \Symfony\Component\HttpFoundation\Response($showContent->show());
     }
 
     /**
