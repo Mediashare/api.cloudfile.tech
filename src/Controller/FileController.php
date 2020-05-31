@@ -30,7 +30,7 @@ class FileController extends AbstractController
         if ($apikey):
             $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
             if (!$volume):
-                return $this->send([
+                return $this->response->send([
                     'status' => 'error',
                     'message' => 'Volume not found with your apikey.'
                 ]);
