@@ -12,6 +12,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SearchController extends AbstractController
 {
+    public function __construct() {
+        $this->response = new Response();
+    }
+
     /**
      * Search file(s)
      * @Route("/search", name="search")
@@ -25,11 +29,10 @@ class SearchController extends AbstractController
         endif;
 
         // Check Authority
-        $response = new Response();
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey');
         if ($apikey):
-            $authority = $response->checkAuthority($em, $apikey);
+            $authority = $this->checkAuthority($apikey);
             if ($authority):
                 return $authority;
             endif;
@@ -41,7 +44,7 @@ class SearchController extends AbstractController
 
         // Response
         $fileSystem = new FileSystemApi();
-        return $response->send([
+        return $this->response->send([
             'status' => 'success',
             'queries' => $queries,
             'files' => [
@@ -68,5 +71,30 @@ class SearchController extends AbstractController
             endif;
         }
         return $vars;
+    }
+
+    /**
+     * Check if ApiKey exist & if Volume associated.
+     *
+     * @param Request $request
+     * @return Response|null
+     */
+    private function checkAuthority($apikey) {
+        if (!$apikey):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'ApiKey not found in Header.'
+            ]);
+        endif;
+        $em = $this->getDoctrine()->getManager();
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+        if (!$volume):
+            return $this->response->send([
+                'status' => 'error',
+                'message' => 'Volume not found with your apikey.'
+            ]);
+        endif;
+        
+        return null; // Checkup valid!
     }
 }
