@@ -159,7 +159,10 @@ class FileController extends AbstractController
         endif;
 
         $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
-        return new \Symfony\Component\HttpFoundation\Response($showContent->show());
+        $response = new \Symfony\Component\HttpFoundation\Response($showContent->show());
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 
     /**
