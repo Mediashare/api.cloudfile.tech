@@ -118,6 +118,10 @@ class FileController extends AbstractController
         endif;
 
         $response = new BinaryFileResponse($file->getPath(), 200);
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_INLINE,
+            $file->getName()
+        );
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
