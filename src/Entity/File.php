@@ -273,7 +273,7 @@ class File
                 'show' => $host.'/show/'.$this->getId().$apikey,
                 'render' => $host.'/render/'.$this->getId().$apikey,
                 'download' => $host.'/download/'.$this->getId().$apikey,
-                'remove' => $host.'/remove/'.$this->getId().$apikey,
+                'remove' => $host.'/remove/'.$this->getId(),
             ];
         endif;
 
