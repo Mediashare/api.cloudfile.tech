@@ -59,7 +59,7 @@ class UploadController extends AbstractController
                 // Select Disk Storage
                 $disk_usage = 99;
                 foreach ($em->getRepository(Disk::class)->findAll() as $disk):
-                    if (\file_exists($disk->getPath())):
+                    if (\file_exists($disk->getPath()) && \is_writable($disk->getPath())):
                         $info = $disk->getInfo();
                         if ((float) $info['size']['used_pct'] < $disk_usage):
                             $disk_usage = (float) $info['size']['used_pct'];
@@ -71,7 +71,7 @@ class UploadController extends AbstractController
                 if (empty($disk_selected)):
                     return $this->json([
                         'status' => 'error',
-                        'message' => 'No disk has been found!'
+                        'message' => 'No disk has been selected!'
                     ]);
                 endif;
 
