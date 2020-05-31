@@ -1928,16 +1928,16 @@
         },
         {
             "name": "mediashare/show-content",
-            "version": "1.2.3",
+            "version": "1.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Mediashare/ShowContent.git",
-                "reference": "5166c16300a7ce47393f625b4a0606f0942b3ca0"
+                "reference": "e330104cac555cb4494ddaffa55691f30e32d183"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Mediashare/ShowContent/zipball/5166c16300a7ce47393f625b4a0606f0942b3ca0",
-                "reference": "5166c16300a7ce47393f625b4a0606f0942b3ca0",
+                "url": "https://api.github.com/repos/Mediashare/ShowContent/zipball/e330104cac555cb4494ddaffa55691f30e32d183",
+                "reference": "e330104cac555cb4494ddaffa55691f30e32d183",
                 "shasum": ""
             },
             "require": {
@@ -1964,7 +1964,7 @@
                 }
             ],
             "description": "Detect file type & generate html view for web interface user-friendly. (Image/Video/Audio/Text/Markdown)",
-            "time": "2020-05-31T14:43:09+00:00"
+            "time": "2020-05-31T14:50:09+00:00"
         },
         {
             "name": "myclabs/php-enum",
