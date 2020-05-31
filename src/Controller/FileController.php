@@ -71,7 +71,7 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey);
+            $authority = $this->checkAuthority($apikey, $id);
             if ($authority):
                 return $authority;
             endif;
@@ -101,7 +101,7 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey);
+            $authority = $this->checkAuthority($apikey, $id);
             if ($authority):
                 return $authority;
             endif;
@@ -131,7 +131,7 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey);
+            $authority = $this->checkAuthority($apikey, $id);
             if ($authority):
                 return $authority;
             endif;
@@ -173,7 +173,7 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey);
+            $authority = $this->checkAuthority($apikey, $id);
             if ($authority):
                 return $authority;
             endif;
@@ -206,7 +206,7 @@ class FileController extends AbstractController
     public function remove(Request $request, string $id) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey'); // Volume ApiKey
+        $apikey = $request->headers->get('apikey') ?? $request->get('apikey'); // Volume ApiKey
         if (!$apikey):
             return $this->response->send([
                 'status' => 'error',
@@ -250,7 +250,7 @@ class FileController extends AbstractController
      * @param Request $request
      * @return Response|null
      */
-    private function checkAuthority($apikey) {
+    private function checkAuthority(?string $apikey = null, string $id) {
         $em = $this->getDoctrine()->getManager();
         if (!$apikey):
             return $this->response->send([
@@ -258,11 +258,15 @@ class FileController extends AbstractController
                 'message' => 'ApiKey not found in Header/Post data.'
             ]);
         endif;
-        $file = $em->getRepository(File::class)->findOneBy(['apikey' => $apikey]);
+        
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+        if ($volume): $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'volume' => $volume]);
+        else: $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'apikey' => $apikey]); endif;
+
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
-                'message' => 'File not found with your apikey.'
+                'message' => 'File/Volume not found with your apikey.'
             ]);
         endif;
         
