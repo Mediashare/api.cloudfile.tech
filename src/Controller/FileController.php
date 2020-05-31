@@ -245,14 +245,14 @@ class FileController extends AbstractController
     private function checkAuthority($apikey) {
         $em = $this->getDoctrine()->getManager();
         if (!$apikey):
-            return $this->send([
+            return $this->response->send([
                 'status' => 'error',
                 'message' => 'ApiKey not found in Header/Post data.'
             ]);
         endif;
         $file = $em->getRepository(File::class)->findOneBy(['apikey' => $apikey]);
         if (!$file):
-            return $this->send([
+            return $this->response->send([
                 'status' => 'error',
                 'message' => 'File not found with your apikey.'
             ]);
