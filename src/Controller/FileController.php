@@ -26,13 +26,15 @@ class FileController extends AbstractController
     public function list(Request $request, ?int $page = 1) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
+        $apikey = $request->headers->get('apikey');
         if ($apikey):
-            $authority = $this->response->checkAuthority($em, $apikey);
-            if ($authority):
-                return $authority;
-            endif;
             $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+            if (!$volume):
+                return $this->send([
+                    'status' => 'error',
+                    'message' => 'Volume not found with your apikey.'
+                ]);
+            endif;
             $counter = count($volume->getFiles());
         else:
             $counter = count($em->getRepository(File::class)->findBy(['private' => false]));
@@ -69,12 +71,11 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->response->checkAuthority($em, $apikey);
+            $authority = $this->checkAuthority($apikey);
             if ($authority):
                 return $authority;
             endif;
-            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-            $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']);    
+            $file = $em->getRepository(File::class)->findOneBy(['apikey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
         else:
             $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
@@ -100,12 +101,11 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->response->checkAuthority($em, $apikey);
+            $authority = $this->checkAuthority($apikey);
             if ($authority):
                 return $authority;
             endif;
-            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-            $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']); 
+            $file = $em->getRepository(File::class)->findOneBy(['apikey' => $apikey, 'id' => $id], ['createDate' => 'DESC']); 
         else:
             $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
@@ -131,12 +131,11 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->response->checkAuthority($em, $apikey);
+            $authority = $this->checkAuthority($apikey);
             if ($authority):
                 return $authority;
             endif;
-            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-            $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']);        
+            $file = $em->getRepository(File::class)->findOneBy(['apikey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);        
         else:
             $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
@@ -150,7 +149,7 @@ class FileController extends AbstractController
 
         // Generate url for bypass apikey protection
         if ($file->getPrivate()):
-            $url = $this->generateUrl('show', ['id' => $file->getId(), 'apikey' => $file->getApiKey()], UrlGeneratorInterface::ABSOLUTE_URL);
+            $url = $this->generateUrl('show', ['id' => $file->getId(), 'apikey' => $file->getApikey()], UrlGeneratorInterface::ABSOLUTE_URL);
         else: $url = $this->generateUrl('show', ['id' => $file->getId()], UrlGeneratorInterface::ABSOLUTE_URL); endif;
         $showContent = new ShowContent($url);
         $showContent->file->mimeType = $file->getMimeType();
@@ -173,12 +172,11 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->response->checkAuthority($em, $apikey);
+            $authority = $this->checkAuthority($apikey);
             if ($authority):
                 return $authority;
             endif;
-            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-            $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']);
+            $file = $em->getRepository(File::class)->findOneBy(['apikey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);
         else:
             $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
         endif;
@@ -208,13 +206,12 @@ class FileController extends AbstractController
         // Check Authority
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
-        $authority = $this->response->checkAuthority($em, $apikey);
+        $authority = $this->checkAuthority($apikey);
         if ($authority):
             return $authority;
         endif;
 
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-        $file = $em->getRepository(File::class)->findOneBy(['volume' => $volume, 'id' => $id], ['createDate' => 'DESC']);    
+        $file = $em->getRepository(File::class)->findOneBy(['apikey' => $apikey, 'id' => $id], ['createDate' => 'DESC']);    
         if (!$file):
             return $this->response->send([
                 'status' => 'error',
@@ -236,5 +233,30 @@ class FileController extends AbstractController
             'status' => 'success',
             'message' => '['.$id.'] File was removed.',
         ]);
+    }
+
+    /**
+     * Check if ApiKey exist & if Volume associated.
+     *
+     * @param Request $request
+     * @return Response|null
+     */
+    private function checkAuthority($apikey) {
+        $em = $this->getDoctrine()->getManager();
+        if (!$apikey):
+            return $this->send([
+                'status' => 'error',
+                'message' => 'ApiKey not found in Header/Post data.'
+            ]);
+        endif;
+        $file = $em->getRepository(File::class)->findOneBy(['apikey' => $apikey]);
+        if (!$file):
+            return $this->send([
+                'status' => 'error',
+                'message' => 'File not found with your apikey.'
+            ]);
+        endif;
+        
+        return null; // Checkup valid!
     }
 }

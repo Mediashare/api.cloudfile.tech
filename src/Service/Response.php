@@ -14,28 +14,4 @@ Class Response {
         $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
     }
-
-    /**
-     * Check if ApiKey exist & if Volume associated.
-     *
-     * @param Request $request
-     * @return Response|null
-     */
-    public function checkAuthority(EntityManager $em, $apikey) {
-        if (!$apikey):
-            return $this->send([
-                'status' => 'error',
-                'message' => 'ApiKey not found in Header.'
-            ]);
-        endif;
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-        if (!$volume):
-            return $this->send([
-                'status' => 'error',
-                'message' => 'Volume not found with your apikey.'
-            ]);
-        endif;
-        // Checkup valid!
-        return null;
-    }
 }

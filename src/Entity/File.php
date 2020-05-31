@@ -49,7 +49,7 @@ class File
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $apiKey;
+    private $apikey;
 
     /**
      * @ORM\Column(type="boolean", nullable=false)
@@ -171,14 +171,19 @@ class File
         return $this;
     }
     
-    public function getApiKey(): ?string
-    {
-        return $this->apiKey;
+    public function generateApiKey(): self {
+        $this->setApikey($this->rngString(32));
+        return $this;
     }
 
-    public function setApiKey(?string $apiKey = null): self
+    public function getApikey(): ?string
     {
-        $this->apiKey = $apiKey;
+        return $this->apikey;
+    }
+
+    public function setApikey(?string $apikey = null): self
+    {
+        $this->apikey = $apikey;
         
         return $this;
     }
@@ -246,6 +251,12 @@ class File
         ];
         
         if ($all_data):
+            $info['mimeType'] = $this->getMimeType();
+            $info['checksum'] = $this->getChecksum();
+            $info['metadata'] = $this->getMetadata(); 
+            $info['private'] = $this->getPrivate();
+
+            // Urls
             if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
                 $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
             else:
@@ -253,19 +264,23 @@ class File
                 else: $http = 'http://'; endif;
                 $host = $http.trim($_SERVER['HTTP_HOST'], '/');
             endif;
+            if ($this->getPrivate()): 
+                $info['apikey'] = $this->getApikey();
+                $apikey = '?apikey='.$this->getApikey();
+            else: $apikey = null; endif;
             $info['urls'] = [
-                'info' => $host.'/info/'.$this->getId(),
-                'show' => $host.'/show/'.$this->getId(),
-                'render' => $host.'/render/'.$this->getId(),
-                'download' => $host.'/download/'.$this->getId(),
-                'remove' => $host.'/remove/'.$this->getId(),
+                'info' => $host.'/info/'.$this->getId().$apikey,
+                'show' => $host.'/show/'.$this->getId().$apikey,
+                'render' => $host.'/render/'.$this->getId().$apikey,
+                'download' => $host.'/download/'.$this->getId().$apikey,
+                'remove' => $host.'/remove/'.$this->getId().$apikey,
             ];
-            $info['mimeType'] = $this->getMimeType();
-            $info['checksum'] = $this->getChecksum();
-            $info['metadata'] = $this->getMetadata(); 
-            $info['private'] = $this->getPrivate();
         endif;
 
         return $info;
+    }
+
+    private function rngString($length = 32) {
+        return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
 }
