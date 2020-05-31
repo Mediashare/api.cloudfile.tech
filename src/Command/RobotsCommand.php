@@ -43,16 +43,18 @@ class RobotsCommand extends Command
     protected function robots() {
         $robots = $this->getRobots();
         foreach ($robots->getModules() as $module):
-            $robot = $robots->get($module->name);
-            $robot->container = $this->container;
-            $robot->em = $this->container->get('doctrine')->getManager();
-            $robot->io = $this->io;
-            $robot->output = $this->output;
-            $robot->pingIt = $this->pingIt;
-            $this->io->section('[Start] '.$module->name);
-            $result = $robot->run();
-            if ($result):
-                $this->io->success($result);
+            if ($module->name !== 'BackUp'):
+                $robot = $robots->get($module->name);
+                $robot->container = $this->container;
+                $robot->em = $this->container->get('doctrine')->getManager();
+                $robot->io = $this->io;
+                $robot->output = $this->output;
+                $robot->pingIt = $this->pingIt;
+                $this->io->section('[Start] '.$module->name);
+                $result = $robot->run();
+                if ($result):
+                    $this->io->success($result);
+                endif;
             endif;
         endforeach;
     }
