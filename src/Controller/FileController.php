@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\File;
-use App\Entity\Proxy;
 use App\Entity\Volume;
 use App\Service\Response;
 use App\Service\FileSystemApi;
@@ -149,11 +148,10 @@ class FileController extends AbstractController
             ], 404);
         endif;
 
-        // Generate proxy url for bypass apikey protection
-        $proxy = new Proxy($file);
-        $em->persist($proxy);
-        $em->flush();
-        $url = $this->generateUrl('proxy', ['id' => $proxy->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        // Generate url for bypass apikey protection
+        if ($file->getPrivate()):
+            $url = $this->generateUrl('show', ['id' => $file->getId(), 'apikey' => $apikey], UrlGeneratorInterface::ABSOLUTE_URL);
+        else: $url = $this->generateUrl('show', ['id' => $file->getId()], UrlGeneratorInterface::ABSOLUTE_URL); endif;
         $showContent = new ShowContent($url);
         $showContent->file->mimeType = $file->getMimeType();
         if ($showContent->file->getType() === "text"):
@@ -162,36 +160,9 @@ class FileController extends AbstractController
                 $showContent->file->mimeType = "text/markdown";
             endif;
         endif;
+
         $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
         return new \Symfony\Component\HttpFoundation\Response($showContent->show());
-    }
-
-
-    /**
-     * @Route("/proxy/{id}", name="proxy")
-     */
-    public function proxy(string $id) {
-        $em = $this->getDoctrine()->getManager();
-        $proxy = $em->getRepository(Proxy::class)->find($id);
-        if ($proxy):
-            $date = new \DateTime();
-            $diff = (int) $date->diff($proxy->getCreateDate())->format('%h%');
-            if ($diff > 6):
-                $em->remove($proxy);
-                $em->flush();
-            endif;
-            $response = new BinaryFileResponse($proxy->getFile()->getPath(), 200);
-            $response->headers->set('Access-Control-Allow-Origin', '*');
-            $response->headers->set('Access-Control-Allow-Headers', '*');
-            $response->headers->set('Content-Type', $proxy->getFile()->getMimeType());
-            return $response;
-        else:
-        endif;
-
-        return $this->response->send([
-            'status' => 'error',
-            'message' => 'Your proxy session was not found.'
-        ]);
     }
 
     /**

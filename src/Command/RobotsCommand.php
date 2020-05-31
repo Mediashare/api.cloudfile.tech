@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Entity\File;
-use App\Entity\Proxy;
 use App\Entity\Volume;
 use Mediashare\PingIt\PingIt;
 use Mediashare\ModulesProvider\Config;
