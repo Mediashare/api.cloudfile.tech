@@ -88,8 +88,9 @@ class UploadController extends AbstractController
                 // Set metadata
                 $file->setMetadata($_REQUEST);
                 $file->setPrivate($volume->getPrivate());
-                // ApiKey & Volume
+                // ApiKey
                 $file->generateApiKey();
+                // Volume update
                 $volume->setUpdateDate(new \DateTime());
 
                 // Record
