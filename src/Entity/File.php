@@ -255,6 +255,7 @@ class File
             $info['checksum'] = $this->getChecksum();
             $info['metadata'] = $this->getMetadata(); 
             $info['private'] = $this->getPrivate();
+            $info['apikey'] = $this->getApikey();
 
             // Urls
             if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
@@ -265,7 +266,6 @@ class File
                 $host = $http.trim($_SERVER['HTTP_HOST'], '/');
             endif;
             if ($this->getPrivate()): 
-                $info['apikey'] = $this->getApikey();
                 $apikey = '?apikey='.$this->getApikey();
             else: $apikey = null; endif;
             $info['urls'] = [
