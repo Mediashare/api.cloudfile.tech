@@ -22,10 +22,13 @@ Class VolumesUpdate {
         $progressBarVolumes->start();
         foreach ($volumes as $volume):
             $progressBarFiles = new ProgressBar($this->output->section('Files'), count($volume->getFiles()));
+            $update = false;
             foreach ($volume->getFiles() as $file):
-                $this->status($volume, $file);
+                $updated = $this->update($volume, $file);
+                if ($updated): $update = true; endif;
                 $progressBarFiles->advance();
             endforeach;
+            if ($update): $this->em->flush(); endif;
             $progressBarFiles->finish();
             $progressBarVolumes->advance();
         endforeach;
@@ -46,7 +49,7 @@ Class VolumesUpdate {
      * @param File $file
      * @return true
      */
-    private function status(Volume $volume, File $file) {
+    private function update(Volume $volume, File $file) {
         $update = false;
         
         if ($file->getPrivate() !== $volume->getPrivate()):
@@ -61,8 +64,7 @@ Class VolumesUpdate {
 
         if ($update):
             $this->em->persist($file);
-            $this->em->flush();
-        endif;
-        return true;
+            return true;
+        else: return false; endif;
     }
 }
