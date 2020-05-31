@@ -148,9 +148,7 @@ class FileController extends AbstractController
         endif;
 
         // Generate url for bypass apikey protection
-        if ($file->getPrivate()):
-            $url = $this->generateUrl('show', ['id' => $file->getId(), 'apikey' => $file->getApikey()], UrlGeneratorInterface::ABSOLUTE_URL);
-        else: $url = $this->generateUrl('show', ['id' => $file->getId()], UrlGeneratorInterface::ABSOLUTE_URL); endif;
+        $url = $file->getInfo()['urls']['show'];
         $showContent = new ShowContent($url);
         $showContent->file->mimeType = $file->getMimeType();
         if ($showContent->file->getType() === "text"):
