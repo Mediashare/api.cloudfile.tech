@@ -24,12 +24,13 @@ class UploadController extends AbstractController
     public function upload(Request $request) {
         // Check ApiKey
         $apikey = $request->headers->get('apikey');
-        $authority = $this->response->checkAuthority($em = $this->getDoctrine()->getManager(), $apikey);
+        $authority = $this->checkAuthority($apikey);
         if ($authority):
             return $authority;
         endif;
         
         // Get Volume
+        $em = $this->getDoctrine()->getManager();
         $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         
         $files = $request->files;
@@ -156,5 +157,30 @@ class UploadController extends AbstractController
         else:
             return false;
         endif;
+    }
+
+    /**
+     * Check if ApiKey exist & if Volume associated.
+     *
+     * @param Request $request
+     * @return Response|null
+     */
+    private function checkAuthority($apikey) {
+        $em = $this->getDoctrine()->getManager();
+        if (!$apikey):
+            return $this->send([
+                'status' => 'error',
+                'message' => 'ApiKey not found in Header.'
+            ]);
+        endif;
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+        if (!$volume):
+            return $this->send([
+                'status' => 'error',
+                'message' => 'Volume not found with your apikey.'
+            ]);
+        endif;
+        
+        return null; // Checkup valid!
     }
 }
