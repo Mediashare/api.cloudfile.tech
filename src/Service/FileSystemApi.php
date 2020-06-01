@@ -36,7 +36,7 @@ Class FileSystemApi {
         endif;
 
         $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
-        \rename($file->getPathName(), $destination . '/' . $name);
+        \copy($file->getPathName(), $destination . '/' . $name);
 
         $FileEntity = new FileEntity();
         $FileEntity->setId($id);
