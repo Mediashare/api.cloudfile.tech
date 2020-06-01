@@ -84,7 +84,7 @@ class FileRepository extends ServiceEntityRepository
      */
     public function authority(string $id, ?string $apikey = null) {
         if (!$apikey):
-            return $this->response->send([
+            return $this->response->json([
                 'status' => 'error',
                 'message' => 'ApiKey not found in Header/Post data.'
             ]);
@@ -96,7 +96,7 @@ class FileRepository extends ServiceEntityRepository
         else: $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'apikey' => $apikey]); endif; // File ApiKey used
 
         if (!$file):
-            return $this->response->send([
+            return $this->response->json([
                 'status' => 'error',
                 'message' => 'File/Volume not found with your apikey.'
             ]);

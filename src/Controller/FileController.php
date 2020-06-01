@@ -30,7 +30,7 @@ class FileController extends AbstractController
         if ($apikey):
             $repo = $em->getRepository(Volume::class);
             $authority = $repo->authority($apikey);
-            if ($authority): return $this->response->send($authority); endif;
+            if ($authority): return $this->response->json($authority); endif;
             $volume = $repo->findOneBy(['apikey' => $apikey]);
             $counter = count($volume->getFiles());
         else:
@@ -48,7 +48,7 @@ class FileController extends AbstractController
         }
         
         $fileSystem = new FileSystemApi();
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'volume' => $volume,
             'files' => [
@@ -73,14 +73,9 @@ class FileController extends AbstractController
             $file = $repo->findOneBy(['id' => $id], ['createDate' => 'DESC']);    
         else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
 
-        if (!$file):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'File not found.',
-            ], 404);
-        endif;
+        if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
         
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'file' => $file->getInfo()
         ]);
@@ -99,21 +94,9 @@ class FileController extends AbstractController
             $file = $repo->findOneBy(['id' => $id], ['createDate' => 'DESC']); 
         else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
 
-        if (!$file):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'File not found.',
-            ], 404);
-        endif;
+        if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
 
-        $response = new BinaryFileResponse($file->getPath(), 200);
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_INLINE,
-            $file->getName()
-        );
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-        return $response;
+        return $this->response->show($file);
     }
 
     /**
@@ -129,12 +112,7 @@ class FileController extends AbstractController
             $file = $repo->findOneBy(['id' => $id], ['createDate' => 'DESC']);        
         else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
         
-        if (!$file):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'File not found.',
-            ], 404);
-        endif;
+        if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
 
         // Generate url for bypass apikey protection
         $url = $file->getInfo()['urls']['show'];
@@ -147,10 +125,8 @@ class FileController extends AbstractController
             endif;
         endif;
 
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Headers: *");
         $showContent->cache = $this->getParameter('kernel_dir').'/var/cache';
-        return new \Symfony\Component\HttpFoundation\Response($showContent->show());
+        return $this->response->render($showContent);
     }
 
     /**
@@ -165,23 +141,10 @@ class FileController extends AbstractController
             if ($authority): return $authority; endif;
             $file = $repo->findOneBy(['id' => $id], ['createDate' => 'DESC']);
         else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
-        
-        if (!$file):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'File not found.',
-            ], 404);
-        endif;
 
-        $response = new BinaryFileResponse($file->getPath());
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $file->getName()
-        );
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-        $response->headers->set('Content-Length', $file->getSize());
-        return $response;
+        if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
+        
+        return $this->response->downlaod($file);
     }
 
     /**
@@ -194,12 +157,7 @@ class FileController extends AbstractController
         if ($authority): return $authority; endif;
         
         $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'volume' => $volume], ['createDate' => 'DESC']);    
-        if (!$file):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'File not found.',
-            ], 404);
-        endif;
+        if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
         
         // Remove to database
         $volume = $file->getVolume()->setUpdateDate(new \DateTime());
@@ -212,7 +170,7 @@ class FileController extends AbstractController
         $fileSystem->remove(dirname($file->getPath()));
 
         // Response
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'message' => '['.$id.'] File was removed.',
         ]);

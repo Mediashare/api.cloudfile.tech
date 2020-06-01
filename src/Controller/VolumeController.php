@@ -29,7 +29,7 @@ class VolumeController extends AbstractController
         foreach ($volumes as $volume):
             $results[] = $volume->getInfo($all_data = false);
         endforeach;
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'volumes' => $results
         ]);
@@ -42,7 +42,7 @@ class VolumeController extends AbstractController
     public function new(Request $request) {
         $em = $this->getDoctrine()->getManager();
         if (!$em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
-            return $this->response->send([
+            return $this->response->json([
                 'status' => 'error',
                 'message' => 'Authority not valid for volume creation.'
             ]);
@@ -58,7 +58,7 @@ class VolumeController extends AbstractController
         $pingIt = new PingIt($this->getParameter('pingit_volumes'));
         $pingIt->send('[API] Volume added', '['.$volume->getId().'] '.$volume->getName().' - ('.$volume->getSize().'Gb) has been created.', 'feather icon-folder', 'success');
 
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'volume' => $volume->getInfo()
         ]);
@@ -74,10 +74,10 @@ class VolumeController extends AbstractController
             ->getManager()
             ->getRepository(Volume::class);
         $authority = $repo->authority($apikey = $request->headers->get('apikey'));
-        if ($authority): return $this->response->send($authority); endif;
+        if ($authority): return $this->response->json($authority); endif;
         $volume = $repo->findOneBy(['apikey' => $apikey]);
 
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'volume' => $volume->getInfo()
         ]);
@@ -91,7 +91,7 @@ class VolumeController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Volume::class);
         $authority = $repo->authority($apikey = $request->headers->get('apikey'));
-        if ($authority): return $this->response->send($authority); endif;
+        if ($authority): return $this->response->json($authority); endif;
         $volume = $repo->findOneBy(['apikey' => $apikey]);
 
         if ($name = (string) $request->get('name')):
@@ -115,7 +115,7 @@ class VolumeController extends AbstractController
         $em->persist($volume);
         $em->flush();
         
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'message' => 'This action can take several minutes',
             'volume' => $volume->getInfo()
@@ -131,7 +131,7 @@ class VolumeController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Volume::class);
         $authority = $repo->authority($apikey = $request->headers->get('apikey'));
-        if ($authority): return $this->response->send($authority); endif;
+        if ($authority): return $this->response->json($authority); endif;
         $volume = $repo->findOneBy(['apikey' => $apikey]);
 
         $volume->generateApiKey();
@@ -142,7 +142,7 @@ class VolumeController extends AbstractController
         $pingIt = new PingIt($this->getParameter('pingit_volumes'));
         $pingIt->send('[API] Volume reset ApiKey', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) ApiKey has been regenerated.', 'fa fa-key', 'warning');
 
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'message' => 'This action can take several minutes',
             'volume' => $volume->getInfo()
@@ -158,7 +158,7 @@ class VolumeController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Volume::class);
         $authority = $repo->authority($apikey = $request->headers->get('apikey'));
-        if ($authority): return $this->response->send($authority); endif;
+        if ($authority): return $this->response->json($authority); endif;
         $volume = $repo->findOneBy(['apikey' => $apikey]);
 
         // Remove file(s)
@@ -181,7 +181,7 @@ class VolumeController extends AbstractController
         $pingIt = new PingIt($this->getParameter('pingit_volumes'));
         $pingIt->send('[API] Volume clear', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) has been cleared.', 'fa fa-recycle', 'warning');
 
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'message' => 'This action can take several minutes.'
         ]);
@@ -196,7 +196,7 @@ class VolumeController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Volume::class);
         $authority = $repo->authority($apikey = $request->headers->get('apikey'));
-        if ($authority): return $this->response->send($authority); endif;
+        if ($authority): return $this->response->json($authority); endif;
         $volume = $repo->findOneBy(['apikey' => $apikey]);
         
         // Remove file(s)
@@ -218,7 +218,7 @@ class VolumeController extends AbstractController
         $pingIt = new PingIt($this->getParameter('pingit_volumes'));
         $pingIt->send('[API] Volume deleted', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) has been deleted.', 'feather icon-trash', 'danger');
         
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'message' => 'Volume  ['.$volume->getId().'] was deleted.'
         ]);

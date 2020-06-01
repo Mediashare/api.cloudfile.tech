@@ -33,7 +33,7 @@ class AppController extends AbstractController
             $disks[$key] = $disk->getInfo();
         endforeach;
 
-        return $response->send([
+        return $response->json([
             'status' => 'success',
             'volumes' => [
                 'counter' =>  count($volumes),

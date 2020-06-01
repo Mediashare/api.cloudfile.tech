@@ -34,7 +34,7 @@ class SearchController extends AbstractController
         if ($apikey):
             $repo = $em->getRepository(Volume::class);
             $authority = $repo->authority($apikey);
-            if ($authority): return $this->response->send($authority); endif;
+            if ($authority): return $this->response->json($authority); endif;
 
             $volume = $repo->findOneBy(['apikey' => $apikey]);
             $files = $em->getRepository(File::class)->search($queries, $volume);
@@ -44,7 +44,7 @@ class SearchController extends AbstractController
 
         // Response
         $fileSystem = new FileSystemApi();
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'success',
             'queries' => $queries,
             'files' => [

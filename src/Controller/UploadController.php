@@ -26,7 +26,7 @@ class UploadController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Volume::class);
         $authority = $repo->authority($apikey = $request->headers->get('apikey'));
-        if ($authority): return $this->response->send($authority); endif;
+        if ($authority): return $this->response->json($authority); endif;
         $volume = $repo->findOneBy(['apikey' => $apikey]);
         
         $files = $request->files;
@@ -34,7 +34,7 @@ class UploadController extends AbstractController
             // Check Espace Disk
             $free_disk = $this->checkVokumeSize($volume, $files); 
             if (!$free_disk):
-                return $this->response->send([
+                return $this->response->json([
                     'status' => 'error',
                     'message' => 'There is a missing of space on your volume disk.'
                 ]);
@@ -101,7 +101,7 @@ class UploadController extends AbstractController
             }
             $size = $fileSystem->getSizeReadable($size);
             // Response
-            return $this->response->send([
+            return $this->response->json([
                 'status' => 'success',
                 'message' => 'Your file(s) was uploaded.',
                 'files' => [
@@ -111,7 +111,7 @@ class UploadController extends AbstractController
                 ]
             ]);
         endif;
-        return $this->response->send([
+        return $this->response->json([
             'status' => 'error',
             'message' => 'File not found.',
         ]);
