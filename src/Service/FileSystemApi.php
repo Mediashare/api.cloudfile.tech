@@ -23,10 +23,14 @@ Class FileSystemApi {
         $destination = rtrim($disk->getPath(), '/').'/'.$volume->getId().'/'.$id;
         $this->mkdir($destination);
 
-        $file->move(
-            $destination, 
-            $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)
-        );
+        // $file->move(
+        //     $destination, 
+        //     $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)
+        // );
+
+        $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+        \rename($file->getPathName(), $destination . '/' . $name);
+
         $FileEntity = new FileEntity();
         $FileEntity->setId($id);
         $FileEntity->setName($file->getClientOriginalName());
