@@ -23,7 +23,7 @@ Class Response {
     }
 
     public function show(File $file): BinaryFileResponse {
-        $response = new BinaryFileResponse($file->getPath(), 200);
+        $response = new BinaryFileResponse($file->getPath());
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_INLINE,
             $file->getName()
