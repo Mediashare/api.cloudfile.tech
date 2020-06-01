@@ -42,7 +42,10 @@ Class SearchFilter {
         usort($results, function($a, $b) {return $a['score'] <=> $b['score'];});
         $results = array_reverse($results, false);
 
-        return $results;
+        return [
+            'results' => $results,
+            'size' => $size
+        ];
     }
 
     private function searchInArray(array $array, string $column, string $needle) {
