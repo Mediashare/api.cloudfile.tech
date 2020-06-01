@@ -73,10 +73,7 @@ class FileRepository extends ServiceEntityRepository
         $searchFilter->setParameters($parameters);
         $results = $searchFilter->filter();
 
-        return [
-            'size' => $size,
-            'results' => $results
-        ];
+        return $results;
     }
 
     /**
