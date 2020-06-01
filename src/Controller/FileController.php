@@ -28,13 +28,10 @@ class FileController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey');
         if ($apikey):
-            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-            if (!$volume):
-                return $this->response->send([
-                    'status' => 'error',
-                    'message' => 'Volume not found with your apikey.'
-                ]);
-            endif;
+            $repo = $em->getRepository(Volume::class);
+            $authority = $repo->authority($apikey);
+            if ($authority): return $this->response->send($authority); endif;
+            $volume = $repo->findOneBy(['apikey' => $apikey]);
             $counter = count($volume->getFiles());
         else:
             $counter = count($em->getRepository(File::class)->findBy(['private' => false]));
@@ -68,17 +65,13 @@ class FileController extends AbstractController
      */
     public function info(Request $request, string $id) {
         // Check Authority
-        $em = $this->getDoctrine()->getManager();
+        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey, $id);
-            if ($authority):
-                return $authority;
-            endif;
-            $file = $em->getRepository(File::class)->findOneBy(['id' => $id], ['createDate' => 'DESC']);    
-        else:
-            $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
-        endif;
+            $authority = $repo->authority($id, $apikey);
+            if ($authority): return $authority; endif;
+            $file = $repo->findOneBy(['id' => $id], ['createDate' => 'DESC']);    
+        else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
 
         if (!$file):
             return $this->response->send([
@@ -98,17 +91,13 @@ class FileController extends AbstractController
      */
     public function show(Request $request, string $id) {
         // Check Authority
-        $em = $this->getDoctrine()->getManager();
+        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey, $id);
-            if ($authority):
-                return $authority;
-            endif;
-            $file = $em->getRepository(File::class)->findOneBy(['id' => $id], ['createDate' => 'DESC']); 
-        else:
-            $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
-        endif;
+            $authority = $repo->authority($id, $apikey);
+            if ($authority): return $authority; endif;
+            $file = $repo->findOneBy(['id' => $id], ['createDate' => 'DESC']); 
+        else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
 
         if (!$file):
             return $this->response->send([
@@ -132,17 +121,13 @@ class FileController extends AbstractController
      */
     public function renderFile(Request $request, string $id) {
         // Check Authority
-        $em = $this->getDoctrine()->getManager();
+        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey, $id);
-            if ($authority):
-                return $authority;
-            endif;
-            $file = $em->getRepository(File::class)->findOneBy(['id' => $id], ['createDate' => 'DESC']);        
-        else:
-            $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
-        endif;
+            $authority = $repo->authority($id, $apikey);
+            if ($authority): return $authority; endif;
+            $file = $repo->findOneBy(['id' => $id], ['createDate' => 'DESC']);        
+        else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
         
         if (!$file):
             return $this->response->send([
@@ -173,17 +158,13 @@ class FileController extends AbstractController
      */
     public function download(Request $request, string $id) {
         // Check Authority
-        $em = $this->getDoctrine()->getManager();
+        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey, $id);
-            if ($authority):
-                return $authority;
-            endif;
-            $file = $em->getRepository(File::class)->findOneBy(['id' => $id], ['createDate' => 'DESC']);
-        else:
-            $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']);
-        endif;
+            $authority = $repo->authority($id, $apikey);
+            if ($authority): return $authority; endif;
+            $file = $repo->findOneBy(['id' => $id], ['createDate' => 'DESC']);
+        else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
         
         if (!$file):
             return $this->response->send([
@@ -208,15 +189,9 @@ class FileController extends AbstractController
      */
     public function remove(Request $request, string $id) {
         // Check Authority
-        $apikey = $request->headers->get('apikey');
         $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-        if (!$volume):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'Volume not found with your apikey.'
-            ]);
-        endif;
+        $authority = $em->getRepository(Volume::class)->authority($request->headers->get('apikey'));
+        if ($authority): return $authority; endif;
         
         $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'volume' => $volume], ['createDate' => 'DESC']);    
         if (!$file):
@@ -227,47 +202,19 @@ class FileController extends AbstractController
         endif;
         
         // Remove to database
-        $em = $this->getDoctrine()->getManager();
         $volume = $file->getVolume()->setUpdateDate(new \DateTime());
         $em->persist($volume);
         $em->remove($file);
         $em->flush();
+
         // Remove file stockage
         $fileSystem = new FileSystemApi();
         $fileSystem->remove(dirname($file->getPath()));
+
         // Response
         return $this->response->send([
             'status' => 'success',
             'message' => '['.$id.'] File was removed.',
         ]);
-    }
-
-    /**
-     * Check if ApiKey exist & if Volume associated.
-     *
-     * @param Request $request
-     * @return Response|null
-     */
-    private function checkAuthority(?string $apikey = null, string $id) {
-        $em = $this->getDoctrine()->getManager();
-        if (!$apikey):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'ApiKey not found in Header/Post data.'
-            ]);
-        endif;
-        
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-        if ($volume): $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'volume' => $volume]);
-        else: $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'apikey' => $apikey]); endif;
-
-        if (!$file):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'File/Volume not found with your apikey.'
-            ]);
-        endif;
-        
-        return null; // Checkup valid!
     }
 }

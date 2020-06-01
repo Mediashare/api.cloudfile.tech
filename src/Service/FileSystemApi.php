@@ -9,7 +9,6 @@ use App\Entity\File as FileEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Filesystem\Filesystem as Fs;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 Class FileSystemApi {
     public function __construct() {

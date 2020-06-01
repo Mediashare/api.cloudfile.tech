@@ -32,11 +32,11 @@ class SearchController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $apikey = $request->headers->get('apikey');
         if ($apikey):
-            $authority = $this->checkAuthority($apikey);
-            if ($authority):
-                return $authority;
-            endif;
-            $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+            $repo = $em->getRepository(Volume::class);
+            $authority = $repo->authority($apikey);
+            if ($authority): return $this->response->send($authority); endif;
+
+            $volume = $repo->findOneBy(['apikey' => $apikey]);
             $files = $em->getRepository(File::class)->search($queries, $volume);
         else:
             $files = $em->getRepository(File::class)->search($queries);
@@ -71,30 +71,5 @@ class SearchController extends AbstractController
             endif;
         }
         return $vars;
-    }
-
-    /**
-     * Check if ApiKey exist & if Volume associated.
-     *
-     * @param Request $request
-     * @return Response|null
-     */
-    private function checkAuthority($apikey) {
-        if (!$apikey):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'ApiKey not found in Header.'
-            ]);
-        endif;
-        $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-        if (!$volume):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'Volume not found with your apikey.'
-            ]);
-        endif;
-        
-        return null; // Checkup valid!
     }
 }

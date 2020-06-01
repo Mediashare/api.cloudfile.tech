@@ -19,32 +19,24 @@ class VolumeRepository extends ServiceEntityRepository
         parent::__construct($registry, Volume::class);
     }
 
-    // /**
-    //  * @return Volume[] Returns an array of Volume objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('v.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+    /**
+     * Check if ApiKey exist & if Volume associated.
+     */
+    public function authority(?string $apikey = null) {
+        if (!$apikey):
+            return [
+                'status' => 'error',
+                'message' => 'ApiKey not found in Header.'
+            ];
+        endif;
+        $volume = $this->findOneBy(['apikey' => $apikey]);
+        if (!$volume):
+            return [
+                'status' => 'error',
+                'message' => 'Volume not found with your apikey.'
+            ];
+        endif;
+        
+        return null; // Checkup valid!
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Volume
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

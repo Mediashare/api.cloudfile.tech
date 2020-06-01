@@ -70,14 +70,13 @@ class VolumeController extends AbstractController
      */
     public function volume(Request $request) {
         // Check Authority
-        $apikey = $request->headers->get('apikey');
-        $authority = $this->checkAuthority($apikey);
-        if ($authority):
-            return $authority;
-        endif;
+        $repo = $this->getDoctrine()
+            ->getManager()
+            ->getRepository(Volume::class);
+        $authority = $repo->authority($apikey = $request->headers->get('apikey'));
+        if ($authority): return $this->response->send($authority); endif;
+        $volume = $repo->findOneBy(['apikey' => $apikey]);
 
-        $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         return $this->response->send([
             'status' => 'success',
             'volume' => $volume->getInfo()
@@ -89,15 +88,12 @@ class VolumeController extends AbstractController
      */
     public function edit(Request $request) {
         // Check Authority
-        $apikey = $request->headers->get('apikey');
-        $authority = $this->checkAuthority($apikey);
-        if ($authority):
-            return $authority;
-        endif;
-        
         $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-        
+        $repo = $em->getRepository(Volume::class);
+        $authority = $repo->authority($apikey = $request->headers->get('apikey'));
+        if ($authority): return $this->response->send($authority); endif;
+        $volume = $repo->findOneBy(['apikey' => $apikey]);
+
         if ($name = (string) $request->get('name')):
             $volume->setName($name);
         endif;        
@@ -132,16 +128,13 @@ class VolumeController extends AbstractController
      */
     public function resetApiKey(Request $request) {
         // Check Authority
-        $apikey = $request->headers->get('apikey');
-        $authority = $this->checkAuthority($apikey);
-        if ($authority):
-            return $authority;
-        endif;
-        
         $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-        $volume->generateApiKey();
+        $repo = $em->getRepository(Volume::class);
+        $authority = $repo->authority($apikey = $request->headers->get('apikey'));
+        if ($authority): return $this->response->send($authority); endif;
+        $volume = $repo->findOneBy(['apikey' => $apikey]);
 
+        $volume->generateApiKey();
         $volume->setUpdateDate(new \DateTime());
         $em->persist($volume);
         $em->flush();
@@ -162,19 +155,18 @@ class VolumeController extends AbstractController
      */
     public function clear(Request $request) {
         // Check Authority
-        $apikey = $request->headers->get('apikey');
-        $authority = $this->checkAuthority($apikey);
-        if ($authority):
-            return $authority;
-        endif;
-
         $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+        $repo = $em->getRepository(Volume::class);
+        $authority = $repo->authority($apikey = $request->headers->get('apikey'));
+        if ($authority): return $this->response->send($authority); endif;
+        $volume = $repo->findOneBy(['apikey' => $apikey]);
+
         // Remove file(s)
         foreach ($volume->getFiles() as $file):
             $volume->removeFile($file);
             $em->remove($file);
         endforeach;
+
         // Remove file(s) from Disks
         $fileSystem = new FileSystemApi();
         $disks = $em->getRepository(Disk::class)->findAll();
@@ -201,14 +193,11 @@ class VolumeController extends AbstractController
      */
     public function delete(Request $request) {
         // Check Authority
-        $apikey = $request->headers->get('apikey');
-        $authority = $this->checkAuthority($apikey);
-        if ($authority):
-            return $authority;
-        endif;
-        
         $em = $this->getDoctrine()->getManager();
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
+        $repo = $em->getRepository(Volume::class);
+        $authority = $repo->authority($apikey = $request->headers->get('apikey'));
+        if ($authority): return $this->response->send($authority); endif;
+        $volume = $repo->findOneBy(['apikey' => $apikey]);
         
         // Remove file(s)
         foreach ($volume->getFiles() as $file):
@@ -233,30 +222,5 @@ class VolumeController extends AbstractController
             'status' => 'success',
             'message' => 'Volume  ['.$volume->getId().'] was deleted.'
         ]);
-    }
-
-    /**
-     * Check if ApiKey exist & if Volume associated.
-     *
-     * @param Request $request
-     * @return Response|null
-     */
-    private function checkAuthority($apikey) {
-        $em = $this->getDoctrine()->getManager();
-        if (!$apikey):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'ApiKey not found in Header.'
-            ]);
-        endif;
-        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
-        if (!$volume):
-            return $this->response->send([
-                'status' => 'error',
-                'message' => 'Volume not found with your apikey.'
-            ]);
-        endif;
-        
-        return null; // Checkup valid!
     }
 }
