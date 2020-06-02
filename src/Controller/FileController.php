@@ -144,7 +144,7 @@ class FileController extends AbstractController
 
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
         
-        return $this->response->downlaod($file);
+        return $this->response->download($file);
     }
 
     /**
