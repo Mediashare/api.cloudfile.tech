@@ -22,28 +22,16 @@ Class FileSystemApi {
         $destination = rtrim($disk->getPath(), '/').'/'.$volume->getId().'/'.$id;
         $this->mkdir($destination);
 
-        $file->move(
-            $destination, 
-            $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)
-        );
-        
-        // if (!file_exists($file->getPathName())):
-        //     dd('TMP not found!', $file);
-        // elseif (!file_exists($destination)):
-        //     dd('Destination not found!', $destination);
-        // elseif (!is_writable($destination)):
-        //     dd('Destination not Writable!', $destination);
-        // endif;
-
-        // $name = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
-        // \copy($file->getPathName(), $destination . '/' . $name);
+        $filename = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+        \copy($file->getPathName(), $destination . '/' . $filename);
+        \unlink($file->getPathName());
 
         $FileEntity = new FileEntity();
         $FileEntity->setId($id);
         $FileEntity->setName($file->getClientOriginalName());
         $FileEntity->setDisk($disk);
         $FileEntity->setVolume($volume);
-        $FileEntity->setFilename($name);
+        $FileEntity->setFilename($filename);
         $FileEntity->setSize(\filesize($FileEntity->getPath()));
         $FileEntity->setMimeType(mime_content_type($FileEntity->getPath()));
         $FileEntity->setChecksum();
