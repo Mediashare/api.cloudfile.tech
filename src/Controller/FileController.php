@@ -153,9 +153,10 @@ class FileController extends AbstractController
     public function remove(Request $request, string $id) {
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $authority = $em->getRepository(Volume::class)->authority($request->headers->get('apikey'));
+        $authority = $em->getRepository(Volume::class)->authority($apikey = $request->headers->get('apikey'));
         if ($authority): return $authority; endif;
         
+        $volume = $em->getRepository(Volume::class)->findOneBy(['apikey' => $apikey]);
         $file = $em->getRepository(File::class)->findOneBy(['id' => $id, 'volume' => $volume], ['createDate' => 'DESC']);    
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
         
