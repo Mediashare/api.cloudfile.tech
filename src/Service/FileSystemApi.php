@@ -23,8 +23,9 @@ Class FileSystemApi {
         $this->mkdir($destination);
 
         $filename = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
-        \copy($file->getPathName(), $destination . '/' . $filename);
-        \unlink($file->getPathName());
+        $file->move($destination, $filename);
+        // \copy($file->getPathName(), $destination . '/' . $filename);
+        // \unlink($file->getPathName());
 
         $FileEntity = new FileEntity();
         $FileEntity->setId($id);
