@@ -110,25 +110,6 @@ class Disk
         return $this;
     }
 
-    public function getInfo(): array {
-        $fileSystem = new FileSystemApi();
-        if (!\file_exists($this->getPath())):
-            $fileSystem->mkdir($this->getPath());
-        endif;
-        $free_space = \disk_free_space($this->getPath());
-        $total_space = \disk_total_space($this->getPath());
-        $used_space = $total_space - $free_space;
-        return [
-            'name' => $this->getName(),
-            'size' => [
-                'used_pct' => number_format($used_space * 100 / $total_space, 1),
-                'used' => $fileSystem->getSizeReadable($used_space),
-                'total' => $fileSystem->getSizeReadable($total_space),
-                'free' => $fileSystem->getSizeReadable($free_space),
-            ],
-        ];
-    }
-
     /**
      * @return Collection|File[]
      */
@@ -158,5 +139,24 @@ class Disk
         }
 
         return $this;
+    }
+
+    public function getInfo(): array {
+        $fileSystem = new FileSystemApi();
+        if (!\file_exists($this->getPath()) && \is_writable($this->getPath())):
+            $fileSystem->mkdir($this->getPath());
+        endif;
+        $free_space = \disk_free_space($this->getPath());
+        $total_space = \disk_total_space($this->getPath());
+        $used_space = $total_space - $free_space;
+        return [
+            'name' => $this->getName(),
+            'size' => [
+                'used_pct' => number_format($used_space * 100 / $total_space, 1),
+                'used' => $fileSystem->getSizeReadable($used_space),
+                'total' => $fileSystem->getSizeReadable($total_space),
+                'free' => $fileSystem->getSizeReadable($free_space),
+            ],
+        ];
     }
 }
