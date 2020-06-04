@@ -9,6 +9,7 @@ use App\Entity\File as FileEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Filesystem\Filesystem as Fs;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 Class FileSystemApi {
     public function __construct() {
@@ -23,7 +24,12 @@ Class FileSystemApi {
         $this->mkdir($destination);
 
         $filename = \uniqid() .'.'. pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
-        $file->move($destination, $filename);
+        try {
+            $file->move($destination, $filename);
+        } catch (FileException $e) {
+            dd($e, $file);
+        }
+
         // \copy($file->getPathName(), $destination . '/' . $filename);
         // \unlink($file->getPathName());
 
