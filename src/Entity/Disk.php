@@ -158,8 +158,8 @@ class Disk
                 'total' => $fileSystem->getSizeReadable($total_space),
                 'free' => $fileSystem->getSizeReadable($free_space),
             ];
-        else: $info['status'] = 'error'; endif;
-        
+        else: $info['status'] = 'Disk not found.'; endif;
+
         return $info;
     }
 }
