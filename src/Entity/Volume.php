@@ -55,6 +55,11 @@ class Volume
      */
     private $files;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Search::class, mappedBy="volume", orphanRemoval=true)
+     */
+    private $searches;
+
     public function __toString() {
         return $this->getId();
     }
@@ -66,6 +71,7 @@ class Volume
         $this->setPrivate(true);
         $this->setCreateDate(new \DateTime());
         $this->setUpdateDate(new \DateTime());
+        $this->searches = new ArrayCollection();
 
     }
 
@@ -226,5 +232,36 @@ class Volume
 
     private function rngString($length = 32) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+    }
+
+    /**
+     * @return Collection|Search[]
+     */
+    public function getSearches(): Collection
+    {
+        return $this->searches;
+    }
+
+    public function addSearch(Search $search): self
+    {
+        if (!$this->searches->contains($search)) {
+            $this->searches[] = $search;
+            $search->setVolume($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSearch(Search $search): self
+    {
+        if ($this->searches->contains($search)) {
+            $this->searches->removeElement($search);
+            // set the owning side to null (unless already changed)
+            if ($search->getVolume() === $this) {
+                $search->setVolume(null);
+            }
+        }
+
+        return $this;
     }
 }

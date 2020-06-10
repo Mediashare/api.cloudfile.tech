@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\File;
+use App\Entity\Search;
 use App\Entity\Volume;
 use App\Service\Response;
 use App\Service\FileSystemApi;
@@ -37,9 +37,9 @@ class SearchController extends AbstractController
             if ($authority): return $this->response->json($authority); endif;
 
             $volume = $repo->findOneBy(['apikey' => $apikey]);
-            $files = $em->getRepository(File::class)->search($queries, $volume);
+            $files = $em->getRepository(Search::class)->search($queries, $volume);
         else:
-            $files = $em->getRepository(File::class)->search($queries);
+            $files = $em->getRepository(Search::class)->search($queries);
         endif;
 
         // Response

@@ -32,4 +32,9 @@ easy_admin:
             list:
                 actions: ['show']
                 fields: ['id', 'name', 'size', 'mimeType', 'private', 'createDate']
-
+        Search:
+            class: App\Entity\Search
+            disabled_actions: ['new']
+            list:
+                actions: ['show']
+                fields: ['id', 'field', 'value', 'file', 'volume']

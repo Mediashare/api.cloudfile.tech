@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Service\FileSystemApi;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -72,6 +74,11 @@ class File
      */
     private $filename;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Search::class, mappedBy="file", cascade={"persist"})
+     */
+    private $searches;
+
     public function __toString() {
         return $this->getName();
     }
@@ -80,6 +87,7 @@ class File
         $this->setId(\uniqid());
         $this->setPrivate(true);
         $this->setCreateDate(new \DateTime());
+        $this->searches = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -257,24 +265,26 @@ class File
             $info['private'] = $this->getPrivate();
 
             // Urls
-            if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
-                $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
-            else:
-                if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'): $http = 'https://';
-                else: $http = 'http://'; endif;
-                $host = $http.trim($_SERVER['HTTP_HOST'], '/');
+            if (isset($_SERVER['HTTP_HOST']) || isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
+                if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
+                    $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
+                else:
+                    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'): $http = 'https://';
+                    else: $http = 'http://'; endif;
+                    $host = $http.trim($_SERVER['HTTP_HOST'], '/');
+                endif;
+                if ($this->getPrivate()): 
+                    $info['apikey'] = $this->getApikey();
+                    $apikey = '?apikey='.$this->getApikey();
+                else: $apikey = null; endif;
+                $info['urls'] = [
+                    'info' => $host.'/info/'.$this->getId().$apikey,
+                    'show' => $host.'/show/'.$this->getId().$apikey,
+                    'render' => $host.'/render/'.$this->getId().$apikey,
+                    'download' => $host.'/download/'.$this->getId().$apikey,
+                    'remove' => $host.'/remove/'.$this->getId(),
+                ];
             endif;
-            if ($this->getPrivate()): 
-                $info['apikey'] = $this->getApikey();
-                $apikey = '?apikey='.$this->getApikey();
-            else: $apikey = null; endif;
-            $info['urls'] = [
-                'info' => $host.'/info/'.$this->getId().$apikey,
-                'show' => $host.'/show/'.$this->getId().$apikey,
-                'render' => $host.'/render/'.$this->getId().$apikey,
-                'download' => $host.'/download/'.$this->getId().$apikey,
-                'remove' => $host.'/remove/'.$this->getId(),
-            ];
         endif;
 
         return $info;
@@ -282,5 +292,36 @@ class File
 
     private function rngString($length = 32) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+    }
+
+    /**
+     * @return Collection|Search[]
+     */
+    public function getSearches(): Collection
+    {
+        return $this->searches;
+    }
+
+    public function addSearch(Search $search): self
+    {
+        if (!$this->searches->contains($search)) {
+            $this->searches[] = $search;
+            $search->setFile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSearch(Search $search): self
+    {
+        if ($this->searches->contains($search)) {
+            $this->searches->removeElement($search);
+            // set the owning side to null (unless already changed)
+            if ($search->getFile() === $this) {
+                $search->setFile(null);
+            }
+        }
+
+        return $this;
     }
 }
