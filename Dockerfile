@@ -24,9 +24,9 @@ RUN sed -i '/^ *max_execution_time/s/=.*/= 360/' /etc/php/7.3/cli/php.ini
 RUN sed -i '/^ *max_input_time/s/=.*/= 360/' /etc/php/7.3/cli/php.ini
 # RUN service apache2 restart
 
-RUN echo "nohup php -S 0.0.0.0:8080 -t public >/dev/null 2>&1 &" >> ~/.bashrc
+# RUN echo "nohup php -S 0.0.0.0:8080 -t public >/dev/null 2>&1 &" >> ~/.bashrc
 RUN echo "nohup bin/robots >/dev/null 2>&1 &" >> ~/.bashrc
-# CMD ["php", "-S", "0.0.0.0:8080", "-t", "public" ]
+ENTRYPOINT ["php", "-S", "0.0.0.0:8080", "-t", "public" ]
 
 # docker build -t cloudfile .
 # docker run -it -p 127.0.0.1:8080:8080 cloudfile
