@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-    front-nginx:
+    api-nginx:
         container_name: api.cloudfile.docker
         hostname: api.cloudfile.docker
         image: nginx:1.19.0-alpine
@@ -12,11 +12,11 @@ services:
         ports:
             - 8080:80
         depends_on:
-            - front-php
+            - api-php
         networks: 
             - api_bridge
 
-    front-php:
+    api-php:
         build:
             context: .
             dockerfile: docker/php/Dockerfile
