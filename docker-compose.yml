@@ -12,7 +12,7 @@ services:
         ports:
             - 8080:80
         depends_on:
-            - php
+            - front-php
         networks: 
             - api_bridge
 
