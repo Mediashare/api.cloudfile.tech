@@ -62,6 +62,10 @@ class Disk
 
     public function setPath(string $path): self
     {
+        if (!\file_exists($path)):
+            $filesystem = new FileSystemApi();
+            $filesystem->mkdir($path);
+        endif;
         $this->path = $path;
 
         return $this;
