@@ -5,6 +5,7 @@
         "php": "^7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "kyranrana/simple-javascript-compilation": "0.3.1",
         "doctrine/annotations": "^1.8",
         "easycorp/easyadmin-bundle": "^2.3",
         "mediashare/cloudfile": "^0.0.7",

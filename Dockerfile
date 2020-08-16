@@ -1,5 +1,6 @@
 FROM debian:stable-slim
 RUN apt upgrade -y && apt update -y
+RUN apt install -y apt-utils
 RUN apt install -y php7.3 php-xml php-curl php-ctype php-tokenizer php-sqlite3 php-pdo php-dom php-bcmath php-zip
 RUN apt install -y php-simplexml
 RUN apt install -y sqlite
