@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d35b0e264a3258c24033446a0ab383d",
+    "content-hash": "bb815ccc6b7f723e6ca9ac01cf1b3445",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -1916,20 +1916,19 @@
         },
         {
             "name": "mediashare/kernel",
-            "version": "0.4.6",
+            "version": "0.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Mediashare/kernel.git",
-                "reference": "db9da622f8c60415d06f7dcc8b6dbc03e02bf0c5"
+                "reference": "d2f5406dd26f12e53ea6eb302e31ba01cc4c5b14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Mediashare/kernel/zipball/db9da622f8c60415d06f7dcc8b6dbc03e02bf0c5",
-                "reference": "db9da622f8c60415d06f7dcc8b6dbc03e02bf0c5",
+                "url": "https://api.github.com/repos/Mediashare/kernel/zipball/d2f5406dd26f12e53ea6eb302e31ba01cc4c5b14",
+                "reference": "d2f5406dd26f12e53ea6eb302e31ba01cc4c5b14",
                 "shasum": ""
             },
             "require": {
-                "kyranrana/cloudflare-bypass": "^3.4",
                 "league/climate": "^3.5",
                 "mediashare/modules-provider": "*",
                 "twig/twig": "^3.0"
@@ -1954,7 +1953,7 @@
                 }
             ],
             "description": "Mediashare Kernel with all public modules provided.",
-            "time": "2020-07-08T17:25:28+00:00"
+            "time": "2020-08-16T12:38:37+00:00"
         },
         {
             "name": "mediashare/modules-provider",
