@@ -17,7 +17,6 @@ services:
             - api_bridge
 
     php:
-        container_name: api-cloudfile-php
         build:
             context: .
             dockerfile: docker/php/Dockerfile
