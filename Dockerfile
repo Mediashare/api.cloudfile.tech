@@ -7,8 +7,8 @@ RUN apt install -y sqlite
 RUN apt install -y composer git --fix-missing
 
 WORKDIR /home
-RUN git clone https://github.com/Mediashare/CloudFile-API
-WORKDIR /home/CloudFile-API
+RUN git clone https://github.com/Mediashare/CloudFile-API cloudfile-api
+WORKDIR /home/cloudfile-api
 
 RUN composer install
 RUN bin/console doctrine:database:create
