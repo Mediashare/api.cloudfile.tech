@@ -26,6 +26,6 @@ RUN sed -i '/^ *max_execution_time/s/=.*/= 360/' /etc/php7/php.ini
 RUN sed -i '/^ *max_input_time/s/=.*/= 360/' /etc/php7/php.ini
 # Jobs
 RUN echo "nohup bin/robots >/dev/null 2>&1 &" >> ~/.bashrc
-ENTRYPOINT ["symfony", "server:start", "--port=8080", "--allow-http"]
+ENTRYPOINT ["symfony", "server:start", "--port=80", "--allow-http"]
 
 # docker build -t cloudfile/api . && docker run -it -p '8080:8080' cloudfile/api
