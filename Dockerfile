@@ -18,9 +18,7 @@ RUN git clone https://github.com/Mediashare/CloudFile-API /home/www-data/cloudfi
 WORKDIR /home/www-data/cloudfile-api
 # Installation
 RUN composer install
-RUN bin/console cache:clear
-RUN bin/console doctrine:database:create
-RUN bin/console doctrine:schema:update --force
+RUN bin/console cloudfile:install
 RUN chmod -R 777 var
 # Php configuration
 RUN sed -i '/^ *memory_limit/s/=.*/= -1/' /etc/php7/php.ini

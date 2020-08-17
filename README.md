@@ -13,8 +13,15 @@ CloudFile is a simple file storage solution that can be consumed via an API. Use
 git clone https://github.com/Mediashare/CloudFile-API
 cd CloudFile-API
 composer update
-bin/console doctrine:schema:update --force
 chmod -R 777 var
+bin/console cloudfile:install \ 
+  --username "Admin" \ 
+  --password "Admin" \ 
+  --disk-name "MobyDisk" \
+  --disk-path "${PWD}/var/stockage" \ 
+  --backup-host "" \ 
+  --backup-apikey "" \ 
+  --cloudfile-password "MyCloudfilePassword"
 php -S localhost:8000 -t public/
 ```
 To finish the installation go to [http://localhost:8000/install](http://localhost:8000/install)

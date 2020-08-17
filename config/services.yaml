@@ -5,6 +5,13 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     kernel_dir: '%kernel.project_dir%'
+    username: '%env(resolve:username)%'
+    password: '%env(resolve:password)%'
+    disk_name: '%env(resolve:disk_name)%'
+    disk_path: '%env(resolve:disk_path)%'
+    cloudfile_password: '%env(resolve:cloudfile_password)%'
+    backup_host: '%env(resolve:backup_host)%'
+    backup_apikey: '%env(resolve:backup_apikey)%'
     
 services:
     # default configuration for services in *this* file
