@@ -255,7 +255,7 @@ class File
             $info['checksum'] = $this->getChecksum();
             $info['metadata'] = $this->getMetadata(); 
             $info['private'] = $this->getPrivate();
-
+            dd($_SERVER);
             // Urls
             if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
                 $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
