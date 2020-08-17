@@ -256,7 +256,9 @@ class File
             $info['metadata'] = $this->getMetadata(); 
             $info['private'] = $this->getPrivate();
             // Urls
-            if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'])):
+            if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL']) 
+                && strpos($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '127.0.0.1') !== false 
+                && strpos($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], 'localhost') !== false):
                 $host = trim($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '/');
             else:
                 if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'): $http = 'https://';
