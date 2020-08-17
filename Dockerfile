@@ -2,7 +2,8 @@ FROM php:7.4-fpm-alpine
 
 # Dependencies
 RUN apk upgrade && apk --update add \
-    wget bash nano composer git sqlite mysql \
+    usermod groupmod nano \
+    wget bash composer git sqlite mysql \
     php php-fpm php-xml php-curl php-ctype php-tokenizer php-sqlite3 php-pdo php-dom php-bcmath php-zip php-simplexml php-session
 # Symfony
 RUN wget https://get.symfony.com/cli/installer -O - | bash && \
