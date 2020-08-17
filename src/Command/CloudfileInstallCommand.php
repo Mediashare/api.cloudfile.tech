@@ -86,8 +86,8 @@ class CloudfileInstallCommand extends Command
             $table->setHeaderTitle($section);
             $table->render();
         endforeach;
-
-        return 0;
+        
+        return 1;
     }
 
     private function schemaUpdate() {
