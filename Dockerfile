@@ -20,6 +20,7 @@ RUN git clone https://github.com/Mediashare/CloudFile-API /home/www-data/cloudfi
 WORKDIR /home/www-data/cloudfile-api
 # Installation
 RUN composer install
+RUN chmod -R 777 var
 RUN bin/console cloudfile:install
 RUN chmod -R 777 var
 # Php configuration
