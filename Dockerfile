@@ -7,7 +7,11 @@ RUN apk upgrade && apk --update add \
 # Symfony
 RUN wget https://get.symfony.com/cli/installer -O - | bash && \
     mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+# Certificat & Permissions
 RUN symfony server:ca:install
+RUN chown -R 1000:1000 /home/www-data \
+    && usermod --uid 1000 --home /home/www-data --shell /bin/bash www-data \
+    && groupmod --gid 1000 www-data
 # Project
 RUN git clone https://github.com/Mediashare/CloudFile-API /home/www-data/cloudfile-api
 WORKDIR /home/www-data/cloudfile-api
