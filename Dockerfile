@@ -1,10 +1,12 @@
-FROM php:7.4-fpm-alpine
+FROM php:7.4-fpm-alpine3.12
 
 # Dependencies
-RUN apk upgrade && apk --update add \
-    usermod groupmod nano \
-    wget bash composer git sqlite mysql \
-    php php-fpm php-xml php-curl php-ctype php-tokenizer php-sqlite3 php-pdo php-dom php-bcmath php-zip php-simplexml php-session
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories
+RUN apk upgrade && apk update
+RUN apk --update add shadow
+RUN apk --update add nano && \
+    apk --update add wget bash composer git sqlite mysql && \
+    apk --update add php php-fpm php-xml php-curl php-ctype php-tokenizer php-sqlite3 php-pdo php-dom php-bcmath php-zip php-simplexml php-session
 # Symfony
 RUN wget https://get.symfony.com/cli/installer -O - | bash && \
     mv /root/.symfony/bin/symfony /usr/local/bin/symfony
