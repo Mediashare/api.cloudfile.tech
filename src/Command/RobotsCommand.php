@@ -4,7 +4,6 @@ namespace App\Command;
 
 use App\Entity\File;
 use App\Entity\Volume;
-use Mediashare\PingIt\PingIt;
 use Mediashare\ModulesProvider\Config;
 use Mediashare\ModulesProvider\Modules;
 use Symfony\Component\Console\Command\Command;
@@ -29,14 +28,11 @@ class RobotsCommand extends Command
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int {
-        $this->pingIt = new PingIt($this->container->getParameter('pingit_robots'));
-        $this->pingIt->send('[API] The robots start the job!', null, 'feather icon-radio', 'primary');
         $this->io = new SymfonyStyle($input, $output);
         $this->input = $input;
         $this->output = $output;
         $this->robots();
         $this->io->success('All robots have finish their jobs.');
-        $this->pingIt->send('[API] The robots finish the job!', null, 'feather icon-radio', 'success');
         return 0;
     }
 
@@ -48,7 +44,6 @@ class RobotsCommand extends Command
             $robot->em = $this->container->get('doctrine')->getManager();
             $robot->io = $this->io;
             $robot->output = $this->output;
-            $robot->pingIt = $this->pingIt;
             $this->io->section('[Start] '.$module->name);
             $result = $robot->run();
             if ($result):

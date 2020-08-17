@@ -6,7 +6,6 @@ use App\Entity\Disk;
 use App\Entity\File;
 use App\Entity\Volume;
 use App\Service\Response;
-use Mediashare\PingIt\PingIt;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,7 +40,6 @@ class UploadController extends AbstractController
             endif;
 
             // Upload file(s)
-            $pingIt = new PingIt($this->getParameter('pingit_uploads'));
             $fileSystem = new FileSystemApi();
             $results = [];
             $size = 0;
@@ -95,9 +93,6 @@ class UploadController extends AbstractController
                 
                 $results[] = $file->getInfo();
                 $size += $file->getSize();
-                
-                // PingIt
-                $pingIt->send('[API] File uploaded '.$file->getName(), '['.$volume->getId().'] '.$volume->getName().' receveid '.$file->getName().' file - '.$fileSystem->getSizeReadable($file->getSize()), 'feather icon-save', 'success');
             }
             $size = $fileSystem->getSizeReadable($size);
             // Response

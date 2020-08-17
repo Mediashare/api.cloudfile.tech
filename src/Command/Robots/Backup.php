@@ -5,7 +5,6 @@ namespace App\Command\Robots;
 use ZipArchive;
 use App\Entity\Disk;
 use App\Entity\Config;
-use Mediashare\PingIt\PingIt;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Mediashare\CloudFile\CloudFile;
@@ -17,15 +16,12 @@ use Symfony\Component\Console\Helper\ProgressBar;
 Class Backup {
     public $em;
     public $io;
-    public $pingIt;
     private $backup_host;
     private $backup_apikey;
 
     public function run() {
-        $this->pingIt = new PingIt($this->container->getParameter('pingit_backup'));
         $config = $this->getBackupConfig();
         if ($config):
-            $this->pingIt->send('[BackUp] The backup is started!', 'The backup system has been started.', 'feather icon-radio', 'primary');
             // Backup Database
             $database = $this->backupDatabase();
             if ($database):
@@ -34,7 +30,6 @@ Class Backup {
                 // Remove old backups for free space
                 $this->removeOldBackups();
             endif;
-            $this->pingIt->send('[BackUp] The backup is ready!', 'The backup system has been finished.', 'feather icon-save', 'success');
         endif;
     }
 
@@ -53,7 +48,6 @@ Class Backup {
         $cloudfile = new CloudFile($this->backup_host, $this->backup_apikey);
         $status = $cloudfile->stats();
         if ($status['status'] !== 'success'): 
-            $this->pingIt->send('[BackUp] CloudFile API server is down!', null, 'feather icon-radio', 'danger');
             return false; 
         endif;
 
@@ -82,7 +76,6 @@ Class Backup {
             $upload = $this->upload($database);
             if ($upload):
                 $this->io->writeln('<info>Database has been uploaded</info>');
-                $this->pingIt->send('[BackUp] Database has been uploaded', null, 'feather icon-upload', 'primary');
                 return true;
             endif;
         endif;
@@ -96,7 +89,6 @@ Class Backup {
                 $upload = $this->upload($zipPath);
                 if ($upload):
                     $this->io->writeln('<info>Disk '.$disk->getName().' has been uploaded</info>');
-                    $this->pingIt->send('[BackUp] Disk '.$disk->getName().' has been uploaded', null, 'feather icon-upload', 'primary');
                     return true;
                 endif;
                 \unlink($zipPath);
@@ -109,7 +101,6 @@ Class Backup {
         $cloudfile = new CloudFile($this->backup_host, $this->backup_apikey);
         $status = $cloudfile->stats();
         if ($status['status'] !== 'success'): 
-            $this->pingIt->send('[BackUp] CloudFile API server is down!', null, 'feather icon-radio', 'danger');
             return false; 
         endif;
         $checksum = $cloudfile->file()->search('checksum='.\md5_file($file));

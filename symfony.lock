@@ -115,9 +115,6 @@
     "mediashare/modules-provider": {
         "version": "0.2.4"
     },
-    "mediashare/pingit": {
-        "version": "0.0.2"
-    },
     "mediashare/show-content": {
         "version": "1.1.6"
     },

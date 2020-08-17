@@ -5,10 +5,6 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     kernel_dir: '%kernel.project_dir%'
-    pingit_robots: '%env(pingit_robots)%'
-    pingit_uploads: '%env(pingit_uploads)%'
-    pingit_volumes: '%env(pingit_volumes)%'
-    pingit_backup: '%env(pingit_backup)%'
     
 services:
     # default configuration for services in *this* file

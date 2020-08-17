@@ -10,7 +10,6 @@
         "mediashare/cloudfile": "^0.1",
         "mediashare/kernel": "*",
         "mediashare/modules-provider": "^0.2.4",
-        "mediashare/pingit": "^0.0",
         "mediashare/show-content": "^1.1",
         "symfony/apache-pack": "^1.0",
         "symfony/console": "5.0.*",

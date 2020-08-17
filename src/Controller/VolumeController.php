@@ -6,7 +6,6 @@ use App\Entity\Disk;
 use App\Entity\Config;
 use App\Entity\Volume;
 use App\Service\Response;
-use Mediashare\PingIt\PingIt;
 use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -54,9 +53,6 @@ class VolumeController extends AbstractController
 
         $em->persist($volume);
         $em->flush();
-
-        $pingIt = new PingIt($this->getParameter('pingit_volumes'));
-        $pingIt->send('[API] Volume added', '['.$volume->getId().'] '.$volume->getName().' - ('.$volume->getSize().'Gb) has been created.', 'feather icon-folder', 'success');
 
         return $this->response->json([
             'status' => 'success',
@@ -139,9 +135,6 @@ class VolumeController extends AbstractController
         $em->persist($volume);
         $em->flush();
 
-        $pingIt = new PingIt($this->getParameter('pingit_volumes'));
-        $pingIt->send('[API] Volume reset ApiKey', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) ApiKey has been regenerated.', 'fa fa-key', 'warning');
-
         return $this->response->json([
             'status' => 'success',
             'message' => 'This action can take several minutes',
@@ -178,9 +171,6 @@ class VolumeController extends AbstractController
         $em->persist($volume);
         $em->flush();
 
-        $pingIt = new PingIt($this->getParameter('pingit_volumes'));
-        $pingIt->send('[API] Volume clear', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) has been cleared.', 'fa fa-recycle', 'warning');
-
         return $this->response->json([
             'status' => 'success',
             'message' => 'This action can take several minutes.'
@@ -214,9 +204,6 @@ class VolumeController extends AbstractController
         // Delete Volume
         $em->remove($volume);
         $em->flush();
-
-        $pingIt = new PingIt($this->getParameter('pingit_volumes'));
-        $pingIt->send('[API] Volume deleted', '['.$volume->getId().'] '.$volume->getName().' ('.$volume->getSize().'Gb) has been deleted.', 'feather icon-trash', 'danger');
         
         return $this->response->json([
             'status' => 'success',

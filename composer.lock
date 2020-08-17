@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ed49675703b67a6af449df982783dee",
+    "content-hash": "83ac9a1c9294afb5809a8ca7c2041225",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -1736,42 +1736,6 @@
             ],
             "description": "Modules provider is an object autoloader for automating and simplifying some code inclusion in different projects. You can call object(s) from different folders and create a container with multiple objects.",
             "time": "2020-01-06T22:35:53+00:00"
-        },
-        {
-            "name": "mediashare/pingit",
-            "version": "0.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Mediashare/PingIt-SDK.git",
-                "reference": "ca1d205ca43b488a27f4e8d9f9fcc55985dad757"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Mediashare/PingIt-SDK/zipball/ca1d205ca43b488a27f4e8d9f9fcc55985dad757",
-                "reference": "ca1d205ca43b488a27f4e8d9f9fcc55985dad757",
-                "shasum": ""
-            },
-            "require": {
-                "mediashare/kernel": "^0.4.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Mediashare\\PingIt\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Thibault Marquand - Mediashare",
-                    "email": "mediashare.supp@gmail.com"
-                }
-            ],
-            "description": "Library for interact with PingIt API",
-            "time": "2020-05-20T04:41:36+00:00"
         },
         {
             "name": "mediashare/show-content",
