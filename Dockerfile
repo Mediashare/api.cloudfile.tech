@@ -9,8 +9,8 @@ RUN wget https://get.symfony.com/cli/installer -O - | bash && \
     mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 RUN symfony server:ca:install
 # Project
-RUN git clone https://github.com/Mediashare/CloudFile-API /home/cloudfile-api
-WORKDIR /home/cloudfile-api
+RUN git clone https://github.com/Mediashare/CloudFile-API /home/www-data/cloudfile-api
+WORKDIR /home/www-data/cloudfile-api
 # Installation
 RUN composer install
 RUN bin/console cache:clear
