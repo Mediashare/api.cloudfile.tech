@@ -86,7 +86,8 @@ class CloudfileInstallCommand extends Command
             $table->setHeaderTitle($section);
             $table->render();
         endforeach;
-        
+
+        $this->io->success('Intallation success...');
         return 1;
     }
 
