@@ -17,6 +17,8 @@ services:
             - api_bridge
 
     api-php:
+        container_name: api-php
+        hostname: api-php
         build:
             context: .
             dockerfile: docker/php/Dockerfile
@@ -29,6 +31,7 @@ services:
         user: 1000:1000
         networks: 
             - api_bridge
+            
 networks: 
     api_bridge: 
         external: 
