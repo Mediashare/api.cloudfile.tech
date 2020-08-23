@@ -88,7 +88,7 @@ class CloudfileInstallCommand extends Command
         endforeach;
 
         $this->io->success('Intallation success...');
-        return 1;
+        return 0;
     }
 
     private function schemaUpdate() {
