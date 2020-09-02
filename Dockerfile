@@ -1,5 +1,4 @@
-FROM php:7.4-fpm-alpine3.12
-
+FROM alpine:3.12
 # Dependencies
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories
 RUN apk upgrade && apk update
@@ -12,9 +11,9 @@ RUN wget https://get.symfony.com/cli/installer -O - | bash && \
     mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 # Certificat & Permissions
 RUN symfony server:ca:install
-RUN chown -R 1000:1000 /home/www-data \
-    && usermod --uid 1000 --home /home/www-data --shell /bin/bash www-data \
-    && groupmod --gid 1000 www-data
+RUN mkdir -p /home/www-data
+WORKDIR /home/www-data
+RUN chown -R 1000:1000 /home/www-data
 # Project
 RUN git clone https://github.com/Mediashare/CloudFile-API /home/www-data/cloudfile-api
 WORKDIR /home/www-data/cloudfile-api
