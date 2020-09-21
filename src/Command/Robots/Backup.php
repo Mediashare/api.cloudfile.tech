@@ -104,7 +104,7 @@ Class Backup {
             return false; 
         endif;
         $checksum = $cloudfile->file()->search('checksum='.\md5_file($file));
-        if ($checksum['files']['counter'] > 0): return false;
+        if (isset($checksum['files']) && $checksum['files']['counter'] > 0): return false;
         else: return true; endif;
     }
 
