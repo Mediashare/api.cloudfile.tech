@@ -21,7 +21,7 @@ bin/console cloudfile:install \
   --disk-path "${PWD}/var/stockage" \ 
   --backup-host "" \ 
   --backup-apikey "" \ 
-  --cloudfile-password "MyCloudfilePassword"
+  --cloudfile-password "MyCloudFilePassword"
 php -S localhost:8000 -t public/
 ```
 To finish the installation go to [http://localhost:8000/install](http://localhost:8000/install)
