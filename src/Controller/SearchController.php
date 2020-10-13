@@ -30,7 +30,7 @@ class SearchController extends AbstractController
 
         // Check Authority
         $em = $this->getDoctrine()->getManager();
-        $apikey = $request->headers->get('apikey');
+        $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $repo = $em->getRepository(Volume::class);
             $authority = $repo->authority($apikey);
