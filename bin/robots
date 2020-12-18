@@ -1,6 +1,6 @@
 #!/bin/bash
 while :
 do
-	bin/console robots
+	php -d memory_limit=-1 bin/console robots
 	sleep 10
 done

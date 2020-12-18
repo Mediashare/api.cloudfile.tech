@@ -8,3 +8,4 @@
 /vendor/
 ###< symfony/framework-bundle ###
 **/.DS_Store
+nohup.out
