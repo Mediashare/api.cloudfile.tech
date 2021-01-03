@@ -1,4 +1,5 @@
 # CloudFile-API
+**[DEPRECATED] Go to [Gitlab Project](https://gitlab.marquand.pro/MarquandT/cloudfile-api)**
 CloudFile is a simple file storage solution that can be consumed via an API. Useful for all your projects, CloudFile allows the storage of files (images, videos, texts, applications...) with an public or private access.
 ## Features
 * File Hosting
