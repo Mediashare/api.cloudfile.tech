@@ -22,7 +22,7 @@ RUN mkdir -p /home/www-data
 WORKDIR /home/www-data
 RUN chown -R 1000:1000 /home/www-data
 # Project
-RUN git clone https://github.com/Mediashare/CloudFile-API /home/www-data/cloudfile-api
+RUN git clone https://gitlab.marquand.pro/MarquandT/cloudfile-api /home/www-data/cloudfile-api
 WORKDIR /home/www-data/cloudfile-api
 # Installation
 RUN composer install
