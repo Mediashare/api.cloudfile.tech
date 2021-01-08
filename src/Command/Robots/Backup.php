@@ -98,11 +98,11 @@ Class Backup {
                     $upload = $this->upload($zipPath);
                     if ($upload):
                         $this->io->writeln('<info>Disk '.$disk->getName().' - Volume '.$volume->getName().' has been uploaded</info>');
-                        return true;
                     endif;
                     \unlink($zipPath);
                 endif;
             endforeach;
+            return true;
         endforeach;
         return false;
     }
