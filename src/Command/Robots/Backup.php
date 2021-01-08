@@ -5,6 +5,7 @@ namespace App\Command\Robots;
 use ZipArchive;
 use App\Entity\Disk;
 use App\Entity\Config;
+use App\Entity\Volume;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Mediashare\CloudFile\CloudFile;
@@ -84,15 +85,24 @@ Class Backup {
 
     private function backupDisks() {        
         foreach ($this->em->getRepository(Disk::class)->findAll() as $disk):
-            $zipPath = $this->createZip($disk);
-            if ($zipPath && $this->checksum($zipPath)):
-                $upload = $this->upload($zipPath);
-                if ($upload):
-                    $this->io->writeln('<info>Disk '.$disk->getName().' has been uploaded</info>');
-                    return true;
+
+            foreach ($disk->getFiles() as $file):
+                if (empty($volumes[$file->getVolume()->getId()])):
+                    $volumes[$file->getVolume()->getId()] = $file->getVolume();
                 endif;
-                \unlink($zipPath);
-            endif;
+            endforeach;
+
+            foreach ($volumes as $volume):
+                $zipPath = $this->createZip($disk, $volume);
+                if ($zipPath && $this->checksum($zipPath)):
+                    $upload = $this->upload($zipPath);
+                    if ($upload):
+                        $this->io->writeln('<info>Disk '.$disk->getName().' - Volume '.$volume->getName().' has been uploaded</info>');
+                        return true;
+                    endif;
+                    \unlink($zipPath);
+                endif;
+            endforeach;
         endforeach;
         return false;
     }
@@ -122,16 +132,17 @@ Class Backup {
         return $upload;
     }
 
-    private function createZip(Disk $disk) {
-        if (count(scandir(rtrim($disk->getPath(), '/').'/')) > 2):
+    private function createZip(Disk $disk, Volume $volume) {
+        $path = rtrim($disk->getPath(), '/').'/'.$volume->getId();
+        if (count(scandir($path.'/')) > 2):
             // Initialize archive object
             $zip = new ZipArchive();
-            $zip->open($zipPath = $this->container->getParameter('kernel_dir').'/var/'.$disk->getName().' - backup.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            $zip->open($zipPath = $this->container->getParameter('kernel_dir').'/var/'.$disk->getName().' - '.$volume->getName().' backup.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
             // Create recursive directory iterator
             /** @var SplFileInfo[] $files */
             $files = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($disk->getPath()),
+                new RecursiveDirectoryIterator($path),
                 RecursiveIteratorIterator::LEAVES_ONLY
             );
             foreach ($files as $name => $file) {
@@ -139,7 +150,7 @@ Class Backup {
                 if (!$file->isDir()) {
                     // Get real and relative path for current file
                     $filePath = $file->getRealPath();
-                    $relativePath = substr($filePath, strlen($disk->getPath()) + 1);
+                    $relativePath = substr($filePath, strlen($path) + 1);
                     // Add current file to archive
                     $zip->addFile($filePath, $relativePath);
                 }
