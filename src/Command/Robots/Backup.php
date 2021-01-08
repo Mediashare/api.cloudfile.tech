@@ -72,7 +72,7 @@ Class Backup {
 
     private function backupDatabase() {
         $database = $this->container->getParameter('kernel_dir').'/var/data.db';
-        if ($this->checksum($database)):
+	if ($this->checksum($database)):
             $upload = $this->upload($database);
             if ($upload):
                 $this->io->writeln('<info>Database has been uploaded</info>');
@@ -113,7 +113,12 @@ Class Backup {
         $status = $cloudfile->stats();
         if ($status['status'] !== 'success'): return false; endif;
         $upload = $cloudfile->file()->upload($file);
-        if ($upload['status'] !== 'success'): return false; endif;
+        if ($upload['status'] !== 'success'):
+	    if (!empty($upload['message'])):
+		$this->io->writeln('<error>[Database Upload] '.$upload['message'].'</error>');
+	    endif;
+	    return false;
+	endif;
         return $upload;
     }
 

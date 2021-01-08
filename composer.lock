@@ -2197,14 +2197,8 @@
             "version": "0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Mediashare/CloudFile-SDK.git",
+                "url": "https://gitlab.marquand.pro/MarquandT/cloudfile-sdk",
                 "reference": "00ce4be1ad8afdfb52d415de442c6d01b10d1eee"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Mediashare/CloudFile-SDK/zipball/00ce4be1ad8afdfb52d415de442c6d01b10d1eee",
-                "reference": "00ce4be1ad8afdfb52d415de442c6d01b10d1eee",
-                "shasum": ""
             },
             "type": "library",
             "autoload": {
@@ -2223,10 +2217,6 @@
                 }
             ],
             "description": "Php library for interact with cloudfile api",
-            "support": {
-                "issues": "https://github.com/Mediashare/CloudFile-SDK/issues",
-                "source": "https://github.com/Mediashare/CloudFile-SDK/tree/0.1.0"
-            },
             "time": "2020-08-16T12:49:19+00:00"
         },
         {
@@ -2234,14 +2224,8 @@
             "version": "0.0.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Mediashare/cloudflare-bypass.git",
+                "url": "https://gitlab.marquand.pro/MarquandT/cloudflare-bypass",
                 "reference": "07d3d23fd0ba1955aa295a6892869452f647c63a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Mediashare/cloudflare-bypass/zipball/07d3d23fd0ba1955aa295a6892869452f647c63a",
-                "reference": "07d3d23fd0ba1955aa295a6892869452f647c63a",
-                "shasum": ""
             },
             "require": {
                 "ext-bcmath": "*",
@@ -2274,10 +2258,6 @@
                 }
             ],
             "description": "[Debug] A library for helping bypass the cloudflare UAM page.",
-            "support": {
-                "issues": "https://github.com/Mediashare/cloudflare-bypass/issues",
-                "source": "https://github.com/Mediashare/cloudflare-bypass/tree/0.0.3"
-            },
             "time": "2020-12-19T20:37:52+00:00"
         },
         {
