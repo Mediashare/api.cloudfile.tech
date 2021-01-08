@@ -49,6 +49,11 @@ class Volume
      * @ORM\Column(type="datetime")
      */
     private $updateDate;
+    
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $metadata;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\File", mappedBy="volume", cascade={"remove", "persist"})
@@ -60,13 +65,13 @@ class Volume
     }
 
     public function __construct() {
+        $this->metadata = [];
         $this->files = new ArrayCollection();
         $this->setId(\uniqid());
         $this->generateApiKey();
         $this->setPrivate(true);
         $this->setCreateDate(new \DateTime());
         $this->setUpdateDate(new \DateTime());
-
     }
 
     public function getId(): ?string
@@ -154,6 +159,20 @@ class Volume
     {
         $this->updateDate = $updateDate;
 
+        return $this;
+    }
+
+    public function getMetadata(): ?array {
+        return $this->metadata ?? [];
+    }
+
+    public function setMetadata(array $metadata): self {
+        $this->metadata = $metadata;
+        return $this;
+    }
+
+    public function addMetadata(string $key, string $value): self {
+        $this->metadata[$key] = $value;
         return $this;
     }
 

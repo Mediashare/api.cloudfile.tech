@@ -85,7 +85,6 @@ Class Backup {
 
     private function backupDisks() {        
         foreach ($this->em->getRepository(Disk::class)->findAll() as $disk):
-
             foreach ($disk->getFiles() as $file):
                 if (empty($volumes[$file->getVolume()->getId()])):
                     $volumes[$file->getVolume()->getId()] = $file->getVolume();
