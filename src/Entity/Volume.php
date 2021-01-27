@@ -60,6 +60,16 @@ class Volume
      */
     private $files;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $convertToMp4;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $encrypt;
+
     public function __toString() {
         return $this->getId();
     }
@@ -245,5 +255,29 @@ class Volume
 
     private function rngString($length = 32) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+    }
+
+    public function getConvertToMp4(): ?bool
+    {
+        return $this->convertToMp4;
+    }
+
+    public function setConvertToMp4(bool $convertToMp4): self
+    {
+        $this->convertToMp4 = $convertToMp4;
+
+        return $this;
+    }
+
+    public function getEncrypt(): ?bool
+    {
+        return $this->encrypt;
+    }
+
+    public function setEncrypt(bool $encrypt): self
+    {
+        $this->encrypt = $encrypt;
+
+        return $this;
     }
 }

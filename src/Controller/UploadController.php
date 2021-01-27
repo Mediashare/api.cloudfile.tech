@@ -65,7 +65,7 @@ class UploadController extends AbstractController
                 if (empty($disk_selected)):
                     return $this->json([
                         'status' => 'error',
-                        'message' => 'No disk has been selected!'
+                        'message' => 'No space into disk(s)!'
                     ]);
                 endif;
 
@@ -84,6 +84,13 @@ class UploadController extends AbstractController
                 $file->setPrivate($volume->getPrivate());
                 // ApiKey
                 $file->generateApiKey();
+                // File encryption
+                $file->setEncrypt($request->get('encrypt') ?? $volume->getEncrypt());
+                // File convertion
+                if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
+                    $file->setConvertToMp4($request->get('convert_to_mp4') ?? $volume->getConvertToMp4());
+                endif;
+
                 // Volume update
                 $volume->setUpdateDate(new \DateTime());
 

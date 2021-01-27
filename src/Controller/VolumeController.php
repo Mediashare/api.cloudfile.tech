@@ -50,6 +50,8 @@ class VolumeController extends AbstractController
         $volume = new Volume();
         $volume->setName($request->get('name'));
         $volume->setSize($request->get('size')); // Gb
+        $volume->setConvertToMp4($request->get('convert_to_mp4') ?? false);
+        $volume->setEncrypt($request->get('encrypt') ?? false);
 
         $em->persist($volume);
         $em->flush();
@@ -100,11 +102,14 @@ class VolumeController extends AbstractController
             else: $private = false;endif;
             $volume->setPrivate($private);
         endif;
+        
+        $volume->setEncrypt($request->get('encrypt') ?? $volume->getEncrypt());
 
         if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
             if ($size = (int) $request->get('size')):
                 $volume->setSize($size);
             endif;
+            $volume->setConvertToMp4($request->get('convert_to_mp4') ?? $volume->getConvertToMp4());
         endif;
         
         $volume->setUpdateDate(new \DateTime());
