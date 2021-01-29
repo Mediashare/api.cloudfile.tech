@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Disk;
 use App\Entity\File;
 use App\Service\FileSystemApi;
 use Doctrine\ORM\Mapping as ORM;
@@ -227,6 +226,8 @@ class Volume
 
         if ($all_data):
             $info['size'] = $this->getSize();
+            $info['encrypted'] = $this->getEncrypt();
+            $info['convertVideo'] = $this->getConvertToMp4();
             $info['private'] = $this->getPrivate();
             $info['apikey'] = $this->getApikey();
             

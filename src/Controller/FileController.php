@@ -4,14 +4,12 @@ namespace App\Controller;
 
 use App\Entity\File;
 use App\Entity\Volume;
+use Kzu\Security\Crypto;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Mediashare\ShowContent\ShowContent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FileController extends AbstractController
@@ -114,12 +112,18 @@ class FileController extends AbstractController
         
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
 
+        
         // Generate url for bypass apikey protection
         $url = $file->getInfo()['urls']['show'];
         $showContent = new ShowContent($url);
         $showContent->file->mimeType = $file->getMimeType();
         if ($showContent->file->getType() === "text"):
-            $showContent->file->content = \file_get_contents($file->getPath());
+            if ($file->getEncrypt()):
+                $content = Crypto::decrypt(file_get_contents($file->getPath()), $file->getApikey());
+                $filesystem = new FileSystemApi();
+                $filesystem->write($filepath = tempnam("", "tmp"), $content);
+            else: $filepath = $file->getPath(); endif;
+            $showContent->file->content = \file_get_contents($filepath);
             if (substr($file->getName(), -3) === ".md"):
                 $showContent->file->mimeType = "text/markdown";
             endif;

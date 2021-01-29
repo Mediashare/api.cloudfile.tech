@@ -3,10 +3,9 @@ namespace App\Service;
 
 use App\Entity\Disk;
 use App\Entity\Volume;
+use Kzu\Security\Crypto;
 use Mediashare\Kernel\Kernel;
-use Doctrine\ORM\EntityManager;
 use App\Entity\File as FileEntity;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Filesystem\Filesystem as Fs;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -27,7 +26,7 @@ Class FileSystemApi {
         try {
             $file->move($destination, $filename);
         } catch (FileException $e) {
-            dd($e, $file);
+            dd($e->getMessage());
         }
 
         // \copy($file->getPathName(), $destination . '/' . $filename);
@@ -44,6 +43,12 @@ Class FileSystemApi {
         $FileEntity->setChecksum();
 
         return $FileEntity;
+    }
+    public function write(string $filepath, ?string $content = "") {
+        $this->mkdir(dirname($filepath));
+        $file = fopen($filepath, "w") or die("Unable to open file!");
+        fwrite($file, $content);
+        fclose($file);
     }
     public function mkdir(string $path) {
         if (!\file_exists($path)):
@@ -78,5 +83,29 @@ Class FileSystemApi {
         }
         return $m[1];
         }, $value);
+    }
+
+    public function encrypt(FileEntity $file) {
+        if (pathinfo($file->getPath())['extension'] !== "encrypted"
+            && md5_file($file->getPath()) === $file->getChecksum()):
+            $content = Crypto::encrypt(file_get_contents($file->getPath()), $file->getApikey());
+            $this->write($file->getPath().'.encrypted', $content);
+            $this->remove($file->getPath());
+            $file->setFilename($file->getFilename() . '.encrypted');
+            return $file;
+        endif;
+        return false;
+    }
+
+    public function decrypt(FileEntity $file) {
+        if (pathinfo($file->getPath())['extension'] === "encrypted"
+            && md5_file($file->getPath()) !== $file->getChecksum()):
+            $content = Crypto::decrypt(file_get_contents($file->getPath()), $file->getApikey());
+            $file->setFilename(rtrim(rtrim($file->getFilename(), "encrypted"), "."));
+            $this->write($file->getPath(), $content);
+            $this->remove($file->getPath() . '.encrypted');
+            return $file;
+        endif;
+        return false;
     }
 }

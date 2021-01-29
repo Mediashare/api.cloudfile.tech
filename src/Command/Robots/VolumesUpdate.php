@@ -56,6 +56,11 @@ Class VolumesUpdate {
             $update = true;
         endif;
 
+        if ($volume->getEncrypt() && !$file->getEncrypt()):
+            $file->setEncrypt(true);
+            $update = true;
+        endif;
+
         if ($update):
             $this->em->persist($file);
             return true;

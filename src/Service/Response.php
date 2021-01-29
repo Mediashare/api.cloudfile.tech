@@ -2,6 +2,8 @@
 namespace App\Service;
 
 use App\Entity\File;
+use Kzu\Security\Crypto;
+use App\Service\FileSystemApi;
 use Mediashare\ShowContent\ShowContent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -23,7 +25,13 @@ Class Response {
     }
 
     public function show(File $file): BinaryFileResponse {
-        $response = new BinaryFileResponse($file->getPath());
+        if ($file->getEncrypt()):
+            $content = Crypto::decrypt(file_get_contents($file->getPath()), $file->getApikey());
+            $filesystem = new FileSystemApi();
+            $filesystem->write($filepath = tempnam("", "tmp"), $content);
+        else: $filepath = $file->getPath(); endif;
+
+        $response = new BinaryFileResponse($filepath);
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_INLINE,
             $file->getName()
@@ -34,7 +42,13 @@ Class Response {
     }
 
     public function download(File $file): BinaryFileResponse {
-        $response = new BinaryFileResponse($file->getPath());
+        if ($file->getEncrypt()):
+            $content = Crypto::decrypt(file_get_contents($file->getPath()), $file->getApikey());
+            $filesystem = new FileSystemApi();
+            $filesystem->write($filepath = tempnam("", "tmp"), $content);
+        else: $filepath = $file->getPath(); endif;
+
+        $response = new BinaryFileResponse($filepath);
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $file->getName()

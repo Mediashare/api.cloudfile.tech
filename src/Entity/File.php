@@ -264,7 +264,10 @@ class File
             $info['mimeType'] = $this->getMimeType();
             $info['checksum'] = $this->getChecksum();
             $info['metadata'] = $this->getMetadata(); 
+            $info['encrypted'] = $this->getEncrypt();
+            $info['convertVideo'] = $this->getConvertToMp4();
             $info['private'] = $this->getPrivate();
+
             // Urls
             if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL']) 
                 && strpos($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '127.0.0.1') !== false 
