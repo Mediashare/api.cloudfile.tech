@@ -83,8 +83,9 @@ class FileController extends AbstractController
      * @Route("/show/{id}", name="show")
      */
     public function show(Request $request, string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(File::class);
         // Check Authority
-        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $repo->authority($id, $apikey);
@@ -94,6 +95,12 @@ class FileController extends AbstractController
 
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
 
+        $stats = $file->getStats();
+        $stats['reading']++;
+        $file->setStats($stats);
+        $em->persist($file);
+        $em->flush();
+
         return $this->response->show($file);
     }
 
@@ -101,8 +108,9 @@ class FileController extends AbstractController
      * @Route("/render/{id}", name="render")
      */
     public function renderFile(Request $request, string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(File::class);
         // Check Authority
-        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $repo->authority($id, $apikey);
@@ -111,8 +119,13 @@ class FileController extends AbstractController
         else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
         
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
-
         
+        $stats = $file->getStats();
+        $stats['reading']++;
+        $file->setStats($stats);
+        $em->persist($file);
+        $em->flush();
+
         // Generate url for bypass apikey protection
         $url = $file->getInfo()['urls']['show'];
         $showContent = new ShowContent($url);
@@ -137,8 +150,9 @@ class FileController extends AbstractController
      * @Route("/download/{id}", name="download")
      */
     public function download(Request $request, string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(File::class);
         // Check Authority
-        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $repo->authority($id, $apikey);
@@ -148,6 +162,13 @@ class FileController extends AbstractController
 
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
         
+
+        $stats = $file->getStats();
+        $stats['download']++;
+        $file->setStats($stats);
+        $em->persist($file);
+        $em->flush();
+
         return $this->response->download($file);
     }
 

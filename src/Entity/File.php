@@ -82,6 +82,11 @@ class File
      */
     private $encrypt;
 
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $stats = ['reading' => 0, 'download' => 0];
+
     public function __toString() {
         return $this->getName();
     }
@@ -268,6 +273,9 @@ class File
             $info['convertVideo'] = $this->getConvertToMp4();
             $info['private'] = $this->getPrivate();
 
+            // Stats
+            $info['stats'] = $this->getStats();
+
             // Urls
             if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL']) 
                 && strpos($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '127.0.0.1') !== false 
@@ -318,6 +326,25 @@ class File
     public function setEncrypt(bool $encrypt): self
     {
         $this->encrypt = $encrypt;
+
+        return $this;
+    }
+
+    public function getStats(): ?array
+    {
+        if (empty($this->stats)):
+            return [
+                'reading' => 0,
+                'download' => 0
+            ];
+        endif;
+        
+        return $this->stats;
+    }
+
+    public function setStats(array $stats): self
+    {
+        $this->stats = $stats;
 
         return $this;
     }

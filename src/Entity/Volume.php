@@ -233,8 +233,12 @@ class Volume
             
             // Stats
             $info['stats']['files'] = count($this->getFiles());
+            $info['stats']['reading'] = 0;
+            $info['stats']['download'] = 0;
             $size = 0;
             foreach ($this->getFiles() as $file):
+                $info['stats']['reading'] += $file->getStats()['reading'];
+                $info['stats']['download'] += $file->getStats()['download']; 
                 $size += $file->getSize();
             endforeach;
 
