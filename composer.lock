@@ -2469,15 +2469,15 @@
         },
         {
             "name": "mediashare/show-content",
-            "version": "1.2.5",
+            "version": "1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.marquand.pro/MarquandT/show-content",
-                "reference": "fa3490d5ed4cbe3469ecf391a325d6951ace44d8"
+                "reference": "a8c525385a9782cdca54289360f34d9017aecaf2"
             },
             "require": {
                 "erusev/parsedown": "^1.7",
-                "twig/twig": "^3.0"
+                "twig/twig": "*"
             },
             "require-dev": {
                 "tracy/tracy": "^2.7"
@@ -2499,7 +2499,7 @@
                 }
             ],
             "description": "Detect file type & generate html view for web interface user-friendly. (Image/Video/Audio/Text/Markdown)",
-            "time": "2021-01-30T16:04:41+00:00"
+            "time": "2021-01-30T16:59:25+00:00"
         },
         {
             "name": "myclabs/php-enum",
