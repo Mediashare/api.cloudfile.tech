@@ -119,12 +119,6 @@ class FileController extends AbstractController
         else: $file = $repo->findOneBy(['id' => $id, 'private' => false], ['createDate' => 'DESC']); endif;
         
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
-        
-        $stats = $file->getStats();
-        $stats['reading']++;
-        $file->setStats($stats);
-        $em->persist($file);
-        $em->flush();
 
         // Generate url for bypass apikey protection
         $url = $file->getInfo()['urls']['show'];
