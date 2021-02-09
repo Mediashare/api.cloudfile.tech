@@ -72,6 +72,21 @@ class File
      */
     private $filename;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $convertToMp4;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $encrypt;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $stats = ['reading' => 0, 'download' => 0];
+
     public function __toString() {
         return $this->getName();
     }
@@ -254,7 +269,13 @@ class File
             $info['mimeType'] = $this->getMimeType();
             $info['checksum'] = $this->getChecksum();
             $info['metadata'] = $this->getMetadata(); 
+            $info['encrypted'] = $this->getEncrypt();
+            $info['convertVideo'] = $this->getConvertToMp4();
             $info['private'] = $this->getPrivate();
+
+            // Stats
+            $info['stats'] = $this->getStats();
+
             // Urls
             if (isset($_SERVER['SYMFONY_DEFAULT_ROUTE_URL']) 
                 && strpos($_SERVER['SYMFONY_DEFAULT_ROUTE_URL'], '127.0.0.1') !== false 
@@ -288,5 +309,48 @@ class File
 
     private function rngString($length = 32) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+    }
+
+    public function getConvertToMp4(): ?bool
+    {
+        return $this->convertToMp4;
+    }
+
+    public function setConvertToMp4(bool $convertToMp4): self
+    {
+        $this->convertToMp4 = $convertToMp4;
+
+        return $this;
+    }
+
+    public function getEncrypt(): ?bool
+    {
+        return $this->encrypt;
+    }
+
+    public function setEncrypt(bool $encrypt): self
+    {
+        $this->encrypt = $encrypt;
+
+        return $this;
+    }
+
+    public function getStats(): ?array
+    {
+        if (empty($this->stats)):
+            return [
+                'reading' => 0,
+                'download' => 0
+            ];
+        endif;
+        
+        return $this->stats;
+    }
+
+    public function setStats(array $stats): self
+    {
+        $this->stats = $stats;
+
+        return $this;
     }
 }

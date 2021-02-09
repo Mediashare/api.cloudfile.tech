@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Disk;
 use App\Entity\File;
+use App\Entity\Config;
 use App\Entity\Volume;
 use App\Service\Response;
 use App\Service\FileSystemApi;
@@ -39,6 +40,21 @@ class UploadController extends AbstractController
                 ]);
             endif;
 
+            if (!$volume->getEncrypt() && !empty($request->get('encrypt'))):
+                if ($request->get('encrypt') == "false" || $request->get('encrypt') === false):
+                    $encrypt = false;
+                else: $encrypt = true; endif;
+            else: $encrypt = $volume->getEncrypt(); endif;
+
+            
+            if (!$volume->getConvertToMp4() && !empty($request->get('convert_to_mp4'))):
+                if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
+                    if ($request->get('convert_to_mp4') == "false" || $request->get('convert_to_mp4') === false):
+                        $convert_to_mp4 = false;
+                    else: $convert_to_mp4 = true; endif;
+                else: $convert_to_mp4 = false; endif;
+            else: $convert_to_mp4 = $volume->getConvertToMp4(); endif;
+
             // Upload file(s)
             $fileSystem = new FileSystemApi();
             $results = [];
@@ -65,7 +81,7 @@ class UploadController extends AbstractController
                 if (empty($disk_selected)):
                     return $this->json([
                         'status' => 'error',
-                        'message' => 'No disk has been selected!'
+                        'message' => 'No space into disk(s)!'
                     ]);
                 endif;
 
@@ -84,12 +100,25 @@ class UploadController extends AbstractController
                 $file->setPrivate($volume->getPrivate());
                 // ApiKey
                 $file->generateApiKey();
+                // File encryption
+                $file->setEncrypt($encrypt);
+                // File convertion
+                $file->setConvertToMp4($convert_to_mp4);
+
                 // Volume update
                 $volume->setUpdateDate(new \DateTime());
 
                 // Record
                 $em->persist($file, $volume);
                 $em->flush();
+
+                if ($file->getEncrypt()):
+                    $file = $fileSystem->encrypt($file);
+                    if ($file):
+                        $em->persist($file);
+                        $em->flush();
+                    endif;
+                endif;
                 
                 $results[] = $file->getInfo();
                 $size += $file->getSize();

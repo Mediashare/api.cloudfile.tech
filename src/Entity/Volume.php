@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Disk;
 use App\Entity\File;
 use App\Service\FileSystemApi;
 use Doctrine\ORM\Mapping as ORM;
@@ -49,24 +48,39 @@ class Volume
      * @ORM\Column(type="datetime")
      */
     private $updateDate;
+    
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $metadata;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\File", mappedBy="volume", cascade={"remove", "persist"})
      */
     private $files;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $convertToMp4;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $encrypt;
+
     public function __toString() {
         return $this->getId();
     }
 
     public function __construct() {
+        $this->metadata = [];
         $this->files = new ArrayCollection();
         $this->setId(\uniqid());
         $this->generateApiKey();
         $this->setPrivate(true);
         $this->setCreateDate(new \DateTime());
         $this->setUpdateDate(new \DateTime());
-
     }
 
     public function getId(): ?string
@@ -157,6 +171,20 @@ class Volume
         return $this;
     }
 
+    public function getMetadata(): ?array {
+        return $this->metadata ?? [];
+    }
+
+    public function setMetadata(array $metadata): self {
+        $this->metadata = $metadata;
+        return $this;
+    }
+
+    public function addMetadata(string $key, string $value): self {
+        $this->metadata[$key] = $value;
+        return $this;
+    }
+
     /**
      * @return Collection|File[]
      */
@@ -198,13 +226,19 @@ class Volume
 
         if ($all_data):
             $info['size'] = $this->getSize();
+            $info['encrypted'] = $this->getEncrypt();
+            $info['convertVideo'] = $this->getConvertToMp4();
             $info['private'] = $this->getPrivate();
             $info['apikey'] = $this->getApikey();
             
             // Stats
             $info['stats']['files'] = count($this->getFiles());
+            $info['stats']['reading'] = 0;
+            $info['stats']['download'] = 0;
             $size = 0;
             foreach ($this->getFiles() as $file):
+                $info['stats']['reading'] += $file->getStats()['reading'];
+                $info['stats']['download'] += $file->getStats()['download']; 
                 $size += $file->getSize();
             endforeach;
 
@@ -226,5 +260,29 @@ class Volume
 
     private function rngString($length = 32) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+    }
+
+    public function getConvertToMp4(): ?bool
+    {
+        return $this->convertToMp4;
+    }
+
+    public function setConvertToMp4(bool $convertToMp4): self
+    {
+        $this->convertToMp4 = $convertToMp4;
+
+        return $this;
+    }
+
+    public function getEncrypt(): ?bool
+    {
+        return $this->encrypt;
+    }
+
+    public function setEncrypt(bool $encrypt): self
+    {
+        $this->encrypt = $encrypt;
+
+        return $this;
     }
 }

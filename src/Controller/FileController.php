@@ -4,14 +4,12 @@ namespace App\Controller;
 
 use App\Entity\File;
 use App\Entity\Volume;
+use Kzu\Security\Crypto;
 use App\Service\Response;
 use App\Service\FileSystemApi;
 use Mediashare\ShowContent\ShowContent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FileController extends AbstractController
@@ -85,8 +83,9 @@ class FileController extends AbstractController
      * @Route("/show/{id}", name="show")
      */
     public function show(Request $request, string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(File::class);
         // Check Authority
-        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $repo->authority($id, $apikey);
@@ -96,6 +95,12 @@ class FileController extends AbstractController
 
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
 
+        $stats = $file->getStats();
+        $stats['reading']++;
+        $file->setStats($stats);
+        $em->persist($file);
+        $em->flush();
+
         return $this->response->show($file);
     }
 
@@ -103,8 +108,9 @@ class FileController extends AbstractController
      * @Route("/render/{id}", name="render")
      */
     public function renderFile(Request $request, string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(File::class);
         // Check Authority
-        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $repo->authority($id, $apikey);
@@ -119,7 +125,12 @@ class FileController extends AbstractController
         $showContent = new ShowContent($url);
         $showContent->file->mimeType = $file->getMimeType();
         if ($showContent->file->getType() === "text"):
-            $showContent->file->content = \file_get_contents($file->getPath());
+            if ($file->getEncrypt()):
+                $content = Crypto::decrypt(file_get_contents($file->getPath()), $file->getApikey());
+                $filesystem = new FileSystemApi();
+                $filesystem->write($filepath = tempnam("", "tmp"), $content);
+            else: $filepath = $file->getPath(); endif;
+            $showContent->file->content = \file_get_contents($filepath);
             if (substr($file->getName(), -3) === ".md"):
                 $showContent->file->mimeType = "text/markdown";
             endif;
@@ -133,8 +144,9 @@ class FileController extends AbstractController
      * @Route("/download/{id}", name="download")
      */
     public function download(Request $request, string $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(File::class);
         // Check Authority
-        $repo = $this->getDoctrine()->getManager()->getRepository(File::class);
         $apikey = $request->headers->get('apikey') ?? $request->get('apikey');
         if ($apikey):
             $authority = $repo->authority($id, $apikey);
@@ -144,6 +156,13 @@ class FileController extends AbstractController
 
         if (!$file): return $this->response->json(['status' => 'error', 'message' => 'File not found.'], 404); endif;
         
+
+        $stats = $file->getStats();
+        $stats['download']++;
+        $file->setStats($stats);
+        $em->persist($file);
+        $em->flush();
+
         return $this->response->download($file);
     }
 

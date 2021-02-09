@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\File;
 use App\Entity\Volume;
+use App\Service\Response;
 use App\Service\SearchFilter;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -16,9 +17,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  */
 class FileRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, Response $response)
     {
         $this->registry = $registry;
+        $this->response = $response;
         parent::__construct($registry, File::class);
     }
 

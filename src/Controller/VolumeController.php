@@ -51,6 +51,20 @@ class VolumeController extends AbstractController
         $volume->setName($request->get('name'));
         $volume->setSize($request->get('size')); // Gb
 
+        
+        if (!empty($request->get('encrypt'))):
+            if ($request->get('encrypt') == "false" || $request->get('encrypt') === false):
+                $volume->setEncrypt(false);
+            else: $volume->setEncrypt(true); endif;
+        else: $volume->setEncrypt(false); endif;
+
+        
+        if (!empty($request->get('convert_to_mp4'))):
+            if ($request->get('convert_to_mp4') == "false" || $request->get('convert_to_mp4') === false):
+                $volume->setConvertToMp4(false);
+            else: $volume->setConvertToMp4(true); endif;
+        else: $volume->setConvertToMp4(false); endif;
+
         $em->persist($volume);
         $em->flush();
 
@@ -97,13 +111,33 @@ class VolumeController extends AbstractController
             $private = $request->get('private');
             if ($private == "true" || $private === true):
                 $private = true;
-            else: $private = false;endif;
+            else: $private = false; endif;
             $volume->setPrivate($private);
+        endif;
+        
+        if (!empty($request->get('encrypt'))):
+            if ($request->get('encrypt') == "false" || $request->get('encrypt') === false):
+                $volume->setEncrypt(false);
+            else: $volume->setEncrypt(true); endif;
+            foreach ($volume->getFiles() as $file):
+                $file->setEncrypt($volume->getEncrypt());
+                $em->persist($file);
+            endforeach;
         endif;
 
         if ($em->getRepository(Config::class)->findOneBy(['cloudfile_password' => $request->get('cloudfile_password')])):
             if ($size = (int) $request->get('size')):
                 $volume->setSize($size);
+            endif;
+
+            if (!empty($request->get('convert_to_mp4'))):
+                if ($request->get('convert_to_mp4') == "false" || $request->get('convert_to_mp4') === false):
+                    $volume->setConvertToMp4(false);
+                else: $volume->setConvertToMp4(true); endif;
+                foreach ($volume->getFiles() as $file):
+                    $file->setConvertToMp4($volume->getConvertToMp4());
+                    $em->persist($file);
+                endforeach;
             endif;
         endif;
         

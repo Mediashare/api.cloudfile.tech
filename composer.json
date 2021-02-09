@@ -7,10 +7,12 @@
         "ext-iconv": "*",
         "doctrine/annotations": "^1.8",
         "easycorp/easyadmin-bundle": "^2.3",
+        "kzu/security": "^0.0.3",
         "mediashare/cloudfile": "*",
         "mediashare/kernel": "*",
         "mediashare/modules-provider": "*",
         "mediashare/show-content": "*",
+        "php-ffmpeg/php-ffmpeg": "^0.17.0",
         "symfony/apache-pack": "^1.0",
         "symfony/console": "5.*",
         "symfony/dotenv": "5.*",
@@ -22,8 +24,6 @@
         "symfony/orm-pack": "^1.0",
         "symfony/twig-pack": "^1.0",
         "symfony/yaml": "5.*"
-    },
-    "require-dev": {
     },
     "config": {
         "preferred-install": {
