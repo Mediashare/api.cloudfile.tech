@@ -81,6 +81,8 @@ class Volume
         $this->setPrivate(true);
         $this->setCreateDate(new \DateTime());
         $this->setUpdateDate(new \DateTime());
+        $this->setEncrypt(false);
+        $this->setConvertToMp4(false);
     }
 
     public function getId(): ?string
