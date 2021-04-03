@@ -101,9 +101,9 @@ class UploadController extends AbstractController
                 // ApiKey
                 $file->generateApiKey();
                 // File encryption
-                $file->setEncrypt($encrypt);
+                if ($encrypt): $file->setEncrypt($encrypt); endif;
                 // File convertion
-                $file->setConvertToMp4($convert_to_mp4);
+                if ($convert_to_mp4): $file->setConvertToMp4($convert_to_mp4); endif;
 
                 // Volume update
                 $volume->setUpdateDate(new \DateTime());
