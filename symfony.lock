@@ -1,0 +1,29 @@
+{
+    "alchemy/binary-driver": {
+        "version": "v5.2.0"
+    },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
+    "evenement/evenement": {
+        "version": "v3.0.1"
+    },
+    "kzu/security": {
+        "version": "0.0.3"
+    },
+    "neutron/temporary-filesystem": {
+        "version": "3.0"
+    },
+    "paragonie/constant_time_encoding": {
+        "version": "v2.4.0"
+    },
+    "php-ffmpeg/php-ffmpeg": {
+        "version": "v0.17.0"
+    },
+    "phpseclib/phpseclib": {
+        "version": "3.0.4"
+    },
+    "symfony/process": {
+        "version": "v5.2.3"
+    }
+}

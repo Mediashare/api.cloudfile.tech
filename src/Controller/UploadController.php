@@ -26,9 +26,8 @@ class UploadController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Volume::class);
         $authority = $repo->authority($apikey = $request->headers->get('apikey'));
-        if ($authority): return $this->response->json($authority); endif;
+	if ($authority): return $this->response->json($authority); endif;
         $volume = $repo->findOneBy(['apikey' => $apikey]);
-        
         $files = $request->files;
         if (count($files) > 0):
             // Check Espace Disk
