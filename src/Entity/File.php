@@ -95,6 +95,8 @@ class File
         $this->setId(\uniqid());
         $this->setPrivate(true);
         $this->setCreateDate(new \DateTime());
+        $this->setConvertToMp4(false);
+        $this->setEncrypt(false);
     }
 
     public function getId(): ?string
