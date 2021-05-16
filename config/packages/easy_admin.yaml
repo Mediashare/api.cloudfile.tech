@@ -10,6 +10,7 @@ easy_admin:
             class: App\Entity\Disk
             list:
                 actions: ['show']
+                fields: ['id', 'name', 'path']
             edit:
                 fields: 
                     - id
