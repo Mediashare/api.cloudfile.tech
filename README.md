@@ -38,4 +38,4 @@ curl \
   http://localhost:8000/volume/new
 ```
 ## API Documentation
-You can follow the [Documentation](http://doc.cloudfile.tech) for interaction with your CloudFile server.
+You can follow the [Documentation](https://mediashare.fr/post/api-cloudfile-documentation) for interaction with your CloudFile server.
