@@ -270,7 +270,10 @@ class File
         if ($all_data):
             $info['mimeType'] = $this->getMimeType();
             $info['checksum'] = $this->getChecksum();
-            $info['metadata'] = $this->getMetadata(); 
+            foreach ($this->getMetadata() as $key => $metadata):
+                if (is_string($metadata)): $metadata = utf8_encode($metadata); endif;
+                $info['metadata'][$key] = $metadata; 
+            endforeach; 
             $info['encrypted'] = $this->getEncrypt();
             $info['convertVideo'] = $this->getConvertToMp4();
             $info['private'] = $this->getPrivate();
