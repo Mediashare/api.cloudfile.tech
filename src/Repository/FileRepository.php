@@ -6,7 +6,7 @@ use App\Entity\File;
 use App\Entity\Volume;
 use App\Service\Response;
 use App\Service\SearchFilter;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**

@@ -6,7 +6,6 @@ use App\Entity\File;
 use App\Entity\Volume;
 use App\Entity\Disk;
 use App\Service\Response;
-use App\Service\FileSystemApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +17,6 @@ class AppController extends AbstractController
      */
     public function index(Request $request) {
         $response = new Response();
-        $fileSystem = new FileSystemApi();
         $em = $this->getDoctrine()->getManager();
 
         $volumes_size = 0;

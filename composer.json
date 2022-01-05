@@ -2,12 +2,15 @@
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": "^7.2.5",
+        "php": "^8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/annotations": "^1.8",
+        "doctrine/doctrine-bundle": "^2.5",
+        "doctrine/doctrine-migrations-bundle": "^3.2",
+        "doctrine/orm": "^2.10",
         "easycorp/easyadmin-bundle": "^2.3",
-        "kzu/security": "^0.0.3",
+        "kzu/security": "*",
         "mediashare/cloudfile": "*",
         "mediashare/kernel": "*",
         "mediashare/modules-provider": "*",
@@ -21,15 +24,20 @@
         "symfony/framework-bundle": "5.*",
         "symfony/maker-bundle": "^1.14",
         "symfony/mime": "5.*",
-        "symfony/orm-pack": "^1.0",
-        "symfony/twig-pack": "^1.0",
-        "symfony/yaml": "5.*"
+        "symfony/twig-bundle": "5.*",
+        "symfony/yaml": "5.*",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "symfony/flex": true
+        }
     },
     "autoload": {
         "psr-4": {
